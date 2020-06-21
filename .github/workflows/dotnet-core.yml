@@ -1,0 +1,24 @@
+name: .NET Core
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: dotnet restore
+      working-directory: ChineseDictionary
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+      working-directory: ChineseDictionary
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+      working-directory: ChineseDictionary
