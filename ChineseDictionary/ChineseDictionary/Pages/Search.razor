@@ -1,0 +1,58 @@
+@page "/search"
+@using ChineseDictionary.Models
+@inject HttpClient Http
+@inject ChineseDictionary.Services.IDictionaryService Dictionary
+
+<h1>Search</h1>
+
+<EditForm Model="@fieldModel" OnValidSubmit="HandleSearchSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="SearchString" @bind-Value="fieldModel.SearchString" />
+
+    <button type="submit">Search</button>
+</EditForm>
+
+@if (words == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @foreach (var word in words)
+    {
+        <p>
+            <h4>@word.Chinese @word.Pinyin</h4> 
+            <em>@string.Join(", ", word.Translations)</em>
+        </p>
+    }
+    <button @onclick="AddMore">More</button>
+}
+
+@code {
+
+    private InputFieldModel fieldModel = new InputFieldModel();
+
+    private int shownItems = 20;
+
+    private IEnumerable<Word> words;
+
+    protected override async Task OnInitializedAsync()
+    {
+        words = Dictionary.SearchByChinese("", 0, shownItems);
+    }
+
+    private void HandleSearchSubmit()
+    {
+        words = Dictionary.SearchByChinese(fieldModel.SearchString, 0, shownItems);
+    }
+
+    public void AddMore()
+    {
+        shownItems += 20;
+        var wordsList = words.ToList();
+        wordsList.AddRange(Dictionary.SearchByChinese(fieldModel.SearchString, shownItems - 20, shownItems));
+        words = wordsList;
+    }
+}
