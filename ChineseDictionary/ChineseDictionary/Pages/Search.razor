@@ -23,7 +23,7 @@ else
     @foreach (var word in words)
     {
         <p>
-            <h4>@word.Chinese @word.Pinyin</h4> 
+            <h4>@word.Chinese</h4><h5>@word.Pinyin</h5> <br />
             <em>@string.Join(", ", word.Translations)</em>
         </p>
     }
