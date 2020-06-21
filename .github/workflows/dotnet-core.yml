@@ -12,7 +12,6 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - working-directory: ChineseDictionary
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
@@ -20,10 +19,13 @@ jobs:
         dotnet-version: 3.1.101
     - name: Install dependencies
       run: dotnet restore
+      working-directory: ChineseDictionary
     - name: Build
       run: dotnet build --configuration Release --no-restore
+      working-directory: ChineseDictionary
     - name: Test
       run: dotnet test --no-restore --verbosity normal
+      working-directory: ChineseDictionary
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v1.3
       with:
