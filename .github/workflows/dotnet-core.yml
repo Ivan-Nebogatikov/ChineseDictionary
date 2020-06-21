@@ -22,8 +22,3 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal
       working-directory: ChineseDictionary
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@v1.3
-      with:
-        # Set the sonar.projectBaseDir analysis property
-        projectBaseDir: ChineseDictionary
