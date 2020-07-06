@@ -7,6 +7,7 @@ namespace ChineseDictionary.Models
 {
     public class Word
     {
+        public long? Id { get; set; }
         public string Chinese { get; set; }
 
         public string Pinyin { get; set; }

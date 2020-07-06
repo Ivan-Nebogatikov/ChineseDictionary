@@ -14,7 +14,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="TG.Blazor.IndexedDB">
+      <HintPath>Packages\TG.Blazor.IndexedDB.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\indexedDb.Blazor.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

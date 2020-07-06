@@ -1,7 +1,11 @@
-@page "/search"
+﻿@page "/search"
 @using ChineseDictionary.Models
 @inject HttpClient Http
 @inject ChineseDictionary.Services.IDictionaryService Dictionary
+
+@using TG.Blazor.IndexedDB
+@inject IndexedDBManager DbManager
+@inject DbStore DbStore
 
 <h1>Search</h1>
 
@@ -41,6 +45,19 @@ else
     protected override async Task OnInitializedAsync()
     {
         words = Dictionary.SearchByChinese("", 0, shownItems);
+
+        // Some code to show how to work with Indexed DB
+        //var z = (await DbManager.GetRecords<Word>("Dictionary")).ToList();
+        //if (!z.Any())
+        //{
+        //    for (int i = 0; i < 1600; ++i)
+        //    {
+        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = "Dictionary", Data = new Word { Chinese = "你好", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
+        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = "Dictionary", Data = new Word { Chinese = "你好吗", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
+        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = "Dictionary", Data = new Word { Chinese = "你好妈妈", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
+        //    }
+        //}
+        //words = (await DbManager.GetAllRecordsByIndexContains<Word>(new StoreIndexQueryStringContains { Storename = "Dictionary", IndexName = "chinese", QueryValue = "你" })).Take(20).ToList();
     }
 
     private void HandleSearchSubmit()
