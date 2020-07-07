@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ChineseDictionary.Services;
 using TG.Blazor.IndexedDB;
+using ChineseDictionary.Constants;
 
 namespace ChineseDictionary
 {
@@ -23,18 +24,18 @@ namespace ChineseDictionary
             builder.Services.AddSingleton<IDictionaryService>(new MockDictionaryService());
             builder.Services.AddIndexedDB(dbStore =>
             {
-                dbStore.DbName = "TheFactory";
+                dbStore.DbName = DbConstants.DbName;
                 dbStore.Version = 2;
 
                 dbStore.Stores.Add(new StoreSchema
                 {
-                    Name = "Dictionary",
-                    PrimaryKey = new IndexSpec { Name = "id", KeyPath = "id", Auto = true },
+                    Name = DbConstants.StoreName,
+                    PrimaryKey = new IndexSpec { Name = DbConstants.Id, KeyPath = DbConstants.Id, Auto = true },
                     Indexes = new List<IndexSpec>
                     {
-                        new IndexSpec { Name = "chinese", KeyPath = "chinese", Auto = false },
-                        new IndexSpec{Name="pinyin", KeyPath = "pinyin", Auto=false},
-                        new IndexSpec{Name="translations", KeyPath = "translations", Auto=false}
+                        new IndexSpec { Name = DbConstants.Chinese, KeyPath = DbConstants.Chinese, Auto = false },
+                        new IndexSpec { Name= DbConstants.Pinyin, KeyPath = DbConstants.Pinyin, Auto=false },
+                        new IndexSpec { Name= DbConstants.Translations, KeyPath = DbConstants.Translations, Auto=false }
 
                     }
                 });

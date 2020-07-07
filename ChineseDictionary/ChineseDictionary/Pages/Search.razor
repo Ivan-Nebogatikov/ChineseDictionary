@@ -46,18 +46,18 @@ else
     {
         words = Dictionary.SearchByChinese("", 0, shownItems);
 
-        // Some code to show how to work with Indexed DB
+        //Some code to show how to work with Indexed DB
         //var z = (await DbManager.GetRecords<Word>("Dictionary")).ToList();
         //if (!z.Any())
         //{
         //    for (int i = 0; i < 1600; ++i)
         //    {
-        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = "Dictionary", Data = new Word { Chinese = "你好", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
-        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = "Dictionary", Data = new Word { Chinese = "你好吗", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
-        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = "Dictionary", Data = new Word { Chinese = "你好妈妈", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
+        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = ChineseDictionary.Constants.DbConstants.StoreName, Data = new Word { Chinese = "你好", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
+        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = ChineseDictionary.Constants.DbConstants.StoreName, Data = new Word { Chinese = "你好吗", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
+        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = ChineseDictionary.Constants.DbConstants.StoreName, Data = new Word { Chinese = "你好妈妈", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
         //    }
         //}
-        //words = (await DbManager.GetAllRecordsByIndexContains<Word>(new StoreIndexQueryStringContains { Storename = "Dictionary", IndexName = "chinese", QueryValue = "你" })).Take(20).ToList();
+        //words = (await DbManager.GetAllRecordsByIndexContains<Word>(new StoreIndexQueryStringContains { Storename = ChineseDictionary.Constants.DbConstants.StoreName, IndexName = ChineseDictionary.Constants.DbConstants.Chinese, QueryValue = "你" })).Take(20).ToList();
     }
 
     private void HandleSearchSubmit()
