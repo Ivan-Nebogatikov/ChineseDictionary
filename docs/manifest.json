@@ -1,7 +1,7 @@
 {
   "name": "ChineseDictionary",
   "short_name": "ChineseDictionary",
-  "start_url": "./",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#03173d",
