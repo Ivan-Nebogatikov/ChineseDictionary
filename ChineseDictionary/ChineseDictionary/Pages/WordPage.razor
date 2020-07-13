@@ -1,0 +1,36 @@
+﻿@page "/dictionary/{text}"
+@using ChineseDictionary.Models
+@inject HttpClient Http
+@inject ChineseDictionary.Services.IDictionaryService DictionaryService
+
+@using TG.Blazor.IndexedDB
+@inject IndexedDBManager DbManager
+@inject DbStore DbStore
+
+<h1>@Text</h1><br/>
+
+
+
+
+
+<h5>@word.Pinyin</h5> <br/>
+<ul>
+    @foreach(string s in word.Translations)
+    {
+        <li>@s</li>
+    }
+</ul>
+
+@code {
+
+    [Parameter]
+    public string Text { get; set; }
+
+    // ToDo: исправить Word на ExtendedWord
+    private Word word;  
+
+    protected override void OnInitialized()
+    {
+        word = DictionaryService.SearchByChinese(Text, 0, 1).First<Word>();
+    }
+}

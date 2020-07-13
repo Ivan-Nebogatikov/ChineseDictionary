@@ -1,0 +1,67 @@
+﻿@page "/dictionary"
+@using ChineseDictionary.Models
+@inject HttpClient Http
+@inject ChineseDictionary.Services.IDictionaryService DictionaryService
+
+@using TG.Blazor.IndexedDB
+@inject IndexedDBManager DbManager
+@inject DbStore DbStore
+
+<h1>Dictionary</h1>
+
+
+
+@if (words == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @foreach (var word in words)
+    {
+        <p>
+            <h4><a href="/dictionary/@word.Chinese">@word.Chinese</a></h4>
+        </p>
+    }
+    <button @onclick="AddMore">More</button>
+}
+
+@code {
+
+    private InputFieldModel fieldModel = new InputFieldModel();
+
+    private int shownItems = 20;
+
+    private IEnumerable<Word> words;
+
+    protected override async Task OnInitializedAsync()
+    {
+        words = DictionaryService.SearchByChinese("", 0, shownItems);
+
+        // Some code to show how to work with Indexed DB
+        //var z = (await DbManager.GetRecords<Word>("Dictionary")).ToList();
+        //if (!z.Any())
+        //{
+        //    for (int i = 0; i < 1600; ++i)
+        //    {
+        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = "Dictionary", Data = new Word { Chinese = "你好", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
+        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = "Dictionary", Data = new Word { Chinese = "你好吗", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
+        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = "Dictionary", Data = new Word { Chinese = "你好妈妈", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
+        //    }
+        //}
+        //words = (await DbManager.GetAllRecordsByIndexContains<Word>(new StoreIndexQueryStringContains { Storename = "Dictionary", IndexName = "chinese", QueryValue = "你" })).Take(20).ToList();
+    }
+
+    private void HandleSearchSubmit()
+    {
+        words = DictionaryService.SearchByChinese(fieldModel.SearchString, 0, shownItems);
+    }
+
+    public void AddMore()
+    {
+        shownItems += 20;
+        var wordsList = words.ToList();
+        wordsList.AddRange(DictionaryService.SearchByChinese(fieldModel.SearchString, shownItems - 20, shownItems));
+        words = wordsList;
+    }
+}
