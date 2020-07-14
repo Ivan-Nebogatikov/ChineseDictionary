@@ -7,17 +7,30 @@
 @inject IndexedDBManager DbManager
 @inject DbStore DbStore
 
-<h1>@Text</h1><br/>
+<h1>@Text</h1>
+<br />
 
 
 
 
 
-<h5>@word.Pinyin</h5> <br/>
+<h5>@word.Pinyin</h5>
+<br />
+<br />
+
+<h5>Translation:</h5>
 <ul>
-    @foreach(string s in word.Translations)
+    @foreach (string s in word.Translations)
     {
         <li>@s</li>
+    }
+</ul>
+
+<h5>Examples:</h5>
+<ul>
+    @foreach (Example s in word.Examples)
+    {
+        <li>@s.Chinese<br /> @s.Translation</li>
     }
 </ul>
 
@@ -26,11 +39,9 @@
     [Parameter]
     public string Text { get; set; }
 
-    // ToDo: исправить Word на ExtendedWord
-    private Word word;  
-
+    private ExtendedWord word;
     protected override void OnInitialized()
     {
-        word = DictionaryService.SearchByChinese(Text, 0, 1).First<Word>();
+        word = DictionaryService.GetByChinese(Text);
     }
 }
