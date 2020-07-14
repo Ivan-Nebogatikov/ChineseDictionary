@@ -10,10 +10,6 @@
 <h1>@Text</h1>
 <br />
 
-
-
-
-
 <h5>@word.Pinyin</h5>
 <br />
 <br />
@@ -26,13 +22,28 @@
     }
 </ul>
 
-<h5>Examples:</h5>
-<ul>
-    @foreach (Example s in word.Examples)
-    {
-        <li>@s.Chinese<br /> @s.Translation</li>
-    }
-</ul>
+@if (word.Examples.Count != 0)
+{
+    <h5>Examples:</h5>
+    <ul>
+        @foreach (Example s in word.Examples)
+        {
+            <li>@s.Chinese<br /> @s.Translation</li>
+        }
+    </ul>
+}
+
+@if (word.RelativeWords.Count != 0)
+{
+    <h5>Relative words:</h5>
+    <ul>
+        @foreach (string s in word.RelativeWords)
+        {
+            <li><a href="/dictionary/@s"> @s </a></li>
+        }
+    </ul>
+}
+
 
 @code {
 
@@ -40,8 +51,9 @@
     public string Text { get; set; }
 
     private ExtendedWord word;
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
         word = DictionaryService.GetByChinese(Text);
     }
+
 }
