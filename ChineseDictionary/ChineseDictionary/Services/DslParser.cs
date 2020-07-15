@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using TG.Blazor.IndexedDB;
+using ChineseDictionary.Constants;
 
 namespace ChineseDictionary.Services
 {
@@ -24,7 +26,7 @@ namespace ChineseDictionary.Services
             return regex.Replace(s, "");
         }
 
-        public static List<ExtendedWord> Parse(Stream stream)
+        public static List<ExtendedWord> ListParse(Stream stream)
         {
             List<ExtendedWord> data = new List<ExtendedWord>();
             using (StreamReader sr = new StreamReader(stream, System.Text.Encoding.Unicode))
@@ -67,6 +69,56 @@ namespace ChineseDictionary.Services
 
 
             return data;
+        }
+
+        // ToDo: Abstract ListParse & DBParse
+        // Maybe need interface to add data
+        public static async void DBParseAsync(IndexedDBManager DbManager, Stream stream)
+        {
+            using (StreamReader sr = new StreamReader(stream, System.Text.Encoding.Unicode))
+            {
+                string line;
+                ParserState state = ParserState.Space;
+                ExtendedWord word = null;
+
+                while ((line = sr.ReadLine()) != null)
+                {
+                    if (line != "" && line[0] != '#')
+                    {
+                        if (line[0] != ' ')
+                        {
+                            state = ParserState.Title;
+
+                            if (word != null)
+                                await DbManager.AddRecord<Word>(new StoreRecord<Word>
+                                {
+                                    Storename = DbConstants.StoreName,
+                                    Data = word
+                                });
+
+                            word = new ExtendedWord
+                            {
+                                Chinese = RemoveTag(line)
+                            };
+                        }
+                        else
+                            state++;
+
+                        if (state == ParserState.Pinyin)
+                            word.Pinyin = RemoveTag(line);
+
+                        if (state == ParserState.Body)
+                            word.Translations = RemoveTag(line).Split(";");
+                    }
+                    else
+                        state = ParserState.Space;
+                }
+
+                await DbManager.AddRecord<Word>(new StoreRecord<Word> { 
+                    Storename = DbConstants.StoreName, 
+                    Data = word 
+                });
+            }
         }
     }
 }

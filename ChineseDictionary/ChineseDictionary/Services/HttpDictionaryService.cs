@@ -21,7 +21,7 @@ namespace ChineseDictionary.Services
         {
             var response = await Http.GetAsync("https://raw.githubusercontent.com/Oleg42-prog/Lanit-CD/master/short.txt");
             var code = response.StatusCode;
-            dict.AddRange(DslParser.Parse(await response.Content.ReadAsStreamAsync()));
+            dict.AddRange(DslParser.ListParse(await response.Content.ReadAsStreamAsync()));
             // Question: Parser should be async?
         }
 
