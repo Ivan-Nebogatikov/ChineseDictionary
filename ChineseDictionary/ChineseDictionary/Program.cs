@@ -20,8 +20,9 @@ namespace ChineseDictionary
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
-            builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddSingleton<IDictionaryService>(new MockDictionaryService());
+            HttpClient Http = new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) };
+            builder.Services.AddTransient(sp => Http); // Question
+            builder.Services.AddSingleton<IDictionaryService>(new HttpDictionaryService(Http));
             builder.Services.AddIndexedDB(dbStore =>
             {
                 dbStore.DbName = DbConstants.DbName;
@@ -34,8 +35,8 @@ namespace ChineseDictionary
                     Indexes = new List<IndexSpec>
                     {
                         new IndexSpec { Name = DbConstants.Chinese, KeyPath = DbConstants.Chinese, Auto = false },
-                        new IndexSpec { Name= DbConstants.Pinyin, KeyPath = DbConstants.Pinyin, Auto=false },
-                        new IndexSpec { Name= DbConstants.Translations, KeyPath = DbConstants.Translations, Auto=false }
+                        new IndexSpec { Name = DbConstants.Pinyin, KeyPath = DbConstants.Pinyin, Auto=false },
+                        new IndexSpec { Name = DbConstants.Translations, KeyPath = DbConstants.Translations, Auto=false }
 
                     }
                 });
