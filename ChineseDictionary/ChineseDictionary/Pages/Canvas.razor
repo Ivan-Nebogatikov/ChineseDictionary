@@ -1,0 +1,56 @@
+﻿@page "/"
+@inject IJSRuntime JsRuntime
+
+<style> 
+    canvas { width: 500px; height: 500px;}
+    </style>
+
+
+<canvas id=" c"
+        height=500
+        width=500
+        style="border: 2px solid "
+        @onmousedown="@StartPaint"
+        @onmousemove="@Paint"
+        @onmouseup="@StopPaint"
+        @onmouseout="@StopPaint"
+        @ref="@canvas" />
+
+
+@code { 
+
+    ElementReference canvas;
+    Canvas2DContext ctx;
+
+
+    bool isPainting = false;
+    double x;
+    double y;
+    private void StartPaint(MouseEventArgs e)
+    {
+        x = e.ClientX;
+        y = e.ClientY;
+        isPainting = true;
+    }
+
+    private async Task Paint(MouseEventArgs e)
+    {
+        if (isPainting)
+        {
+            var eX = e.ClientX;
+            var eY = e.ClientY;
+            if (ctx == null)
+            {
+                ctx = new Canvas2DContext(JsRuntime, canvas);
+            }
+            await ctx.DrawLine(x, y, eX, eY);
+            x = eX;
+            y = eY;
+        }
+    }
+
+    private void StopPaint(MouseEventArgs e)
+    {
+        isPainting = false;
+    }
+}
