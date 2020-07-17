@@ -9,45 +9,53 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.IO;
 using TG.Blazor.IndexedDB;
+using ChineseDictionary.Constants;
 
 namespace ChineseDictionary.Services
 {
-    public class DbDictionaryService : IDictionaryService
+    public class DbDictionaryService : IDictionaryServiceAsync
     {
         private HttpClient Http;
         private IndexedDBManager DbManager;
-        private List<ExtendedWord> mockDict;
 
         private async void Load()
         {
-            mockDict = new List<ExtendedWord>
+            if (!(await DbManager.GetRecords<Word>("Dictionary")).Any())
             {
-                new ExtendedWord{ Chinese = "test", Pinyin = "may", Translations = new List<string>{ "привет", "здравствуй" }, Examples = new List<Example> { new Example { Chinese = "王女士，你好！", Translation = "Добрый день, госпожа Ван!" } } },
-                new ExtendedWord{ Chinese = "test", Pinyin = "may", Translations = new List<string>{ "ты", "твой" } },
-                new ExtendedWord{ Chinese = "test", Pinyin = "may", Translations = new List<string>{ "хорошо" } }
-            };
-
-            var response = await Http.GetAsync("https://raw.githubusercontent.com/Oleg42-prog/Lanit-CD/master/short.txt");
-            var code = response.StatusCode;
-            // Question: I think that async was wrong
-            DslParser.DBParseAsync(DbManager, await response.Content.ReadAsStreamAsync());
+                var response = await Http.GetAsync("https://raw.githubusercontent.com/Oleg42-prog/Lanit-CD/master/short.txt");
+                var code = response.StatusCode; // ToDo: condition & error
+                DslParser.DBParseAsync(DbManager, await response.Content.ReadAsStreamAsync());
+            }
         }
 
-        public DbDictionaryService(HttpClient Http, IndexedDBManager DbManager)
+        public DbDictionaryService(HttpClient Http, IndexedDBManager DbManager, DbStore DbStore)
         {
             this.Http = Http;
             this.DbManager = DbManager;
             Load();
         }
 
-        public IEnumerable<ExtendedWord> SearchByChinese(string chinese, int skip = 0, int take = int.MaxValue)
+        private async Task<IEnumerable<ExtendedWord>> SearchByAsync(string indexName, string queryValue, int skip = 0, int take = int.MaxValue)
         {
-            return mockDict.Where(x => x.Chinese.Contains(chinese)).Skip(0).Take(take);
+            var query = new StoreIndexQueryStringContains
+            {
+                Storename = DbConstants.StoreName,
+                IndexName = indexName,
+                QueryValue = queryValue
+            };
+
+            // Question
+            return (await DbManager.GetAllRecordsByIndexContains<ExtendedWord>(query)).Skip(skip).Take(take).ToList();
         }
 
-        public IEnumerable<ExtendedWord> SearchByTranslation(string translation, int skip = 0, int take = int.MaxValue)
+        public async Task<IEnumerable<ExtendedWord>> SearchByChineseAsync(string chinese, int skip = 0, int take = int.MaxValue)
         {
-            return mockDict.Where(x => x.Translations.Any(y => y.Contains(translation))).Skip(0).Take(take);
+            return await SearchByAsync(DbConstants.Chinese, chinese, skip, take);
+        }
+
+        public async Task<IEnumerable<ExtendedWord>> SearchByTranslationAsync(string translation, int skip = 0, int take = int.MaxValue)
+        {
+            return await SearchByAsync(DbConstants.Translations, translation, skip, take);
         }
     }
 }

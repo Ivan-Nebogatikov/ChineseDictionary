@@ -28,7 +28,12 @@ namespace ChineseDictionary.Services
         public HttpDictionaryService(HttpClient Http)
         {
             this.Http = Http;
-            dict = new List<ExtendedWord>();
+            dict = new List<ExtendedWord>
+            {
+                new ExtendedWord{ Chinese = "你好", Pinyin = "nǐ hǎo", Translations = new List<string>{ "привет", "здравствуй" }, Examples = new List<Example> { new Example { Chinese = "王女士，你好！", Translation = "Добрый день, госпожа Ван!" } } },
+                new ExtendedWord{ Chinese = "你", Pinyin = "nǐ", Translations = new List<string>{ "ты", "твой" } },
+                new ExtendedWord{ Chinese = "好", Pinyin = "hǎo", Translations = new List<string>{ "хорошо" } }
+            };
             Load();
         }
 
