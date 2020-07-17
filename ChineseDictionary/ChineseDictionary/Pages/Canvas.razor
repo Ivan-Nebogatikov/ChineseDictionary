@@ -1,23 +1,29 @@
 ﻿@page "/canvas"
 @inject IJSRuntime JsRuntime
 
-<style> 
-    canvas { width: 500px; height: 500px;}
-    </style>
+<style>
+    canvas {
+        width: 500px;
+        height: 500px;
+    }
+</style>
 
 
-<canvas id=" c"
-        height=500
+<canvas height=500
         width=500
         style="border: 2px solid "
         @onmousedown="@StartPaint"
         @onmousemove="@Paint"
         @onmouseup="@StopPaint"
         @onmouseout="@StopPaint"
-        @ref="@canvas" />
+        @ref="@canvas"
+        @ontouchstart="@StartPaint1"
+        @ontouchmove="@Paint1"
+        @ontouchend="@StopPaint1" />
 
 
-@code { 
+
+@code {
 
     ElementReference canvas;
     Canvas2DContext ctx;
@@ -26,6 +32,8 @@
     bool isPainting = false;
     double x;
     double y;
+
+
     private void StartPaint(MouseEventArgs e)
     {
         x = e.ClientX;
@@ -53,4 +61,34 @@
     {
         isPainting = false;
     }
+    private void StartPaint1(TouchEventArgs e)
+    {
+        if (ctx == null)
+        {
+            ctx = new Canvas2DContext(JsRuntime, canvas);
+        }
+        x = e.Touches.First().ClientX;
+        y = e.Touches.First().ClientY;
+        isPainting = true;
+    }
+
+
+    private async Task Paint1(TouchEventArgs e)
+    {
+        if (isPainting)
+        {
+            var eX = e.Touches.First().ClientX;
+            var eY = e.Touches.First().ClientY;
+
+            await ctx.DrawLine(x, y, eX, eY);
+            x = eX;
+            y = eY;
+        }
+    }
+
+    private void StopPaint1(TouchEventArgs e)
+    {
+        isPainting = false;
+    }
 }
+
