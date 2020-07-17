@@ -58,7 +58,7 @@ namespace ChineseDictionary.Services
             foreach (ExtendedWord word in mockDict)
                 if (word.Chinese == chinese)
                     return word;
-            return new ExtendedWord() { Chinese = "error" };
+            return new ExtendedWord() { Chinese = null };
         }
     }
 }
