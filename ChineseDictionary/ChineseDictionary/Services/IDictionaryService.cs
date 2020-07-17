@@ -10,6 +10,7 @@ namespace ChineseDictionary.Services
     {
         IEnumerable<ExtendedWord> SearchByChinese(string chinese, int skip = 0, int take = int.MaxValue);
         IEnumerable<ExtendedWord> SearchByTranslation(string translation, int skip = 0, int take = int.MaxValue);
+        public ExtendedWord GetByChinese(string chinese);
 
     }
 }
