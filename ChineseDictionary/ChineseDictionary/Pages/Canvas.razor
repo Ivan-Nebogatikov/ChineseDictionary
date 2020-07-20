@@ -1,16 +1,12 @@
 ﻿@page "/canvas"
 @inject IJSRuntime JsRuntime
 
-<style>
-    canvas {
-        width: 500px;
-        height: 500px;
-    }
-</style>
 
 
-<canvas height=500
-        width=500
+
+
+<canvas height="@windowSize.Height"
+        width="@windowSize.Width"
         style="border: 2px solid "
         @onmousedown="@StartPaint"
         @onmousemove="@Paint"
@@ -19,7 +15,7 @@
         @ref="@canvas"
         @ontouchstart="@StartPaint1"
         @ontouchmove="@Paint1"
-        @ontouchend="@StopPaint1" />
+        @ontouchend="@StopPaint" />
 
 
 
@@ -32,7 +28,20 @@
     bool isPainting = false;
     double x;
     double y;
+    WindowSize windowSize;
+    public struct WindowSize
+    {
+        public long Height { get; set; }
+        public long Width { get; set; }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        windowSize = await JsRuntime.InvokeAsync<WindowSize>("getWindowSize");
 
+        windowSize = new WindowSize() { Width = 290, Height = 300 };
+
+
+    }
 
     private void StartPaint(MouseEventArgs e)
     {
@@ -57,10 +66,7 @@
         }
     }
 
-    private void StopPaint(MouseEventArgs e)
-    {
-        isPainting = false;
-    }
+
     private void StartPaint1(TouchEventArgs e)
     {
         if (ctx == null)
@@ -86,9 +92,10 @@
         }
     }
 
-    private void StopPaint1(TouchEventArgs e)
+    private void StopPaint()
     {
         isPainting = false;
     }
-}
 
+
+}
