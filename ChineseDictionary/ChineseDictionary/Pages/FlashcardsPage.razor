@@ -3,6 +3,7 @@
 @inject HttpClient Http
 @inject ChineseDictionary.Services.IDictionaryServiceAsync Dictionary
 @inject ChineseDictionary.Services.IFlashcardsService Flashcards
+@using System.ComponentModel.DataAnnotations
 
 @using TG.Blazor.IndexedDB
 @inject IndexedDBManager DbManager
@@ -32,7 +33,7 @@ else
             <li>@translate</li>
         }
 
-        <EditForm Model="@input" OnValidSubmit="HandleTrainSubmit">
+        <EditForm OnValidSubmit="HandleTrainSubmit">
             <button type="submit">Stop train</button>
         </EditForm>
     }
@@ -42,9 +43,29 @@ else
     }
 }
 
+<h1>Radio Button Group Test</h1>
+
+<EditForm Model="@model" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    @for (int i = 1; i <= 5; i++)
+    {
+        <label>
+            <ChineseDictionary.Components.InputRadio name="rate" SelectedValue="i" @bind-Value="model.Rating"/>
+            @i
+        </label>
+    }
+
+    <button type="submit">Submit</button>
+</EditForm>
+
+<p>You chose: @model.Rating</p>
+
 @code {
 
     bool training = false;
+    private Model model = new Model();
 
     private InputFlashcardsModel input = new InputFlashcardsModel();
     ExtendedWord word;
@@ -63,5 +84,17 @@ else
             translations = Flashcards.GetRandomTranslations(word.Chinese, 4);
         }
 
+    }
+
+    private void HandleValidSubmit()
+    {
+
+    }
+
+    public class Model
+    {
+        [Required]
+        [Range(1, 5, ErrorMessage = "Words count should be in [1; 20]")]
+        public int Rating { get; set; }
     }
 }
