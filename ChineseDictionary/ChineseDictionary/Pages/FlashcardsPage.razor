@@ -2,6 +2,7 @@
 @using ChineseDictionary.Models
 @inject HttpClient Http
 @inject ChineseDictionary.Services.IDictionaryServiceAsync Dictionary
+@inject ChineseDictionary.Services.IFlashcardsService Flashcards
 
 @using TG.Blazor.IndexedDB
 @inject IndexedDBManager DbManager
@@ -23,11 +24,22 @@
 }
 else
 {
-    <p><em>Loading...</em></p>
+    @if (word != null)
+    {
 
-    <EditForm Model="@input" OnValidSubmit="HandleTrainSubmit">
-        <button type="submit">Stop train</button>
-    </EditForm>
+        @foreach (string translate in translations)
+        {
+            <li>@translate</li>
+        }
+
+        <EditForm Model="@input" OnValidSubmit="HandleTrainSubmit">
+            <button type="submit">Stop train</button>
+        </EditForm>
+    }
+    else
+    {
+        <p><em>Loading...</em></p>
+    }
 }
 
 @code {
@@ -35,19 +47,21 @@ else
     bool training = false;
 
     private InputFlashcardsModel input = new InputFlashcardsModel();
+    ExtendedWord word;
+    List<string> translations;
 
     protected override async Task OnInitializedAsync()
     {
-
+        word = (await Dictionary.SearchByChineseAsync("", 0, 1)).First(); // mock word
     }
 
     private async void HandleTrainSubmit()
     {
         training = !training;
-        if(training)
+        if (training)
         {
-
+            translations = Flashcards.GetRandomTranslations(word.Chinese, 4);
         }
-        //words = await Dictionary.SearchByChineseAsync(fieldModel.SearchString, 0, shownItems);
+
     }
 }
