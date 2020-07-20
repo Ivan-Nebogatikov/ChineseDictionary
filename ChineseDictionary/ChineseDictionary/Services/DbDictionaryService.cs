@@ -20,7 +20,7 @@ namespace ChineseDictionary.Services
 
         private async void Load()
         {
-            //if (!(await DbManager.GetRecords<Word>(DbConstants.StoreName)).Any())
+            if (!(await DbManager.GetRecords<Word>(DbConstants.StoreName)).Any())
             {
                 var response = await Http.GetAsync("https://raw.githubusercontent.com/Oleg42-prog/Lanit-CD/master/short.txt");
                 var code = response.StatusCode; // ToDo: condition & error
