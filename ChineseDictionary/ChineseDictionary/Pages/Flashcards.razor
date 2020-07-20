@@ -1,0 +1,53 @@
+﻿@page "/flashcards"
+@using ChineseDictionary.Models
+@inject HttpClient Http
+@inject ChineseDictionary.Services.IDictionaryServiceAsync Dictionary
+
+@using TG.Blazor.IndexedDB
+@inject IndexedDBManager DbManager
+@inject DbStore DbStore
+
+<h1>Flashcards</h1>
+
+@if (training == false)
+{
+    <EditForm Model="@input" OnValidSubmit="HandleTrainSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        Number of words:
+        <InputNumber id="WordsCount" @bind-Value="input.WordsCount" />
+
+        <button type="submit">Train!</button>
+    </EditForm>
+}
+else
+{
+    <p><em>Loading...</em></p>
+
+    <EditForm Model="@input" OnValidSubmit="HandleTrainSubmit">
+        <button type="submit">Stop train</button>
+    </EditForm>
+}
+
+@code {
+
+    bool training = false;
+
+    private InputFlashcardsModel input = new InputFlashcardsModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    private async void HandleTrainSubmit()
+    {
+        training = !training;
+        if(training)
+        {
+
+        }
+        //words = await Dictionary.SearchByChineseAsync(fieldModel.SearchString, 0, shownItems);
+    }
+}
