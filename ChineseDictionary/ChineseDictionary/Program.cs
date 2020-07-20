@@ -34,7 +34,8 @@ namespace ChineseDictionary
                     {
                         new IndexSpec { Name = DbConstants.Chinese, KeyPath = DbConstants.Chinese, Auto = false },
                         new IndexSpec { Name = DbConstants.Pinyin, KeyPath = DbConstants.Pinyin, Auto = false },
-                        new IndexSpec { Name = DbConstants.Translations, KeyPath = DbConstants.Translations, Auto = false }
+                        new IndexSpec { Name = DbConstants.Translations, KeyPath = DbConstants.Translations, Auto = false },
+                        new IndexSpec { Name = DbConstants.RelativeWords, KeyPath = DbConstants.RelativeWords, Auto = false },
                     }
                 });
             });

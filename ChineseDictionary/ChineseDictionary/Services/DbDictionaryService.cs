@@ -20,7 +20,7 @@ namespace ChineseDictionary.Services
 
         private async void Load()
         {
-            if (!(await DbManager.GetRecords<Word>("Dictionary")).Any())
+            //if (!(await DbManager.GetRecords<Word>(DbConstants.StoreName)).Any())
             {
                 var response = await Http.GetAsync("https://raw.githubusercontent.com/Oleg42-prog/Lanit-CD/master/short.txt");
                 var code = response.StatusCode; // ToDo: condition & error
@@ -28,7 +28,7 @@ namespace ChineseDictionary.Services
             }
         }
 
-        public DbDictionaryService(HttpClient Http, IndexedDBManager DbManager, DbStore DbStore)
+        public DbDictionaryService(HttpClient Http, IndexedDBManager DbManager)
         {
             this.Http = Http;
             this.DbManager = DbManager;
@@ -44,7 +44,6 @@ namespace ChineseDictionary.Services
                 QueryValue = queryValue
             };
 
-            // Question
             return (await DbManager.GetAllRecordsByIndexContains<ExtendedWord>(query)).Skip(skip).Take(take).ToList();
         }
 

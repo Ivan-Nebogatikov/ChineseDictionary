@@ -20,59 +20,26 @@ namespace ChineseDictionary.Services
             Body
         }
 
-        private static string RemoveTag(string s)
+        private static Regex removeRegex = new Regex(@"\[[^]]*\]", RegexOptions.Compiled);
+        private static Regex relativeWordRegex = new Regex(@"\[ref\]([^[]*)\[\/ref\]", RegexOptions.Compiled);
+
+        private static string RemoveTags(string s)
         {
-            Regex regex = new Regex(@"\[[^]]*\]");
-            return regex.Replace(s, "");
+            return removeRegex.Replace(s, "");
         }
 
-        public static List<ExtendedWord> ListParse(Stream stream)
+        private static List<string> GetRelativeWords(string s)
         {
-            List<ExtendedWord> data = new List<ExtendedWord>();
-            using (StreamReader sr = new StreamReader(stream, System.Text.Encoding.Unicode))
-            {
-                string line;
-                ParserState state = ParserState.Space;
-                ExtendedWord word = null;
+            List<string> relativeWords = new List<string>();
+            MatchCollection matches = relativeWordRegex.Matches(s);
 
-                while ((line = sr.ReadLine()) != null)
-                {
-                    if (line != "" && line[0] != '#')
-                    {
-                        if (line[0] != ' ')
-                        {
-                            state = ParserState.Title;
+            if (matches.Any())
+                foreach (Match match in matches)
+                    relativeWords.Add(match.Groups[1].Value);
 
-                            if (word != null)
-                                data.Add(word);
-
-                            word = new ExtendedWord
-                            {
-                                Chinese = RemoveTag(line)
-                            };
-                        }
-                        else
-                            state++;
-
-                        if (state == ParserState.Pinyin)
-                            word.Pinyin = RemoveTag(line);
-
-                        if (state == ParserState.Body)
-                            word.Translations = RemoveTag(line).Split(";");
-                    }
-                    else
-                        state = ParserState.Space;
-                }
-
-                data.Add(word);
-            }
-
-
-            return data;
+            return relativeWords;
         }
 
-        // ToDo: Abstract ListParse & DBParse
-        // Maybe need interface to add data
         public static async void DBParseAsync(IndexedDBManager DbManager, Stream stream)
         {
             using (StreamReader sr = new StreamReader(stream, System.Text.Encoding.Unicode))
@@ -90,7 +57,7 @@ namespace ChineseDictionary.Services
                             state = ParserState.Title;
 
                             if (word != null)
-                                await DbManager.AddRecord<Word>(new StoreRecord<Word>
+                                await DbManager.AddRecord<ExtendedWord>(new StoreRecord<ExtendedWord>
                                 {
                                     Storename = DbConstants.StoreName,
                                     Data = word
@@ -98,23 +65,26 @@ namespace ChineseDictionary.Services
 
                             word = new ExtendedWord
                             {
-                                Chinese = RemoveTag(line)
+                                Chinese = RemoveTags(line)
                             };
                         }
                         else
                             state++;
 
                         if (state == ParserState.Pinyin)
-                            word.Pinyin = RemoveTag(line);
+                            word.Pinyin = RemoveTags(line);
 
                         if (state == ParserState.Body)
-                            word.Translations = RemoveTag(line).Split(";");
+                        {
+                            word.RelativeWords = GetRelativeWords(line);
+                            word.Translations = RemoveTags(line).Split(";");
+                        }
                     }
                     else
                         state = ParserState.Space;
                 }
 
-                await DbManager.AddRecord<Word>(new StoreRecord<Word> { 
+                await DbManager.AddRecord<ExtendedWord>(new StoreRecord<ExtendedWord> { 
                     Storename = DbConstants.StoreName, 
                     Data = word 
                 });
