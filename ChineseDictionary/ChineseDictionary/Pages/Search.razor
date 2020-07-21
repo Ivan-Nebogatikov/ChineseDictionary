@@ -44,8 +44,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        words = Dictionary.SearchByChinese("", 0, shownItems);
-
+        words = await Dictionary.SearchByChineseAsync("", 0, shownItems);
     }
 
     private async void HandleSearchSubmit()

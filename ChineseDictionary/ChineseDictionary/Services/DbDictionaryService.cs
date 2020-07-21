@@ -56,5 +56,27 @@ namespace ChineseDictionary.Services
         {
             return await SearchByAsync(DbConstants.Translations, translation, skip, take);
         }
+
+        public async Task<ExtendedWord> GetByChinese(string chinese)
+        {
+            Console.WriteLine("GetByChinese");
+            var query = new StoreIndexQuery<string>
+            {
+                Storename = DbConstants.StoreName,
+                IndexName = DbConstants.Chinese,
+                QueryValue = chinese
+            };
+            Console.WriteLine("query");
+
+            var result = await DbManager.GetRecordByIndex<string, ExtendedWord>(query);
+            Console.WriteLine("result");
+
+            if (result is null)
+                Console.WriteLine("Null");
+            else
+                Console.WriteLine("Ok");
+
+            return result;
+        }
     }
 }

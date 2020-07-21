@@ -10,6 +10,6 @@ namespace ChineseDictionary.Services
     {
         Task<IEnumerable<ExtendedWord>> SearchByChineseAsync(string chinese, int skip = 0, int take = int.MaxValue);
         Task<IEnumerable<ExtendedWord>> SearchByTranslationAsync(string translation, int skip = 0, int take = int.MaxValue);
-
+        public Task<ExtendedWord> GetByChinese(string chinese);
     }
 }
