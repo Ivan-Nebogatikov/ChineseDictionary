@@ -26,11 +26,10 @@ else
 {
     @foreach (var word in words)
     {
-<p>
-    <h4>@word.Chinese</h4><h5>@word.Pinyin</h5> <br />
-    <em>Translations: @string.Join(", ", word.Translations)</em>
-    <em>Relative words: @string.Join(", ", ((ExtendedWord)word).RelativeWords)</em> <!-- Just for checking the apple -->
-</p>
+        <p>
+            <h4><a href="/search/@word.Chinese">@word.Chinese</a></h4><h5>@word.Pinyin</h5> <br />
+            <em>@string.Join(", ", word.Translations)</em>
+        </p>
     }
     <button @onclick="AddMore">More</button>
 }
@@ -45,7 +44,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        words = await Dictionary.SearchByChineseAsync("", 0, shownItems);
+        words = Dictionary.SearchByChinese("", 0, shownItems);
+
     }
 
     private async void HandleSearchSubmit()
