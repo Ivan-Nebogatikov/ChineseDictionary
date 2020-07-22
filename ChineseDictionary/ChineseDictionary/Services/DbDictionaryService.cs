@@ -32,7 +32,7 @@ namespace ChineseDictionary.Services
         {
             this.Http = Http;
             this.DbManager = DbManager;
-            Load();
+            Load(); // ToDo: Rewrite
         }
 
         private async Task<IEnumerable<ExtendedWord>> SearchByAsync(string indexName, string queryValue, int skip = 0, int take = int.MaxValue)
