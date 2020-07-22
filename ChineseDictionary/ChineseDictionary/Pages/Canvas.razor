@@ -5,16 +5,16 @@
 
 
 
-<canvas height="@windowSize.Height"
+<canvas  height="@windowSize.Height"
         width="@windowSize.Width"
         style="border: 2px solid "
-        @onmousedown="@StartPaint"
-        @onmousemove="@Paint"
+        @onmousedown="@StartPaintMouse"
+        @onmousemove="@PaintMouse"
         @onmouseup="@StopPaint"
         @onmouseout="@StopPaint"
         @ref="@canvas"
-        @ontouchstart="@StartPaint1"
-        @ontouchmove="@Paint1"
+        @ontouchstart="@StartPaintTouch"
+        @ontouchmove="@PaintTouch"
         @ontouchend="@StopPaint" />
 
 
@@ -29,6 +29,7 @@
     double x;
     double y;
     WindowSize windowSize;
+
     public struct WindowSize
     {
         public long Height { get; set; }
@@ -38,24 +39,49 @@
     {
         windowSize = await JsRuntime.InvokeAsync<WindowSize>("getWindowSize");
 
-        windowSize = new WindowSize() { Width = 290, Height = 300 };
 
+
+        if (windowSize.Width > 500)
+        {
+
+            windowSize.Height = 500;
+            windowSize.Width = 500;
+
+        }
+        else
+        {
+            windowSize.Width = (int)(windowSize.Width * 0.9);
+            windowSize.Height = windowSize.Width;
+        }
+    }
+
+
+    private void StartPaintMouse(MouseEventArgs e)
+    {
+        StartPainting(e.ClientX, e.ClientY);
 
     }
 
-    private void StartPaint(MouseEventArgs e)
+    private async Task PaintMouse(MouseEventArgs e)
     {
-        x = e.ClientX;
-        y = e.ClientY;
-        isPainting = true;
+        await Start(e.ClientX, e.ClientY);
+
     }
 
-    private async Task Paint(MouseEventArgs e)
+
+    private void StartPaintTouch(TouchEventArgs e)
     {
+        StartPainting(e.Touches.First().ClientX, e.Touches.First().ClientY);
+
+    }
+    private async Task Start(double pointx, double pointy)
+    {
+
+
         if (isPainting)
         {
-            var eX = e.ClientX;
-            var eY = e.ClientY;
+            var eX = pointx;
+            var eY = pointy;
             if (ctx == null)
             {
                 ctx = new Canvas2DContext(JsRuntime, canvas);
@@ -65,31 +91,22 @@
             y = eY;
         }
     }
-
-
-    private void StartPaint1(TouchEventArgs e)
+    private void StartPainting(double pointX, double pointY)
     {
+        x = pointX;
+        y = pointY;
         if (ctx == null)
         {
             ctx = new Canvas2DContext(JsRuntime, canvas);
         }
-        x = e.Touches.First().ClientX;
-        y = e.Touches.First().ClientY;
         isPainting = true;
     }
 
-
-    private async Task Paint1(TouchEventArgs e)
+    private async Task PaintTouch(TouchEventArgs e)
     {
-        if (isPainting)
-        {
-            var eX = e.Touches.First().ClientX;
-            var eY = e.Touches.First().ClientY;
+        await Start(e.Touches.First().ClientX, e.Touches.First().ClientY);
 
-            await ctx.DrawLine(x, y, eX, eY);
-            x = eX;
-            y = eY;
-        }
+
     }
 
     private void StopPaint()
