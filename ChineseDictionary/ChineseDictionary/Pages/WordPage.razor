@@ -40,12 +40,12 @@
     </ul>
 }
 
-<h5><a href="/search">To Search</a></h5>
-
-<div>@message</div>
 
 <div id="character-target-div"></div>
 <button id="animate-button">Animate</button>
+<br />
+<br />
+<h5><a href="/search">To Search</a></h5>
 
 @code {
 
@@ -54,8 +54,6 @@
 
     private ExtendedWord word;
 
-    private string message = "0";
-
     protected override void OnParametersSet()
     {
         word = DictionaryService.GetByChinese(Text);
@@ -63,7 +61,11 @@
 
     protected override async void OnAfterRender(bool firstRender)
     {
-        message = await JSRuntime.InvokeAsync<string>("characterDraw");
+        foreach (char character in word.Chinese)
+        {
+            await JSRuntime.InvokeAsync<string>("characterDraw", character);
+        }
+
     }
 
 }

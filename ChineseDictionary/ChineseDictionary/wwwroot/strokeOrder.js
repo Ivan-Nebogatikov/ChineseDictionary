@@ -1,5 +1,5 @@
-﻿function characterDraw() {
-	var writer = HanziWriter.create('character-target-div', '国', {
+﻿function characterDraw(character) {
+	var writer = HanziWriter.create('character-target-div', character, {
 		width: 100,
 		height: 100,
 		padding: 5,
@@ -9,6 +9,3 @@
 		writer.animateCharacter();
 	});
 } 
-
-
-
