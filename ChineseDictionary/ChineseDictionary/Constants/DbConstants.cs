@@ -14,5 +14,6 @@ namespace ChineseDictionary.Constants
         public const string Pinyin = "pinyin";
         public const string Translations = "translations";
         public const string RelativeWords = "relativeWords";
+        public const string Day = "day";
     }
 }

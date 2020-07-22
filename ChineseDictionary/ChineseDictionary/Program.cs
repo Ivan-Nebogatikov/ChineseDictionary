@@ -38,6 +38,17 @@ namespace ChineseDictionary
                         new IndexSpec { Name = DbConstants.RelativeWords, KeyPath = DbConstants.RelativeWords, Auto = false },
                     }
                 });
+
+                dbStore.Stores.Add(new StoreSchema
+                {
+                    Name = "Flashcards",
+                    PrimaryKey = new IndexSpec { Name = DbConstants.Id, KeyPath = DbConstants.Id, Auto = true },
+                    Indexes = new List<IndexSpec>
+                    {
+                        new IndexSpec { Name = DbConstants.Chinese, KeyPath = DbConstants.Chinese, Auto = false },
+                        new IndexSpec { Name = DbConstants.Day, KeyPath = DbConstants.Day, Auto = false },
+                    }
+                });
             });
 
             builder.Services.AddTransient<IDictionaryServiceAsync, DbDictionaryService>();

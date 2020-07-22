@@ -11,7 +11,7 @@
 
 <h1>Flashcards</h1>
 
-@if (training == false)
+@if (!training && !end)
 {
     <EditForm Model="@input" OnValidSubmit="HandleTrainSubmit">
         <DataAnnotationsValidator />
@@ -19,7 +19,9 @@
 
         Number of words:
         <InputNumber id="WordsCount" @bind-Value="input.WordsCount" />
-
+        <br>
+        Group of flashcards:
+        <InputNumber id="FlashcardsGroup" @bind-Value="group" />
         <button type="submit">Train!</button>
     </EditForm>
 }
@@ -28,12 +30,25 @@ else
     @if (word != null)
     {
 
-        @foreach (string translate in translations)
-        {
-            <li>@translate</li>
-        }
+        <h4>@word.Chinese</h4>
+        <EditForm Model="@model" OnValidSubmit="HandleCheckSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-        <EditForm OnValidSubmit="HandleTrainSubmit">
+            @foreach (string translate in optionTranslations)
+            {
+                <label>
+                    <ChineseDictionary.Components.InputRadio name="translate" SelectedValue="@translate" @bind-Value="model.Translate" />
+                    @translate
+                </label>
+                <br>
+            }
+
+            <button type="submit">Далее</button>
+        </EditForm>
+
+        <br />
+        <EditForm OnValidSubmit="HandleStopSubmit">
             <button type="submit">Stop train</button>
         </EditForm>
     }
@@ -43,33 +58,18 @@ else
     }
 }
 
-<h1>Radio Button Group Test</h1>
-
-<EditForm Model="@model" OnValidSubmit="HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    @for (int i = 1; i <= 5; i++)
-    {
-        <label>
-            <ChineseDictionary.Components.InputRadio name="rate" SelectedValue="i" @bind-Value="model.Rating"/>
-            @i
-        </label>
-    }
-
-    <button type="submit">Submit</button>
-</EditForm>
-
-<p>You chose: @model.Rating</p>
-
 @code {
 
     bool training = false;
+    bool end = false;
+    int group;
     private Model model = new Model();
 
     private InputFlashcardsModel input = new InputFlashcardsModel();
     ExtendedWord word;
-    List<string> translations;
+    List<string> optionTranslations;
+    List<ExtendedWord> correct;
+    List<ExtendedWord> wrong;
 
     protected override async Task OnInitializedAsync()
     {
@@ -81,20 +81,27 @@ else
         training = !training;
         if (training)
         {
-            translations = Flashcards.GetRandomTranslations(word.Chinese, 4);
+            optionTranslations = Flashcards.GetRandomTranslations(word.Chinese, 4);
         }
 
     }
 
-    private void HandleValidSubmit()
+    private void HandleStopSubmit()
     {
+        training = false;
+    }
 
+    private void HandleCheckSubmit()
+    {
+        if (word.Translations.Contains(model.Translate))
+            correct.Append(word);
+        else
+            wrong.Append(word);
     }
 
     public class Model
     {
         [Required]
-        [Range(1, 5, ErrorMessage = "Words count should be in [1; 20]")]
-        public int Rating { get; set; }
+        public string Translate { get; set; }
     }
 }
