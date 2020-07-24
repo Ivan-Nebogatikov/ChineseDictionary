@@ -1,10 +1,6 @@
 ﻿@page "/canvas"
 @inject IJSRuntime JsRuntime
 
-
-
-
-
 <canvas  height="@windowSize.Height"
         width="@windowSize.Width"
         style="border: 2px solid "
@@ -17,36 +13,23 @@
         @ontouchmove="@PaintTouch"
         @ontouchend="@StopPaint" />
 
-
-
 @code {
 
+    [CascadingParameter] WindowSize windowSize { get; set; }
     ElementReference canvas;
     Canvas2DContext ctx;
-
-
     bool isPainting = false;
     double x;
     double y;
-    WindowSize windowSize;
-
-    public struct WindowSize
-    {
-        public long Height { get; set; }
-        public long Width { get; set; }
-    }
+       
     protected override async Task OnInitializedAsync()
     {
         windowSize = await JsRuntime.InvokeAsync<WindowSize>("getWindowSize");
-
-
-
+        int SIZE = 500;
         if (windowSize.Width > 500)
         {
-
-            windowSize.Height = 500;
-            windowSize.Width = 500;
-
+            windowSize.Height = SIZE;
+            windowSize.Width = SIZE;
         }
         else
         {
@@ -55,33 +38,28 @@
         }
     }
 
-
     private void StartPaintMouse(MouseEventArgs e)
     {
         StartPainting(e.ClientX, e.ClientY);
-
     }
 
     private async Task PaintMouse(MouseEventArgs e)
     {
-        await Start(e.ClientX, e.ClientY);
-
+        await Paint(e.ClientX, e.ClientY);
     }
-
 
     private void StartPaintTouch(TouchEventArgs e)
     {
         StartPainting(e.Touches.First().ClientX, e.Touches.First().ClientY);
 
     }
-    private async Task Start(double pointx, double pointy)
+
+    private async Task Paint(double pointX, double pointY)
     {
-
-
         if (isPainting)
         {
-            var eX = pointx;
-            var eY = pointy;
+            var eX = pointX;
+            var eY = pointY;
             if (ctx == null)
             {
                 ctx = new Canvas2DContext(JsRuntime, canvas);
@@ -91,6 +69,7 @@
             y = eY;
         }
     }
+
     private void StartPainting(double pointX, double pointY)
     {
         x = pointX;
@@ -104,15 +83,11 @@
 
     private async Task PaintTouch(TouchEventArgs e)
     {
-        await Start(e.Touches.First().ClientX, e.Touches.First().ClientY);
-
-
+        await Paint(e.Touches.First().ClientX, e.Touches.First().ClientY);
     }
 
     private void StopPaint()
     {
         isPainting = false;
     }
-
-
 }
