@@ -55,7 +55,7 @@ else
     public async Task AddMore()
     {
         shownItems += 20;
-        string q = fieldModel.SearchString != null ? fieldModel.SearchString : "";
+        string query = fieldModel.SearchString ?? string.Empty;
         var data = await Dictionary.SearchByChineseAsync(q, shownItems - 20, shownItems);
         words = words.ToList().Concat(data);
     }
