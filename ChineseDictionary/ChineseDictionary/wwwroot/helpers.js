@@ -25,7 +25,7 @@
         },
 
         setContextPropertyValue: (canvas, propertyName, propertyValue) => {
-            let context = getContext(canvas)
+            let context = getContext(canvas);
             context[propertyName] = propertyValue;
         }
     };
