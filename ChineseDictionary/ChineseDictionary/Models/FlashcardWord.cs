@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace ChineseDictionary.Models
 {
-    public class FlashcardWord : Word
+    public class FlashcardWord
     {
         public string Chinese { get; set; }
-        public int day;
+        public int Day { get; set; }
     }
 }

@@ -15,14 +15,43 @@ namespace ChineseDictionary.Services
 {
     public class FlashcardsService : IFlashcardsService
     {
-        public ExtendedWord GetWordByGroup(int group)
+        private IndexedDBManager DbManager;
+        private Random rand;
+
+        public FlashcardsService(IndexedDBManager DbManager)
         {
-            return null;
+            this.DbManager = DbManager;
+            this.rand = new Random();
+        }
+
+        /*public async Task<ExtendedWord> GetRandomWordByGroup(int group)
+        {
+            var query = new StoreIndexQuery<int>
+            {
+                Storename = DbConstants.FlashcardsStoreName,
+                IndexName = DbConstants.Day,
+                QueryValue = group
+            };
+
+            var result = await DbManager.GetAllRecordsByIndex<int, ExtendedWord>(query);
+            return result[rand.Next(result.Count)];
+        }*/
+
+        public async Task<ExtendedWord> GetRandomWordByGroup(int group)
+        {
+            var query = new StoreIndexQuery<int>
+            {
+                Storename = DbConstants.StoreName,
+                IndexName = DbConstants.Id,
+                QueryValue = group
+            };
+
+            return await DbManager.GetRecordByIndex<int, ExtendedWord>(query);
         }
 
         public List<string> GetRandomTranslations(string word, int count)
         {
-            return new List<string> { "Привет", "Пока", "Дом", "Холм" };
+            return new List<string> { word, "Привет", "Пока", "Дом" };
         }
     }
 }

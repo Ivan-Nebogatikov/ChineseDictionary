@@ -41,7 +41,7 @@ namespace ChineseDictionary
 
                 dbStore.Stores.Add(new StoreSchema
                 {
-                    Name = "Flashcards",
+                    Name = DbConstants.FlashcardsStoreName,
                     PrimaryKey = new IndexSpec { Name = DbConstants.Id, KeyPath = DbConstants.Id, Auto = true },
                     Indexes = new List<IndexSpec>
                     {

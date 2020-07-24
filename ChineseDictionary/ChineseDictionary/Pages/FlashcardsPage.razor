@@ -81,22 +81,29 @@ else
         training = !training;
         if (training)
         {
+            word = await Flashcards.GetRandomWordByGroup(group);
             optionTranslations = Flashcards.GetRandomTranslations(word.Chinese, 4);
+
+            correct = new List<ExtendedWord>();
+            wrong = new List<ExtendedWord>();
         }
 
     }
 
-    private void HandleStopSubmit()
-    {
-        training = false;
-    }
-
-    private void HandleCheckSubmit()
+    private async void HandleCheckSubmit()
     {
         if (word.Translations.Contains(model.Translate))
             correct.Append(word);
         else
             wrong.Append(word);
+
+        word = await Flashcards.GetRandomWordByGroup(group);
+        optionTranslations = Flashcards.GetRandomTranslations(word.Chinese, 4);
+    }
+
+    private void HandleStopSubmit()
+    {
+        training = false;
     }
 
     public class Model
