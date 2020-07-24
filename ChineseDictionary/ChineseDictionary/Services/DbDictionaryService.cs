@@ -18,7 +18,7 @@ namespace ChineseDictionary.Services
         private HttpClient Http;
         private IndexedDBManager DbManager;
 
-        private async void Load()
+        private async Task Load()
         {
             if (!(await DbManager.GetRecords<Word>(DbConstants.StoreName)).Any())
             {

@@ -47,12 +47,12 @@ else
         words = await Dictionary.SearchByChineseAsync("", 0, shownItems);
     }
 
-    private async void HandleSearchSubmit()
+    private async Task HandleSearchSubmit()
     {
         words = await Dictionary.SearchByChineseAsync(fieldModel.SearchString, 0, shownItems);
     }
 
-    public async void AddMore()
+    public async Task AddMore()
     {
         shownItems += 20;
         string q = fieldModel.SearchString != null ? fieldModel.SearchString : "";

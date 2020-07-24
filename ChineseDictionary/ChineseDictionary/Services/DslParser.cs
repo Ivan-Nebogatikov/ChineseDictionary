@@ -40,7 +40,7 @@ namespace ChineseDictionary.Services
             return relativeWords;
         }
 
-        public static async void DBParseAsync(IndexedDBManager DbManager, Stream stream)
+        public static async Task DBParseAsync(IndexedDBManager DbManager, Stream stream)
         {
             using (StreamReader sr = new StreamReader(stream, System.Text.Encoding.Unicode))
             {
