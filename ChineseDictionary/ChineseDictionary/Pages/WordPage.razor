@@ -40,12 +40,12 @@ else
         <ul>
             @foreach (string relativeWord in word.RelativeWords)
             {
-                <li><a href="/search/@relativeWord"> @relativeWord </a></li>
+                <li><a href="search/@relativeWord"> @relativeWord </a></li>
             }
         </ul>
     }
 
-    <h5><a href="/search">To Search</a></h5>
+    <h5><a href="search">To Search</a></h5>
 }
 
 @code {

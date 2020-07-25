@@ -15,13 +15,13 @@
 
 @code {
 
-    [CascadingParameter] WindowSize windowSize { get; set; }
+    WindowSize windowSize = new WindowSize();
     ElementReference canvas;
     Canvas2DContext ctx;
     bool isPainting = false;
     double x;
     double y;
-       
+
     protected override async Task OnInitializedAsync()
     {
         windowSize = await JsRuntime.InvokeAsync<WindowSize>("getWindowSize");

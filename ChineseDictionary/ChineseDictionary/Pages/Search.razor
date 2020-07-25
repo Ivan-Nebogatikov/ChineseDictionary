@@ -27,7 +27,7 @@ else
     @foreach (var word in words)
     {
         <p>
-            <h4><a href="/search/@word.Chinese">@word.Chinese</a></h4><h5>@word.Pinyin</h5> <br />
+            <h4><a href="search/@word.Chinese">@word.Chinese</a></h4><h5>@word.Pinyin</h5> <br />
             <em>@string.Join(", ", word.Translations)</em>
         </p>
     }
