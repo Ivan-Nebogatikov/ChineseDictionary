@@ -1,0 +1,93 @@
+﻿@page "/canvas"
+@inject IJSRuntime JsRuntime
+
+<canvas  height="@windowSize.Height"
+        width="@windowSize.Width"
+        style="border: 2px solid "
+        @onmousedown="@StartPaintMouse"
+        @onmousemove="@PaintMouse"
+        @onmouseup="@StopPaint"
+        @onmouseout="@StopPaint"
+        @ref="@canvas"
+        @ontouchstart="@StartPaintTouch"
+        @ontouchmove="@PaintTouch"
+        @ontouchend="@StopPaint" />
+
+@code {
+
+    [CascadingParameter] WindowSize windowSize { get; set; }
+    ElementReference canvas;
+    Canvas2DContext ctx;
+    bool isPainting = false;
+    double x;
+    double y;
+       
+    protected override async Task OnInitializedAsync()
+    {
+        windowSize = await JsRuntime.InvokeAsync<WindowSize>("getWindowSize");
+        int SIZE = 500;
+        if (windowSize.Width > 500)
+        {
+            windowSize.Height = SIZE;
+            windowSize.Width = SIZE;
+        }
+        else
+        {
+            windowSize.Width = (int)(windowSize.Width * 0.9);
+            windowSize.Height = windowSize.Width;
+        }
+    }
+
+    private void StartPaintMouse(MouseEventArgs e)
+    {
+        StartPainting(e.ClientX, e.ClientY);
+    }
+
+    private async Task PaintMouse(MouseEventArgs e)
+    {
+        await Paint(e.ClientX, e.ClientY);
+    }
+
+    private void StartPaintTouch(TouchEventArgs e)
+    {
+        StartPainting(e.Touches.First().ClientX, e.Touches.First().ClientY);
+
+    }
+
+    private async Task Paint(double pointX, double pointY)
+    {
+        if (isPainting)
+        {
+            var eX = pointX;
+            var eY = pointY;
+            if (ctx == null)
+            {
+                ctx = new Canvas2DContext(JsRuntime, canvas);
+            }
+            await ctx.DrawLine(x, y, eX, eY);
+            x = eX;
+            y = eY;
+        }
+    }
+
+    private void StartPainting(double pointX, double pointY)
+    {
+        x = pointX;
+        y = pointY;
+        if (ctx == null)
+        {
+            ctx = new Canvas2DContext(JsRuntime, canvas);
+        }
+        isPainting = true;
+    }
+
+    private async Task PaintTouch(TouchEventArgs e)
+    {
+        await Paint(e.Touches.First().ClientX, e.Touches.First().ClientY);
+    }
+
+    private void StopPaint()
+    {
+        isPainting = false;
+    }
+}
