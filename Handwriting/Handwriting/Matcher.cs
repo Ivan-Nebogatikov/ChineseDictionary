@@ -29,7 +29,7 @@ namespace Handwriting
         private double[][] res;
 
 
-        private static double looseness;
+        private static double looseness = CharConstants.DEFAULT_LOOSENESS;
 
         //private MatchCollector matchCollector;
 
