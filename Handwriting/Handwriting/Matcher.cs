@@ -21,8 +21,6 @@ namespace Handwriting
             Matcher.subStrokesCount = subStrokesCount;
         }
 
-
-
         private double[][] res;
 
         private static double looseness = CharConstants.DEFAULT_LOOSENESS;
