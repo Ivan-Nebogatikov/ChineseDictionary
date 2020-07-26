@@ -27,13 +27,13 @@ namespace HandwritingLibrary
         public Analyzer(List<Stroke> rawStrokes)
         {
             // Calculate bounding rectangle
-            getBoundingRect(rawStrokes);
+            GetBoundingRect(rawStrokes);
             // Build analyzed strokes
-            buildAnalyzedStrokes(rawStrokes);
+            BuildAnalyzedStrokes(rawStrokes);
         }
 
         // Calculates rectangle that bounds all points in raw strokes.
-        void getBoundingRect(List<Stroke> rawStrokes)
+        void GetBoundingRect(List<Stroke> rawStrokes)
         {
             for (var i = 0; i != rawStrokes.Count; ++i)
             {
@@ -49,7 +49,7 @@ namespace HandwritingLibrary
         }
 
         // Gets distance between two points
-        double dist(Point a, Point b)
+        double Dist(Point a, Point b)
         {
             double dx = a.X - b.X;
             double dy = a.Y - b.Y;
@@ -58,21 +58,21 @@ namespace HandwritingLibrary
 
         // Gets normalized distance between two points
         // Normalized based on bounding rectangle
-        double normDist(Point a, Point b)
+        double NormDist(Point a, Point b)
         {
             double width = Right - Left;
             double height = Bottom - Top;
             // normalizer is a diagonal along a square with sides of size the larger dimension of the bounding box
             double dimensionSquared = width > height ? width * width : height * height;
             double normalizer = Math.Sqrt(dimensionSquared + dimensionSquared);
-            double distanceNormalized = dist(a, b) / normalizer;
+            double distanceNormalized = Dist(a, b) / normalizer;
             // Cap at 1 (...why is this needed??)
             return Math.Min(distanceNormalized, 1);
         }
 
         // Gets direction, in radians, from point a to b
         // 0 is to the right, PI / 2 is up, etc.
-        double dir(Point a, Point b)
+        double Dir(Point a, Point b)
         {
             double dx = a.X - b.X;
             double dy = a.Y - b.Y;
@@ -81,7 +81,7 @@ namespace HandwritingLibrary
         }
 
         // Calculates array with indexes of pivot points in raw stroke
-        List<int> getPivotIndexes(List<Point> points)
+        List<int> GetPivotIndexes(List<Point> points)
         {
             // One item for each point: true if it's a pivot
             List<bool> markers = new List<bool>(points.Count);
@@ -100,7 +100,7 @@ namespace HandwritingLibrary
             // We do this by checking localLength against the distance between the first and last
             // of the three points. If localLength is more than a certain amount longer than the
             // length between the first and last point, then there must have been a corner of some kind.
-            double localLength = dist(points[firstPtIx], points[pivotPtIx]);
+            double localLength = Dist(points[firstPtIx], points[pivotPtIx]);
 
             // runningLength keeps track of the length between the start of the current SubStroke
             // and the point we are currently examining.  If the runningLength becomes a certain
@@ -117,21 +117,21 @@ namespace HandwritingLibrary
                 // pivotPoint is the point we're currently examining to see if it's a pivot.
                 // We get the distance between this point and the next point and add it
                 // to the length sums we're using.
-                var pivotLength = dist(points[pivotPtIx], nextPoint);
+                var pivotLength = Dist(points[pivotPtIx], nextPoint);
                 localLength += pivotLength;
                 runningLength += pivotLength;
 
                 // Check the lengths against the ratios.  If the lengths are a certain among
                 // longer than a straight line between the first and last point, then we
                 // mark the point as a pivot.
-                var distFromPrevious = dist(points[prevPtIx], nextPoint);
-                var distFromFirst = dist(points[firstPtIx], nextPoint);
+                var distFromPrevious = Dist(points[prevPtIx], nextPoint);
+                var distFromFirst = Dist(points[firstPtIx], nextPoint);
                 if (localLength > MAX_LOCAL_LENGTH_RATIO * distFromPrevious ||
                     runningLength > MAX_RUNNING_LENGTH_RATIO * distFromFirst)
                 {
                     // If the previous point was a pivot and was very close to this point,
                     // which we are about to mark as a pivot, then unmark the previous point as a pivot.
-                    if (markers[prevPtIx] && dist(points[prevPtIx], points[pivotPtIx]) < MIN_SEGMENT_LENGTH)
+                    if (markers[prevPtIx] && Dist(points[prevPtIx], points[pivotPtIx]) < MIN_SEGMENT_LENGTH)
                     {
                         markers[prevPtIx] = false;
                     }
@@ -151,7 +151,7 @@ namespace HandwritingLibrary
             // We'll want to unmark the previous point if it's also a pivot and very close to the lat point.
             // However if the previous point is the first point of the stroke, then don't unmark it, because
             // then we'd only have one pivot.
-            if (markers[prevPtIx] && dist(points[prevPtIx], points[pivotPtIx]) < MIN_SEGMENT_LENGTH && prevPtIx != 0)
+            if (markers[prevPtIx] && Dist(points[prevPtIx], points[pivotPtIx]) < MIN_SEGMENT_LENGTH && prevPtIx != 0)
                 markers[prevPtIx] = false;
 
             // Return result in the form of an index array: includes indexes where marker is true
@@ -162,7 +162,7 @@ namespace HandwritingLibrary
         }
 
         // Builds array of substrokes from stroke's points, pivots, and character's bounding rectangle
-        List<SubStroke> buildSubStrokes(List<Point> points, List<int> pivotIndexes)
+        List<SubStroke> BuildSubStrokes(List<Point> points, List<int> pivotIndexes)
         {
             List<SubStroke> res = new List<SubStroke>();
             var prevIx = 0;
@@ -170,15 +170,15 @@ namespace HandwritingLibrary
             {
                 var ix = pivotIndexes[i];
                 if (ix == prevIx) continue;
-                var direction = dir(points[prevIx], points[ix]);
-                var normLength = normDist(points[prevIx], points[ix]);
+                var direction = Dir(points[prevIx], points[ix]);
+                var normLength = NormDist(points[prevIx], points[ix]);
                 Point ptCenter = new Point
                 {
                     X = (points[prevIx].X + points[ix].X) / 2,
                     Y = (points[prevIx].Y + points[ix].Y) / 2,
                 };
-                double centerX = normDist(new Point { X = 0, Y = ptCenter.Y }, ptCenter);
-                double centerY = normDist(new Point { X = ptCenter.X, Y = 0 }, ptCenter);
+                double centerX = NormDist(new Point { X = 0, Y = ptCenter.Y }, ptCenter);
+                double centerY = NormDist(new Point { X = ptCenter.X, Y = 0 }, ptCenter);
                 res.Add(new SubStroke { Dir = direction, Len = normLength, CenterX = centerX, CenterY = centerY });
                 prevIx = ix;
             }
@@ -186,15 +186,15 @@ namespace HandwritingLibrary
         }
 
         // Analyze raw input, store result in AnalyzedStrokes member.
-        void buildAnalyzedStrokes(List<Stroke> rawStrokes)
+        void BuildAnalyzedStrokes(List<Stroke> rawStrokes)
         {
             // Process each stroke
             for (var i = 0; i != rawStrokes.Count; ++i)
             {
                 // Identify pivot points
-                var pivotIndexes = getPivotIndexes(rawStrokes[i].Points);
+                var pivotIndexes = GetPivotIndexes(rawStrokes[i].Points);
                 // Abstract away substrokes
-                var subStrokes = buildSubStrokes(rawStrokes[i].Points, pivotIndexes);
+                var subStrokes = BuildSubStrokes(rawStrokes[i].Points, pivotIndexes);
                 // Append
                 AnalyzedStrokes.AddRange(subStrokes);
             }

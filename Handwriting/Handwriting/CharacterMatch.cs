@@ -6,16 +6,14 @@ namespace Handwriting
 {
     class CharacterMatch
     {
-		class CharacterMatch
-		{
-			public readonly char Character;
-			public readonly double Score;
+		public readonly char Character;
+		public readonly double Score;
 
-			public CharacterMatch(char character, double score)
-			{
-				this.Character = character;
-				this.Score = score;
-			}
+		public CharacterMatch(char character, double score)
+		{
+			this.Character = character;
+			this.Score = score;
 		}
+	
 	}
 }
