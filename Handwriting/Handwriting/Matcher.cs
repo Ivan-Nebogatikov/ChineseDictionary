@@ -12,38 +12,31 @@ namespace Handwriting
 {
     public class Matcher
     {
+        public static int strokesCount;
+        public static int subStrokesCount;
 
-        static void Main(string[] args)
+        public Matcher(int strokesCount, int subStrokesCount)
         {
-            Program o = new Program();
-            Console.WriteLine(Program.strokesCount);
-            Console.WriteLine(Program.subStrokesCount);
-
-            //Matcher mt = new Matcher();
-            //Matcher.DoMatching();
-
-
+            Matcher.strokesCount = strokesCount;
+            Matcher.subStrokesCount = subStrokesCount;
         }
-        
+
+
 
         private double[][] res;
 
-
-        private static double looseness;
+        private static double looseness = CharConstants.DEFAULT_LOOSENESS;
 
         //private MatchCollector matchCollector;
 
         private bool running;
 
-        
         CharConstants cc = new CharConstants();
 
-
-        
-        public static void DoMatching()
+        public void DoMatching()
         {
-            int strokeCount = Program.strokesCount;
-            int subStrokeCount = Program.subStrokesCount;
+            int strokeCount = strokesCount;
+            int subStrokeCount = subStrokesCount;
 
 
             int strokeRange = getStrokesRange(strokeCount);
@@ -56,7 +49,7 @@ namespace Handwriting
 
 
             JArray jarrayObj = new JArray();
-            using (StreamReader reader = File.OpenText("D:/Projects/КитайскийСловарь/HanziLookupJS/dist/orig.json"))
+            using (StreamReader reader = File.OpenText("orig.json"))
             {
 
                 JObject chars = (JObject)JToken.ReadFrom(new JsonTextReader(reader));
@@ -70,7 +63,7 @@ namespace Handwriting
                     int cmpSubStrokes = repoChar[2].ToObject<int>();
                     if (cmpStrokeCount < minimumStrokes || cmpStrokeCount > maximumStrokes) continue;
                     if (cmpSubStrokes < minSubStrokes || cmpSubStrokes > maxSubStrokes) continue;
-                    if ((cmpStrokeCount >= minimumStrokes) && (cmpStrokeCount <= maximumStrokes))
+                    if ((cmpStrokeCount >= minimumStrokes) && (cmpStrokeCount <= maximumStrokes)) 
                     {
                         if ((cmpSubStrokes >= minSubStrokes) && (cmpSubStrokes <= maxSubStrokes))
                         {
