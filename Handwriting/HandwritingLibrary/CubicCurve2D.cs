@@ -39,9 +39,9 @@ namespace HandwritingLibrary
             //double bx = getCubicBx();
             //double cx = getCubicCx();
 
-            double ay = getCubicAy();
-            double by = getCubicBy();
-            double cy = getCubicCy();
+            double ay = GetCubicAy();
+            double by = GetCubicBy();
+            double cy = GetCubicCy();
 
             double tSquared = t * t;
             double tCubed = t * tSquared;
@@ -74,9 +74,9 @@ namespace HandwritingLibrary
         /// @param solutions an array to write solutions into
         public void SolveForX(double x, out double[] solutions)
         {
-            double a = getCubicAx();
-            double b = getCubicBx();
-            double c = getCubicCx();
+            double a = GetCubicAx();
+            double b = GetCubicBx();
+            double c = GetCubicCx();
             double d = X1 - x;
             /// ax^3 + bx^2 + cx + d = 0
 
@@ -131,32 +131,32 @@ namespace HandwritingLibrary
             }
         }
 
-        public double getCubicAx()
+        public double GetCubicAx()
         {
-            return X2 - X1 - getCubicBx() - getCubicCx();
+            return X2 - X1 - GetCubicBx() - GetCubicCx();
         }
 
-        public double getCubicAy()
+        public double GetCubicAy()
         {
-            return Y2 - Y1 - getCubicBy() - getCubicCy();
+            return Y2 - Y1 - GetCubicBy() - GetCubicCy();
         }
 
-        public double getCubicBx()
+        public double GetCubicBx()
         {
-            return 3.0 * (CtrlX2 - CtrlX1) - getCubicCx();
+            return 3.0 * (CtrlX2 - CtrlX1) - GetCubicCx();
         }
 
-        public double getCubicBy()
+        public double GetCubicBy()
         {
-            return 3.0 * (CtrlY2 - CtrlY1) - getCubicCy();
+            return 3.0 * (CtrlY2 - CtrlY1) - GetCubicCy();
         }
 
-        public double getCubicCx()
+        public double GetCubicCx()
         {
             return 3.0 * (CtrlX1 - X1);
         }
 
-        public double getCubicCy()
+        public double GetCubicCy()
         {
             return 3.0 * (CtrlY1 - Y1);
         }

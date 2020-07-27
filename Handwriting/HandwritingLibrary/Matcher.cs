@@ -51,6 +51,7 @@ namespace HandwritingLibrary
             {
 
                 JObject chars = (JObject)JToken.ReadFrom(new JsonTextReader(reader));
+                chars["substrokes"] = CompactDecoder.Decode(chars["substrokes"].ToString());
                 var symbols = chars["chars"] as JArray;
 
 
