@@ -21,7 +21,6 @@ namespace ChineseDictionary
             builder.RootComponents.Add<App>("app");
 
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddSingleton<IDictionaryService>(new MockDictionaryService());
             builder.Services.AddIndexedDB(dbStore =>
             {
                 dbStore.DbName = DbConstants.DbName;
@@ -34,12 +33,14 @@ namespace ChineseDictionary
                     Indexes = new List<IndexSpec>
                     {
                         new IndexSpec { Name = DbConstants.Chinese, KeyPath = DbConstants.Chinese, Auto = false },
-                        new IndexSpec { Name= DbConstants.Pinyin, KeyPath = DbConstants.Pinyin, Auto=false },
-                        new IndexSpec { Name= DbConstants.Translations, KeyPath = DbConstants.Translations, Auto=false }
-
+                        new IndexSpec { Name = DbConstants.Pinyin, KeyPath = DbConstants.Pinyin, Auto = false },
+                        new IndexSpec { Name = DbConstants.Translations, KeyPath = DbConstants.Translations, Auto = false },
+                        new IndexSpec { Name = DbConstants.RelativeWords, KeyPath = DbConstants.RelativeWords, Auto = false },
                     }
                 });
             });
+
+            builder.Services.AddTransient<IDictionaryServiceAsync, DbDictionaryService>();
             await builder.Build().RunAsync();
         }
     }
