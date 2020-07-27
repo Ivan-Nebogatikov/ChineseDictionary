@@ -2,7 +2,7 @@
 @using ChineseDictionary.Models
 @inject HttpClient Http
 @inject ChineseDictionary.Services.IDictionaryServiceAsync Dictionary
-
+@using System.IO
 @using TG.Blazor.IndexedDB
 @inject IndexedDBManager DbManager
 @inject DbStore DbStore
@@ -44,6 +44,19 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+<<<<<<< HEAD
+        words = Dictionary.SearchByChinese("", 0, shownItems);
+        var response = await Http.GetAsync("https://raw.githubusercontent.com/Oleg42-prog/Lanit-CD/master/short.txt");
+        var code = response.StatusCode;
+        using (StreamReader sr = new StreamReader(await response.Content.ReadAsStreamAsync(), System.Text.Encoding.Unicode))
+        {
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                Console.WriteLine(line);
+            }
+        }
+
         words = await Dictionary.SearchByChineseAsync("", 0, shownItems);
     }
 
