@@ -7,6 +7,7 @@ namespace ChineseDictionary.Models
 {
     public class FlashcardWord
     {
+        public long? Id { get; set; }
         public string Chinese { get; set; }
         public int Day { get; set; }
     }

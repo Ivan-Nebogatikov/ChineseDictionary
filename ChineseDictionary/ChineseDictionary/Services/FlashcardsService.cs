@@ -24,8 +24,14 @@ namespace ChineseDictionary.Services
             this.rand = new Random();
         }
 
-        /*public async Task<ExtendedWord> GetRandomWordByGroup(int group)
+        private static void DbMessage(object sender, IndexedDBNotificationArgs args)
         {
+            Console.WriteLine("Message: " + args.Message);
+        }
+
+        public async Task<FlashcardWord> GetRandomWordByGroup(int group)
+        {
+            Console.WriteLine("group: " + group.ToString());
             var query = new StoreIndexQuery<int>
             {
                 Storename = DbConstants.FlashcardsStoreName,
@@ -33,25 +39,51 @@ namespace ChineseDictionary.Services
                 QueryValue = group
             };
 
-            var result = await DbManager.GetAllRecordsByIndex<int, ExtendedWord>(query);
-            return result[rand.Next(result.Count)];
-        }*/
+            //var result = await DbManager.GetAllRecordsByIndex<int, FlashcardWord>(query);
 
-        public async Task<ExtendedWord> GetRandomWordByGroup(int group)
-        {
-            var query = new StoreIndexQuery<int>
+            Console.WriteLine("Stores: ");
+            foreach (var s in DbManager.Stores)
             {
-                Storename = DbConstants.StoreName,
-                IndexName = DbConstants.Id,
-                QueryValue = group
-            };
+                Console.WriteLine(s.Name);
+                Console.WriteLine(DbConstants.FlashcardsStoreName);
+                Console.WriteLine(s.Name == DbConstants.FlashcardsStoreName);
+                Console.WriteLine("_____");
+            }
 
-            return await DbManager.GetRecordByIndex<int, ExtendedWord>(query);
+            DbManager.ActionCompleted += DbMessage;
+
+            
+            var result = await DbManager.GetRecords<FlashcardWord>(DbConstants.FlashcardsStoreName);
+            Console.WriteLine("result is: ");
+            if (result is null)
+            {
+                Console.WriteLine("Null");
+            }
+            else
+            {
+                Console.WriteLine("Ok");
+                Console.WriteLine(result.Count);
+            }
+
+            return result[rand.Next(result.Count)];
         }
 
         public List<string> GetRandomTranslations(string word, int count)
         {
             return new List<string> { word, "Привет", "Пока", "Дом" };
+        }
+
+        public async Task<bool> IsCorrectTranslation(string chinese, string translate)
+        {
+            var query = new StoreIndexQuery<string>
+            {
+                Storename = DbConstants.StoreName,
+                IndexName = DbConstants.Chinese,
+                QueryValue = chinese
+            };
+
+            var result = await DbManager.GetRecordByIndex<string, ExtendedWord>(query);
+            return result.Translations.Contains(translate);
         }
     }
 }

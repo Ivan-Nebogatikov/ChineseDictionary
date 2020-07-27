@@ -40,6 +40,21 @@ namespace ChineseDictionary.Services
             return relativeWords;
         }
 
+        private static async void AddRecord(IndexedDBManager DbManager, ExtendedWord word)
+        {
+            await DbManager.AddRecord(new StoreRecord<ExtendedWord>
+            {
+                Storename = DbConstants.StoreName,
+                Data = word
+            });
+
+            await DbManager.AddRecord(new StoreRecord<FlashcardWord>
+            {
+                Storename = DbConstants.FlashcardsStoreName,
+                Data = new FlashcardWord { Chinese = word.Chinese, Day = 1 }
+            });
+        }
+
         public static async void DBParseAsync(IndexedDBManager DbManager, Stream stream)
         {
             using (StreamReader sr = new StreamReader(stream, System.Text.Encoding.Unicode))
@@ -57,11 +72,7 @@ namespace ChineseDictionary.Services
                             state = ParserState.Title;
 
                             if (word != null)
-                                await DbManager.AddRecord<ExtendedWord>(new StoreRecord<ExtendedWord>
-                                {
-                                    Storename = DbConstants.StoreName,
-                                    Data = word
-                                });
+                                AddRecord(DbManager, word);
 
                             word = new ExtendedWord
                             {
@@ -84,10 +95,7 @@ namespace ChineseDictionary.Services
                         state = ParserState.Space;
                 }
 
-                await DbManager.AddRecord<ExtendedWord>(new StoreRecord<ExtendedWord> { 
-                    Storename = DbConstants.StoreName, 
-                    Data = word 
-                });
+                AddRecord(DbManager, word);
             }
         }
     }

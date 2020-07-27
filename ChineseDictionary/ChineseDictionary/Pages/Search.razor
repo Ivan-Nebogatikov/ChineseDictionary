@@ -29,7 +29,8 @@ else
 <p>
     <h4>@word.Chinese</h4><h5>@word.Pinyin</h5> <br />
     <em>Translations: @string.Join(", ", word.Translations)</em>
-    <em>Relative words: @string.Join(", ", ((ExtendedWord)word).RelativeWords)</em> <!-- Just for checking the apple -->
+    <br />
+    <em>@word.Id</em>
 </p>
     }
     <button @onclick="AddMore">More</button>

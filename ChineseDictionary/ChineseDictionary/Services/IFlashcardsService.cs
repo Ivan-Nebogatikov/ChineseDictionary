@@ -9,7 +9,7 @@ namespace ChineseDictionary.Services
     public interface IFlashcardsService
     {
         List<string> GetRandomTranslations(string word, int count);
-        Task<ExtendedWord> GetRandomWordByGroup(int group);
-
+        Task<FlashcardWord> GetRandomWordByGroup(int group);
+        Task<bool> IsCorrectTranslation(string chinese, string translate);
     }
 }

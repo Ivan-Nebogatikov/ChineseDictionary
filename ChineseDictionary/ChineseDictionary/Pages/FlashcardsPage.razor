@@ -25,7 +25,8 @@
         <button type="submit">Train!</button>
     </EditForm>
 }
-else
+
+@if(training && !end)
 {
     @if (word != null)
     {
@@ -48,7 +49,7 @@ else
         </EditForm>
 
         <br />
-        <EditForm OnValidSubmit="HandleStopSubmit">
+        <EditForm Model="@model" OnValidSubmit="HandleStopSubmit">
             <button type="submit">Stop train</button>
         </EditForm>
     }
@@ -58,25 +59,40 @@ else
     }
 }
 
+@if (end)
+{
+    <h2>Correct:</h2>
+    @foreach (var word in correct)
+    {
+        <p>
+            <h4>@word.Chinese</h4>
+        </p>
+    }
+
+    <h2>Wrong:</h2>
+    @foreach (var word in correct)
+    {
+        <p>
+            <h4>@word.Chinese</h4>
+        </p>
+    }
+}
+
 @code {
 
     bool training = false;
     bool end = false;
     int group;
     private Model model = new Model();
+    int index = 0;
 
     private InputFlashcardsModel input = new InputFlashcardsModel();
-    ExtendedWord word;
+    FlashcardWord word;
     List<string> optionTranslations;
-    List<ExtendedWord> correct;
-    List<ExtendedWord> wrong;
+    List<FlashcardWord> correct;
+    List<FlashcardWord> wrong;
 
-    protected override async Task OnInitializedAsync()
-    {
-        word = (await Dictionary.SearchByChineseAsync("", 0, 1)).First(); // mock word
-    }
-
-    private async void HandleTrainSubmit()
+    private async Task HandleTrainSubmit()
     {
         training = !training;
         if (training)
@@ -84,21 +100,27 @@ else
             word = await Flashcards.GetRandomWordByGroup(group);
             optionTranslations = Flashcards.GetRandomTranslations(word.Chinese, 4);
 
-            correct = new List<ExtendedWord>();
-            wrong = new List<ExtendedWord>();
+            correct = new List<FlashcardWord>();
+            wrong = new List<FlashcardWord>();
         }
 
+        index++;
     }
 
-    private async void HandleCheckSubmit()
+    private async Task HandleCheckSubmit()
     {
-        if (word.Translations.Contains(model.Translate))
+        if (await Flashcards.IsCorrectTranslation(word.Chinese, model.Translate))
             correct.Append(word);
         else
             wrong.Append(word);
 
         word = await Flashcards.GetRandomWordByGroup(group);
         optionTranslations = Flashcards.GetRandomTranslations(word.Chinese, 4);
+
+        index++;
+
+        if (index >= input.WordsCount)
+            end = true;
     }
 
     private void HandleStopSubmit()
