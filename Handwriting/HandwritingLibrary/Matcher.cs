@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 using System.IO;
 using HandwritingLibrary;
 
-namespace Handwriting
+namespace HandwritingLibrary
 {
     public class Matcher
     {
