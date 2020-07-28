@@ -9,3 +9,6 @@
 		writer.animateCharacter();
 	});
 } 
+function removeListeners() {
+	document.getElementById('character-target-div').innerHTML = "";
+}

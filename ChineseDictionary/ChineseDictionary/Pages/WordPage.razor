@@ -40,7 +40,6 @@
     </ul>
 }
 
-
 <div id="character-target-div"></div>
 <button id="animate-button">Animate</button>
 <br />
@@ -59,13 +58,16 @@
         word = DictionaryService.GetByChinese(Text);
     }
 
-    protected override async void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (!firstRender)
+        {
+            await JSRuntime.InvokeAsync<string>("removeListeners");
+        }
         foreach (char character in word.Chinese)
         {
             await JSRuntime.InvokeAsync<string>("characterDraw", character);
         }
-
     }
 
 }
