@@ -1,7 +1,7 @@
 ﻿@page "/search"
 @using ChineseDictionary.Models
 @inject HttpClient Http
-@inject ChineseDictionary.Services.IDictionaryService Dictionary
+@inject ChineseDictionary.Services.IDictionaryServiceAsync Dictionary
 
 @using TG.Blazor.IndexedDB
 @inject IndexedDBManager DbManager
@@ -27,7 +27,7 @@ else
     @foreach (var word in words)
     {
         <p>
-            <h4><a href="/search/@word.Chinese">@word.Chinese</a></h4><h5>@word.Pinyin</h5> <br />
+            <h4><a href="search/@word.Chinese">@word.Chinese</a></h4><h5>@word.Pinyin</h5> <br />
             <em>@string.Join(", ", word.Translations)</em>
         </p>
     }
@@ -44,32 +44,19 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        words = Dictionary.SearchByChinese("", 0, shownItems);
-
-        //Some code to show how to work with Indexed DB
-        //var z = (await DbManager.GetRecords<Word>("Dictionary")).ToList();
-        //if (!z.Any())
-        //{
-        //    for (int i = 0; i < 1600; ++i)
-        //    {
-        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = ChineseDictionary.Constants.DbConstants.StoreName, Data = new Word { Chinese = "你好", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
-        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = ChineseDictionary.Constants.DbConstants.StoreName, Data = new Word { Chinese = "你好吗", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
-        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = ChineseDictionary.Constants.DbConstants.StoreName, Data = new Word { Chinese = "你好妈妈", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
-        //    }
-        //}
-        //words = (await DbManager.GetAllRecordsByIndexContains<Word>(new StoreIndexQueryStringContains { Storename =  ChineseDictionary.Constants.DbConstants.StoreName, IndexName = ChineseDictionary.Constants.DbConstants.Chinese, , QueryValue = "你" })).Take(20).ToList();
+        words = await Dictionary.SearchByChineseAsync("", 0, shownItems);
     }
 
-    private void HandleSearchSubmit()
+    private async Task HandleSearchSubmit()
     {
-        words = Dictionary.SearchByChinese(fieldModel.SearchString, 0, shownItems);
+        words = await Dictionary.SearchByChineseAsync(fieldModel.SearchString, 0, shownItems);
     }
 
-    public void AddMore()
+    public async Task AddMore()
     {
         shownItems += 20;
-        var wordsList = words.ToList();
-        wordsList.AddRange(Dictionary.SearchByChinese(fieldModel.SearchString, shownItems - 20, shownItems));
-        words = wordsList;
+        string query = fieldModel.SearchString ?? string.Empty;
+        var data = await Dictionary.SearchByChineseAsync(query, shownItems - 20, shownItems);
+        words = words.ToList().Concat(data);
     }
 }

@@ -1,50 +1,60 @@
 ﻿@page "/search/{text}"
 @using ChineseDictionary.Models
-@inject ChineseDictionary.Services.IDictionaryService DictionaryService
 @inject IJSRuntime JSRuntime;
+@inject ChineseDictionary.Services.IDictionaryServiceAsync DictionaryService
+
 
 <h1>@Text</h1>
 <br />
 
-<h5>@word.Pinyin</h5>
-<br />
-<br />
+@if (word is null)
+{
+    <em>Loading...</em>
+}
+else
+{
+    <h5>@word.Pinyin</h5>
+    <br />
+    <br />
 
-<h5>Translation:</h5>
-<ul>
-    @foreach (string translation in word.Translations)
+    <h5>Translation:</h5>
+    <ul>
+        @foreach (string translation in word.Translations)
+        {
+            <li>@translation</li>
+        }
+    </ul>
+
+    @if (word.Examples.Any())
     {
-        <li>@translation</li>
+        <h5>Examples:</h5>
+        <ul>
+            @foreach (Example example in word.Examples)
+            {
+                <li>@example.Chinese<br /> @example.Translation</li>
+            }
+        </ul>
     }
-</ul>
 
-@if (word.Examples.Any())
-{
-    <h5>Examples:</h5>
-    <ul>
-        @foreach (Example example in word.Examples)
-        {
-            <li>@example.Chinese<br /> @example.Translation</li>
-        }
-    </ul>
+    @if (word.RelativeWords.Any())
+    {
+        <h5>Relative words:</h5>
+        <ul>
+            @foreach (string relativeWord in word.RelativeWords)
+            {
+                <li><a href="search/@relativeWord"> @relativeWord </a></li>
+            }
+        </ul>
+    }
+
+    <h5><a href="search">To Search</a></h5>
+
+    <div id="character-target-div"></div>
+    <button id="animate-button">Animate</button>
+    <br />
+    <br />
+
 }
-
-@if (word.RelativeWords.Any())
-{
-    <h5>Relative words:</h5>
-    <ul>
-        @foreach (string relativeWord in word.RelativeWords)
-        {
-            <li><a href="/search/@relativeWord"> @relativeWord </a></li>
-        }
-    </ul>
-}
-
-<div id="character-target-div"></div>
-<button id="animate-button">Animate</button>
-<br />
-<br />
-<h5><a href="/search">To Search</a></h5>
 
 @code {
 
@@ -54,8 +64,9 @@
     private ExtendedWord word;
 
     protected override void OnParametersSet()
+
     {
-        word = DictionaryService.GetByChinese(Text);
+        word = await DictionaryService.GetByChinese(Text);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

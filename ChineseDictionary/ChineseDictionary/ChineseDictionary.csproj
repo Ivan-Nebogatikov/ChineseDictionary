@@ -25,6 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="wwwroot\helpers.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="wwwroot\indexedDb.Blazor.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
