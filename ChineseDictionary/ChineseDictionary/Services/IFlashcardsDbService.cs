@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace ChineseDictionary.Services
 {
-    public interface IFlashcardsService
+    public interface IFlashcardsDbService
     {
-        List<string> GetRandomTranslations(string word, int count);
+        Task<List<string>> GetRandomTranslations(FlashcardWord questionWord, int count);
         Task<FlashcardWord> GetRandomWordByGroup(int group);
         Task<bool> IsCorrectTranslation(string chinese, string translate);
+        Task MoveFlashcards(List<FlashcardWord> words, int group);
     }
 }

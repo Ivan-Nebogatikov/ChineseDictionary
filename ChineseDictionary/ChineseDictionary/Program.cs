@@ -52,7 +52,8 @@ namespace ChineseDictionary
             });
 
             builder.Services.AddTransient<IDictionaryServiceAsync, DbDictionaryService>();
-            builder.Services.AddTransient<IFlashcardsService, FlashcardsService>();
+            builder.Services.AddTransient<IFlashcardsDbService, FlashcardsDbService>();
+            builder.Services.AddSingleton<IFlashcardsStatusService, FlashcardsStatusService>();
             await builder.Build().RunAsync();
         }
     }

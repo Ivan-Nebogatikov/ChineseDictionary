@@ -1,0 +1,75 @@
+﻿@page "/flashcards/options"
+@using ChineseDictionary.Models
+@inject HttpClient Http
+@inject ChineseDictionary.Services.IDictionaryServiceAsync Dictionary
+@inject ChineseDictionary.Services.IFlashcardsDbService FlashcardsDb
+@inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
+@using System.ComponentModel.DataAnnotations
+
+@using TG.Blazor.IndexedDB
+@inject IndexedDBManager DbManager
+@inject DbStore DbStore
+
+<h1>Flashcards</h1>
+
+@if (word != null)
+{
+    <h4>@word.Chinese</h4>
+    <EditForm Model="@model" OnValidSubmit="HandleCheckSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        @foreach (string translate in optionTranslations)
+        {
+            <label>
+                <ChineseDictionary.Components.InputRadio name="translate" SelectedValue="@translate" @bind-Value="model.Translate" />
+                @translate
+            </label>
+            <br>
+        }
+
+        <button type="submit">Далее</button>
+    </EditForm>
+
+    <br />
+    <EditForm Model="@model" OnValidSubmit="HandleStopSubmit">
+        <button type="submit">Stop train</button>
+    </EditForm>
+}
+else
+{ 
+    <p><em>Loading...</em></p>
+}
+
+@code {
+
+    int group;
+    private Model model = new Model();
+    FlashcardWord word;
+    List<string> optionTranslations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        word = FlashcardsStatus.GetWord();
+        optionTranslations = FlashcardsStatus.GetTranslations();
+    }
+
+    private async Task HandleCheckSubmit()
+    {
+        await FlashcardsStatus.Answer(FlashcardsDb, model.Translate);
+        word = FlashcardsStatus.GetWord();
+        optionTranslations = FlashcardsStatus.GetTranslations();
+    }
+
+    private void HandleStopSubmit()
+    {
+        FlashcardsStatus.StopTrain(FlashcardsDb);
+    }
+
+    // Maybe move & group with other models
+    public class Model
+    {
+        [Required]
+        public string Translate { get; set; }
+    }
+}

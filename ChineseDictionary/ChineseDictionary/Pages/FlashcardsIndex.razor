@@ -1,0 +1,47 @@
+﻿@page "/flashcards"
+@using ChineseDictionary.Models
+@inject HttpClient Http
+@inject ChineseDictionary.Services.IDictionaryServiceAsync Dictionary
+@inject ChineseDictionary.Services.IFlashcardsDbService FlashcardsDb
+@inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
+@using System.ComponentModel.DataAnnotations
+
+@using TG.Blazor.IndexedDB
+@inject IndexedDBManager DbManager
+@inject DbStore DbStore
+
+<h1>Flashcards</h1>
+
+    <EditForm Model="@input" OnValidSubmit="HandleTrainSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        Number of words:
+        <InputNumber id="WordsCount" @bind-Value="input.WordsCount" />
+        <br>
+        Group of flashcards:
+        <InputNumber id="FlashcardsGroup" @bind-Value="input.Group" />
+        <button type="submit">Train!</button>
+    </EditForm>
+
+
+@code {
+
+    private InputFlashcardsModel input = new InputFlashcardsModel();
+
+    private void HandleTrainSubmit()
+    {
+        FlashcardsStatus.BeginTrain(FlashcardsDb, input.Group, input.WordsCount);
+    }
+
+    public class InputFlashcardsModel
+    {
+        [Required]
+        [Range(1, 20, ErrorMessage = "Words count should be in [1; 20]")]
+        public int WordsCount { get; set; } // Rewrite to select
+
+        [Required]
+        [Range(1, 20, ErrorMessage = "Group should be in [1; 20]")]
+        public int Group { get; set; }
+    }
+}

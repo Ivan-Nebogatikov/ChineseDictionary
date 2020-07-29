@@ -1,0 +1,51 @@
+﻿@page "/flashcards/results"
+@using ChineseDictionary.Models
+@inject HttpClient Http
+@inject ChineseDictionary.Services.IDictionaryServiceAsync Dictionary
+@inject ChineseDictionary.Services.IFlashcardsDbService FlashcardsDb
+@inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
+@using System.ComponentModel.DataAnnotations
+
+@using TG.Blazor.IndexedDB
+@inject IndexedDBManager DbManager
+@inject DbStore DbStore
+
+<h1>Flashcards</h1>
+
+<br />
+<h2>Correct:</h2>
+@foreach (var word in correct)
+{
+    <p>
+        <h4>@word.Chinese</h4>
+    </p>
+}
+
+<hr>
+
+<h2>Wrong:</h2>
+@foreach (var word in wrong)
+{
+    <p>
+        <h4>@word.Chinese</h4>
+    </p>
+}
+
+<br />
+<button @onclick="RestoreHandle">Restore</button>
+
+@code {
+    private List<FlashcardWord> correct;
+    private List<FlashcardWord> wrong;
+
+    protected override async Task OnInitializedAsync()
+    {
+        correct = FlashcardsStatus.GetCorrect();
+        wrong = FlashcardsStatus.GetWrong();
+    }
+
+    private void RestoreHandle()
+    {
+        FlashcardsStatus.Restore();
+    }
+}
