@@ -26,11 +26,11 @@
     protected override async Task OnInitializedAsync()
     {
         windowSize = await JsRuntime.InvokeAsync<WindowSize>("getWindowSize");
-        int SIZE = 500;
+        int SIZe = 500;
         if (windowSize.Width > 500)
         {
-            windowSize.Height = SIZE;
-            windowSize.Width = SIZE;
+            windowSize.Height = SIZe;
+            windowSize.Width = SIZe;
         }
         else
         {
