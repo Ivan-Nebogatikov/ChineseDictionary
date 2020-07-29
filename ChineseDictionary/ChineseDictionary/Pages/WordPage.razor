@@ -1,7 +1,8 @@
 ﻿@page "/search/{text}"
 @using ChineseDictionary.Models
 @inject IJSRuntime JSRuntime;
-@inject ChineseDictionary.Services.IDictionaryService DictionaryService
+@inject ChineseDictionary.Services.IDictionaryServiceAsync DictionaryService
+
 
 <h1>@Text</h1>
 <br />
@@ -41,7 +42,7 @@ else
         <ul>
             @foreach (string relativeWord in word.RelativeWords)
             {
-                <li><a href="/search/@relativeWord"> @relativeWord </a></li>
+                <li><a href="search/@relativeWord"> @relativeWord </a></li>
             }
         </ul>
     }
@@ -62,6 +63,7 @@ else
     private ExtendedWord word;
 
     protected override void OnParametersSet()
+
     {
         word = DictionaryService.GetByChinese(Text);
     }
