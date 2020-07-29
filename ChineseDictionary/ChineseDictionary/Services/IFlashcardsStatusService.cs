@@ -8,9 +8,10 @@ namespace ChineseDictionary.Services
 {
     interface IFlashcardsStatusService
     {
-        public Task BeginTrain(IFlashcardsDbService FlashcardsDb, int group, int wordsCount);
+        public Task BeginTrain(IFlashcardsDbService FlashcardsDb, int group, int wordsCount, TrainType type);
 
-        public Task Answer(IFlashcardsDbService FlashcardsDb, string translate);
+        public Task AnswerOptions(IFlashcardsDbService FlashcardsDb, string translate);
+        public Task AnswerReview(IFlashcardsDbService FlashcardsDb, bool remember);
 
         public void StopTrain(IFlashcardsDbService FlashcardsDb);
         public void Restore();

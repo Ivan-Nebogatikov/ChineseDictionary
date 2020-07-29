@@ -7,14 +7,14 @@ using Microsoft.AspNetCore.Components;
 
 namespace ChineseDictionary.Services
 {
-    enum TrainState
+    public enum TrainState
     {
         Begin,
         Training,
         End
     }
 
-    enum TrainType
+    public enum TrainType
     {
         Options,
         Review
@@ -28,6 +28,7 @@ namespace ChineseDictionary.Services
         private List<string> answers;
 
         private TrainState state;
+        private TrainType type = TrainType.Options;
 
         private FlashcardWord word;
 
@@ -43,7 +44,7 @@ namespace ChineseDictionary.Services
             this.navigation = navigation;
         }
 
-        public async Task BeginTrain(IFlashcardsDbService FlashcardsDb, int group, int wordsCount)
+        public async Task BeginTrain(IFlashcardsDbService FlashcardsDb, int group, int wordsCount, TrainType type)
         {
             if (state == TrainState.Begin)
             {
@@ -56,17 +57,23 @@ namespace ChineseDictionary.Services
 
                 state = TrainState.Training;
                 word = await FlashcardsDb.GetRandomWordByGroup(group);
-                optionTranslations = await FlashcardsDb.GetRandomTranslations(word, 4);
+                
+                this.type = type;
+                if (type == TrainType.Options)
+                    optionTranslations = await FlashcardsDb.GetRandomTranslations(word, 4);
             }
 
-            if (state == TrainState.Training)
+            if (state == TrainState.Training && type == TrainType.Options)
                 navigation.NavigateTo("/flashcards/options"); // Maybe it's wrong way & redirect need to be moved to a razor file
+
+            if (state == TrainState.Training && type == TrainType.Review)
+                navigation.NavigateTo("/flashcards/review"); // Maybe it's wrong way & redirect need to be moved to a razor file
 
             if (state == TrainState.End)
                 navigation.NavigateTo("/flashcards/results"); // Maybe it's wrong way & redirect need to be moved to a razor file
         }
 
-        public async Task Answer(IFlashcardsDbService FlashcardsDb, string translate)
+        public async Task AnswerOptions(IFlashcardsDbService FlashcardsDb, string translate)
         {
             if (await FlashcardsDb.IsCorrectTranslation(word.Chinese, translate))
                 correct.Add(word);
@@ -77,6 +84,21 @@ namespace ChineseDictionary.Services
 
             word = await FlashcardsDb.GetRandomWordByGroup(group);
             optionTranslations = await FlashcardsDb.GetRandomTranslations(word, 4);
+
+            index++;
+
+            if (index >= wordsCount)
+                StopTrain(FlashcardsDb);
+        }
+
+        public async Task AnswerReview(IFlashcardsDbService FlashcardsDb, bool remember)
+        {
+            if (remember)
+                correct.Add(word);
+            else
+                wrong.Add(word);
+
+            word = await FlashcardsDb.GetRandomWordByGroup(group);
 
             index++;
 

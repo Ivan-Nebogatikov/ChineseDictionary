@@ -1,4 +1,4 @@
-﻿@page "/flashcards/options"
+﻿@page "/flashcards/review"
 @using ChineseDictionary.Models
 @inject HttpClient Http
 @inject ChineseDictionary.Services.IDictionaryServiceAsync Dictionary
@@ -15,29 +15,15 @@
 @if (word != null)
 {
     <h4>@word.Chinese</h4>
-    <EditForm Model="@model" OnValidSubmit="HandleCheckSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
 
-        @foreach (string translate in optionTranslations)
-        {
-            <label>
-                <ChineseDictionary.Components.InputRadio name="translate" SelectedValue="@translate" @bind-Value="model.Translate" />
-                @translate
-            </label>
-            <br>
-        }
-
-        <button type="submit">Далее</button>
-    </EditForm>
-
+    <button @onclick="HandleRemember">Помню</button>
     <br />
-    <EditForm Model="@model" OnValidSubmit="HandleStopSubmit">
-        <button type="submit">Stop train</button>
-    </EditForm>
+    <button @onclick="HandleNotRemember">Не помню</button>
+    <hr />
+    <button @onclick="HandleStopSubmit">Stop train</button>
 }
 else
-{ 
+{
     <p><em>Loading...</em></p>
 }
 
@@ -54,11 +40,16 @@ else
         optionTranslations = FlashcardsStatus.GetTranslations();
     }
 
-    private async Task HandleCheckSubmit()
+    private async Task HandleRemember()
     {
-        await FlashcardsStatus.AnswerOptions(FlashcardsDb, model.Translate);
+        await FlashcardsStatus.AnswerReview(FlashcardsDb, true);
         word = FlashcardsStatus.GetWord();
-        optionTranslations = FlashcardsStatus.GetTranslations();
+    }
+
+    private async Task HandleNotRemember()
+    {
+        await FlashcardsStatus.AnswerReview(FlashcardsDb, false);
+        word = FlashcardsStatus.GetWord();
     }
 
     private void HandleStopSubmit()

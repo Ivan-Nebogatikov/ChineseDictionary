@@ -12,17 +12,23 @@
 
 <h1>Flashcards</h1>
 
-    <EditForm Model="@input" OnValidSubmit="HandleTrainSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+<EditForm Model="@input" OnValidSubmit="HandleTrainSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
 
-        Number of words:
-        <InputNumber id="WordsCount" @bind-Value="input.WordsCount" />
-        <br>
-        Group of flashcards:
-        <InputNumber id="FlashcardsGroup" @bind-Value="input.Group" />
-        <button type="submit">Train!</button>
-    </EditForm>
+    Number of words:
+    <InputNumber id="WordsCount" @bind-Value="input.WordsCount" />
+    <br>
+    Group of flashcards:
+    <InputNumber id="FlashcardsGroup" @bind-Value="input.Group" />
+    <br>
+    <InputSelect @bind-Value="input.Type">
+        <option value="">Select type of train ...</option>
+        <option value="Options">4 Options</option>
+        <option value="Review">Review</option>
+    </InputSelect>
+    <button type="submit">Train!</button>
+</EditForm>
 
 
 @code {
@@ -31,7 +37,11 @@
 
     private void HandleTrainSubmit()
     {
-        FlashcardsStatus.BeginTrain(FlashcardsDb, input.Group, input.WordsCount);
+        if (input.Type == "Options")
+            FlashcardsStatus.BeginTrain(FlashcardsDb, input.Group, input.WordsCount, Services.TrainType.Options);
+
+        if (input.Type == "Review")
+            FlashcardsStatus.BeginTrain(FlashcardsDb, input.Group, input.WordsCount, Services.TrainType.Review);
     }
 
     public class InputFlashcardsModel
@@ -43,5 +53,8 @@
         [Required]
         [Range(1, 20, ErrorMessage = "Group should be in [1; 20]")]
         public int Group { get; set; }
+
+        [Required]
+        public string Type { get; set; }
     }
 }
