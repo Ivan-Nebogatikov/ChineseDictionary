@@ -59,13 +59,13 @@ else
 
     [Parameter]
     public string Text { get; set; }
-    
+
     private ExtendedWord word;
 
-    protected override void OnParametersSet()
+    protected override async Task OnInitializedAsync()
 
     {
-        word = DictionaryService.GetByChinese(Text);
+        word = await DictionaryService.GetByChinese(Text);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
