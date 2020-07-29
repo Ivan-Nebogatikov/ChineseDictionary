@@ -60,10 +60,9 @@ else
     [Parameter]
     public string Text { get; set; }
 
-    private ExtendedWord word;
+    private Word word;
 
     protected override async Task OnInitializedAsync()
-
     {
         word = await DictionaryService.GetByChinese(Text);
     }
@@ -72,11 +71,14 @@ else
     {
         if (!firstRender)
         {
-            await JSRuntime.InvokeAsync<string>("removeListeners");
+            await JSRuntime.InvokeVoidAsync("removeListeners");
         }
-        foreach (char character in word.Chinese)
+        if (word != null)
         {
-            await JSRuntime.InvokeAsync<string>("characterDraw", character);
+            foreach (char character in word.Chinese)
+            {
+                await JSRuntime.InvokeVoidAsync("characterDraw", character);
+            }
         }
     }
 

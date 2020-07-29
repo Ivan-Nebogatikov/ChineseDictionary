@@ -46,7 +46,7 @@ namespace ChineseDictionary.Services
             {
                 string line;
                 ParserState state = ParserState.Space;
-                ExtendedWord word = null;
+                Word word = null;
 
                 while ((line = sr.ReadLine()) != null)
                 {
@@ -57,13 +57,13 @@ namespace ChineseDictionary.Services
                             state = ParserState.Title;
 
                             if (word != null)
-                                await DbManager.AddRecord<ExtendedWord>(new StoreRecord<ExtendedWord>
+                                await DbManager.AddRecord<Word>(new StoreRecord<Word>
                                 {
                                     Storename = DbConstants.StoreName,
                                     Data = word
                                 });
 
-                            word = new ExtendedWord
+                            word = new Word
                             {
                                 Chinese = RemoveTags(line)
                             };
@@ -84,7 +84,7 @@ namespace ChineseDictionary.Services
                         state = ParserState.Space;
                 }
 
-                await DbManager.AddRecord<ExtendedWord>(new StoreRecord<ExtendedWord> { 
+                await DbManager.AddRecord<Word>(new StoreRecord<Word> { 
                     Storename = DbConstants.StoreName, 
                     Data = word 
                 });
