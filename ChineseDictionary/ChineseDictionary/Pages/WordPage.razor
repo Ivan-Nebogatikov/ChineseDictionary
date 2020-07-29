@@ -1,6 +1,8 @@
 ﻿@page "/search/{text}"
 @using ChineseDictionary.Models
+@inject IJSRuntime JSRuntime;
 @inject ChineseDictionary.Services.IDictionaryServiceAsync DictionaryService
+
 
 <h1>@Text</h1>
 <br />
@@ -45,17 +47,37 @@ else
         </ul>
     }
 
-    <h5><a href="search">To Search</a></h5>
-}
+    <div id="character-target-div"></div>
+    <button id="animate-button">Animate</button>
+    <br />
+    <br />
+    <h5><a href="/search">To Search</a></h5>
 
+}
+    
 @code {
 
     [Parameter]
     public string Text { get; set; }
 
     private ExtendedWord word;
+
     protected override async Task OnInitializedAsync()
+
     {
         word = await DictionaryService.GetByChinese(Text);
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            await JSRuntime.InvokeAsync<string>("removeListeners");
+        }
+        foreach (char character in word.Chinese)
+        {
+            await JSRuntime.InvokeAsync<string>("characterDraw", character);
+        }
+    }
+
 }

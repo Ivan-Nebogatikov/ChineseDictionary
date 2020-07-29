@@ -31,6 +31,9 @@
     <Content Update="wwwroot\indexedDb.Blazor.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="wwwroot\strokeOrder.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
