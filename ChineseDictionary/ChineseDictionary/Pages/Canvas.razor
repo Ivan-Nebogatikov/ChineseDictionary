@@ -1,6 +1,7 @@
 ﻿@page "/canvas"
 @inject IJSRuntime JsRuntime
 
+
 <canvas  height="@windowSize.Height"
         width="@windowSize.Width"
         style="border: 2px solid "
@@ -14,7 +15,7 @@
         @ontouchend="@StopPaint" />
 
 @code {
-
+    List<Stroke> stroke = new List<Stroke>();
     WindowSize windowSize = new WindowSize();
     ElementReference canvas;
     Canvas2DContext ctx;
@@ -51,7 +52,6 @@
     private void StartPaintTouch(TouchEventArgs e)
     {
         StartPainting(e.Touches.First().ClientX, e.Touches.First().ClientY);
-
     }
 
     private async Task Paint(double pointX, double pointY)
@@ -64,9 +64,10 @@
             {
                 ctx = new Canvas2DContext(JsRuntime, canvas);
             }
-            await ctx.DrawLine(x, y, eX, eY);
+            await ctx.DrawLine(x, y, eX, eY);   
             x = eX;
             y = eY;
+            stroke.Add(new Stroke());
         }
     }
 
@@ -79,6 +80,7 @@
             ctx = new Canvas2DContext(JsRuntime, canvas);
         }
         isPainting = true;
+        stroke.Add(new Stroke());
     }
 
     private async Task PaintTouch(TouchEventArgs e)
@@ -89,5 +91,6 @@
     private void StopPaint()
     {
         isPainting = false;
+        stroke.Add(new Stroke());
     }
 }
