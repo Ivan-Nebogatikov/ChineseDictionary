@@ -72,6 +72,7 @@ else
     <br />
     <br />
     <h5><a href="search">To Search</a></h5>
+
 }
 
 @code {
@@ -79,12 +80,11 @@ else
     [Parameter]
     public string Text { get; set; }
 
-    private ExtendedWord word;
+    private Word word;
 
     List<ColoredCharacter> coloredCharacters;
 
     protected override async Task OnInitializedAsync()
-
     {
         word = await DictionaryService.GetByChinese(Text);
     }
@@ -93,11 +93,14 @@ else
     {
         if (!firstRender)
         {
-            await JSRuntime.InvokeAsync<string>("removeListeners");
+            await JSRuntime.InvokeVoidAsync("removeListeners");
         }
-        foreach (ColoredCharacter colChar in coloredCharacters)
+        if (word != null)
         {
-            await JSRuntime.InvokeAsync<string>("drawCharacter", colChar.character, colChar.color);
+            foreach (ColoredCharacter colChar in coloredCharacters)
+            {
+                await JSRuntime.InvokeAsync<string>("drawCharacter", colChar.character, colChar.color);
+            }
         }
     }
 
