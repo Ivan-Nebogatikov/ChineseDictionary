@@ -21,22 +21,23 @@ namespace ChineseDictionary
             string[] split = word.Split(separators);
 
             int j = 0;
-            string style = ColorConstants.fifthTone;
+            
             List<ColoredCharacter> coloredCharactersList = new List<ColoredCharacter> { };
 
-            foreach (string splitSimbols in split)
+            foreach (string splitSymbols in split)
             {
-                if (splitSimbols.Trim() != "")
+                if (!string.IsNullOrWhiteSpace(splitSymbols))
                 {
-                    foreach (char simbol in splitSimbols)
+                    string style = ColorConstants.fifthTone;
+                    foreach (char symbol in splitSymbols)
                     {
-                        if (firstTone.Contains(simbol))
+                        if (firstTone.Contains(symbol))
                             style = ColorConstants.firstTone;
-                        if (secondTone.Contains(simbol))
+                        if (secondTone.Contains(symbol))
                             style = ColorConstants.secondTone;
-                        if (thirdTone.Contains(simbol))
+                        if (thirdTone.Contains(symbol))
                             style = ColorConstants.thirdTone;
-                        if (fourthTone.Contains(simbol))
+                        if (fourthTone.Contains(symbol))
                             style = ColorConstants.fourthTone;
                     }
 
