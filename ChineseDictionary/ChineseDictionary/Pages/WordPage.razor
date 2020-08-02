@@ -22,38 +22,37 @@ else
     <br />
 
     <h5>Translation:</h5>
-    <br />
-    @foreach (string translation in word.Translations)
-    {
-        @translation
-        <br />
-    }
-    <br />
+    <ul>
+        @foreach (string translation in word.Translations)
+        {
+            <li>@translation</li>
+        }
+    </ul>
 
     @if (word.Examples.Any())
     {
         <h5>Examples:</h5>
-        <br />
-        @foreach (Example example in word.Examples)
-        {
-            @example.Chinese
-            <br />
-            @example.Translation
-            <br />
-        }
-        <br />
+        <ul>
+            @foreach (Example example in word.Examples)
+            {
+                <li>
+                    @example.Chinese <br />@example.Translation
+                </li>
+            }
+        </ul>
     }
 
     @if (word.RelativeWords.Any())
     {
         <h5>Relative words:</h5>
-        <br />
-        @foreach (string relativeWord in word.RelativeWords)
-        {
-            <a href="search/@relativeWord"> @relativeWord </a>
-            <br />
-        }
-        <br />
+        <ul>
+            @foreach (string relativeWord in word.RelativeWords)
+            {
+                <li>
+                    <a href="search/@relativeWord"> @relativeWord </a>
+                </li>
+            }
+        </ul>      
     }
 
     <h5>Stroke order:</h5>
@@ -72,6 +71,7 @@ else
     <br />
     <br />
     <h5><a href="search">To Search</a></h5>
+
 }
 
 @code {
@@ -79,12 +79,11 @@ else
     [Parameter]
     public string Text { get; set; }
 
-    private ExtendedWord word;
+    private Word word;
 
     List<ColoredCharacter> coloredCharacters;
 
     protected override async Task OnInitializedAsync()
-
     {
         word = await DictionaryService.GetByChinese(Text);
     }
@@ -93,11 +92,14 @@ else
     {
         if (!firstRender)
         {
-            await JSRuntime.InvokeAsync<string>("removeListeners");
+            await JSRuntime.InvokeVoidAsync("removeListeners");
         }
-        foreach (ColoredCharacter colChar in coloredCharacters)
+        if (word != null)
         {
-            await JSRuntime.InvokeAsync<string>("drawCharacter", colChar.character, colChar.color);
+            foreach (ColoredCharacter colChar in coloredCharacters)
+            {
+                await JSRuntime.InvokeAsync<string>("drawCharacter", colChar.character, colChar.color);
+            }
         }
     }
 
