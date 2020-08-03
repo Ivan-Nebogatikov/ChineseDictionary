@@ -8,19 +8,25 @@ namespace ChineseDictionary.Services
 {
     interface IFlashcardsStatusService
     {
-        public Task BeginTrain(IFlashcardsDbService FlashcardsDb, int group, int wordsCount, TrainType type);
+        public void BeginTrainReview(Word[] questions, int group, int wordsCount);
+        public void BeginTrainOptions(Word[] questions, string[][] translations, int group, int wordsCount);
+        
+        public void AnswerOptions(string translate);
+        public void AnswerReview(bool remember);
 
-        public Task AnswerOptions(IFlashcardsDbService FlashcardsDb, string translate);
-        public Task AnswerReview(IFlashcardsDbService FlashcardsDb, bool remember);
-
-        public void StopTrain(IFlashcardsDbService FlashcardsDb);
+        public void StopTrain();
         public void Restore();
 
-        public FlashcardWord GetWord();
-        public List<string> GetTranslations();
+        public bool IsStateBegin();
+        public bool IsStateTrainingOptions();
+        public bool IsStateTrainingReview();
+        public bool IsStateEnd();
 
-        public List<FlashcardWord> GetCorrect();
-        public List<FlashcardWord> GetWrong();
+        public Word GetWord();
+        public string[] GetTranslations();
+        public List<Word> GetCorrect();
+        public List<Word> GetWrong();
         public List<string> GetAnswers();
+        public int GetGroup();
     }
 }

@@ -1,14 +1,10 @@
 ﻿@page "/flashcards/options"
+
 @using ChineseDictionary.Models
-@inject HttpClient Http
-@inject ChineseDictionary.Services.IDictionaryServiceAsync Dictionary
-@inject ChineseDictionary.Services.IFlashcardsDbService FlashcardsDb
-@inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
 @using System.ComponentModel.DataAnnotations
 
-@using TG.Blazor.IndexedDB
-@inject IndexedDBManager DbManager
-@inject DbStore DbStore
+@inject NavigationManager navigation
+@inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
 
 <h1>Flashcards</h1>
 
@@ -37,33 +33,47 @@
     </EditForm>
 }
 else
-{ 
+{
     <p><em>Loading...</em></p>
 }
 
 @code {
 
-    int group;
+    Word word;
+    string[] optionTranslations;
     private Model model = new Model();
-    FlashcardWord word;
-    List<string> optionTranslations;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        word = FlashcardsStatus.GetWord();
-        optionTranslations = FlashcardsStatus.GetTranslations();
+        if (FlashcardsStatus.IsStateBegin())
+            navigation.NavigateTo("/flashcards");
+
+        if (FlashcardsStatus.IsStateTrainingOptions())
+        {
+            word = FlashcardsStatus.GetWord();
+            optionTranslations = FlashcardsStatus.GetTranslations();
+        }
+
+        if (FlashcardsStatus.IsStateTrainingReview())
+            navigation.NavigateTo("/flashcards/review");
+
+        if (FlashcardsStatus.IsStateEnd())
+            navigation.NavigateTo("/flashcards/results");
     }
 
-    private async Task HandleCheckSubmit()
+    private void HandleCheckSubmit()
     {
-        await FlashcardsStatus.AnswerOptions(FlashcardsDb, model.Translate);
-        word = FlashcardsStatus.GetWord();
-        optionTranslations = FlashcardsStatus.GetTranslations();
+        FlashcardsStatus.AnswerOptions(model.Translate);
+        if (FlashcardsStatus.IsStateTrainingOptions())
+        {
+            word = FlashcardsStatus.GetWord();
+            optionTranslations = FlashcardsStatus.GetTranslations();
+        }
     }
 
     private void HandleStopSubmit()
     {
-        FlashcardsStatus.StopTrain(FlashcardsDb);
+        FlashcardsStatus.StopTrain();
     }
 
     // Maybe move & group with other models

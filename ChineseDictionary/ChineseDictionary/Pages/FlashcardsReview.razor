@@ -1,14 +1,10 @@
 ﻿@page "/flashcards/review"
+
 @using ChineseDictionary.Models
-@inject HttpClient Http
-@inject ChineseDictionary.Services.IDictionaryServiceAsync Dictionary
-@inject ChineseDictionary.Services.IFlashcardsDbService FlashcardsDb
-@inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
 @using System.ComponentModel.DataAnnotations
 
-@using TG.Blazor.IndexedDB
-@inject IndexedDBManager DbManager
-@inject DbStore DbStore
+@inject NavigationManager navigation
+@inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
 
 <h1>Flashcards</h1>
 
@@ -29,32 +25,41 @@ else
 
 @code {
 
-    int group;
+    Word word;
     private Model model = new Model();
-    FlashcardWord word;
-    List<string> optionTranslations;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        word = FlashcardsStatus.GetWord();
-        optionTranslations = FlashcardsStatus.GetTranslations();
+        if (FlashcardsStatus.IsStateBegin())
+            navigation.NavigateTo("/flashcards");
+
+        if (FlashcardsStatus.IsStateTrainingOptions())
+            navigation.NavigateTo("/flashcards/options");
+
+        if (FlashcardsStatus.IsStateTrainingReview())
+            word = FlashcardsStatus.GetWord();
+
+        if (FlashcardsStatus.IsStateEnd())
+            navigation.NavigateTo("/flashcards/results");
     }
 
-    private async Task HandleRemember()
+    private void HandleRemember()
     {
-        await FlashcardsStatus.AnswerReview(FlashcardsDb, true);
-        word = FlashcardsStatus.GetWord();
+        FlashcardsStatus.AnswerReview(true);
+        if (FlashcardsStatus.IsStateTrainingReview())
+            word = FlashcardsStatus.GetWord();
     }
 
-    private async Task HandleNotRemember()
+    private void HandleNotRemember()
     {
-        await FlashcardsStatus.AnswerReview(FlashcardsDb, false);
-        word = FlashcardsStatus.GetWord();
+        FlashcardsStatus.AnswerReview(false);
+        if (FlashcardsStatus.IsStateTrainingReview())
+            word = FlashcardsStatus.GetWord();
     }
 
     private void HandleStopSubmit()
     {
-        FlashcardsStatus.StopTrain(FlashcardsDb);
+        FlashcardsStatus.StopTrain();
     }
 
     // Maybe move & group with other models

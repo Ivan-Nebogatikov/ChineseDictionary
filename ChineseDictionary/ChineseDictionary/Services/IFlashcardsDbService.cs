@@ -8,9 +8,10 @@ namespace ChineseDictionary.Services
 {
     public interface IFlashcardsDbService
     {
-        Task<List<string>> GetRandomTranslations(FlashcardWord questionWord, int count);
-        Task<FlashcardWord> GetRandomWordByGroup(int group);
-        Task<bool> IsCorrectTranslation(string chinese, string translate);
-        Task MoveFlashcards(List<FlashcardWord> words, int group);
+        Task<Word[]> GetRandomWordsByGroup(int group, int count);
+        Task<string[][]> GetRandomTranslationMatrix(Word[] questionWord, int count);
+        Task MoveFlashcards(IEnumerable<Word> words, int group);
+        Task MoveFlashcards(IEnumerable<FlashcardWord> flashcardWords, int group);
+        Task MoveFlashcard(FlashcardWord flashcardWord, int group);
     }
 }

@@ -1,14 +1,12 @@
 ﻿@page "/flashcards/results"
+
 @using ChineseDictionary.Models
-@inject HttpClient Http
-@inject ChineseDictionary.Services.IDictionaryServiceAsync Dictionary
-@inject ChineseDictionary.Services.IFlashcardsDbService FlashcardsDb
-@inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
+@using ChineseDictionary.Constants
 @using System.ComponentModel.DataAnnotations
 
-@using TG.Blazor.IndexedDB
-@inject IndexedDBManager DbManager
-@inject DbStore DbStore
+@inject NavigationManager navigation
+@inject ChineseDictionary.Services.IFlashcardsDbService FlashcardsDb
+@inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
 
 <h1>Flashcards</h1>
 
@@ -35,17 +33,31 @@
 <button @onclick="RestoreHandle">Restore</button>
 
 @code {
-    private List<FlashcardWord> correct;
-    private List<FlashcardWord> wrong;
+    private List<Word> correct;
+    private List<Word> wrong;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        correct = FlashcardsStatus.GetCorrect();
-        wrong = FlashcardsStatus.GetWrong();
+        if (FlashcardsStatus.IsStateBegin())
+            navigation.NavigateTo("/flashcards");
+
+        if (FlashcardsStatus.IsStateTrainingOptions())
+            navigation.NavigateTo("/flashcards/options");
+
+        if (FlashcardsStatus.IsStateTrainingReview())
+            navigation.NavigateTo("/flashcards/review");
+
+        if (FlashcardsStatus.IsStateEnd())
+        {
+            correct = FlashcardsStatus.GetCorrect();
+            wrong = FlashcardsStatus.GetWrong();
+        }
     }
 
     private void RestoreHandle()
     {
         FlashcardsStatus.Restore();
+        FlashcardsDb.MoveFlashcards(correct, FlashcardsStatus.GetGroup());
+        navigation.NavigateTo("/flashcards");
     }
 }

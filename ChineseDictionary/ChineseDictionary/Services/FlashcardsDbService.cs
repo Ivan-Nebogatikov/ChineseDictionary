@@ -24,7 +24,33 @@ namespace ChineseDictionary.Services
             this.rand = new Random();
         }
 
-        public async Task<FlashcardWord> GetRandomWordByGroup(int group)
+        #region FlashcardWord & Word link
+        private async Task<FlashcardWord> GetFlashcardWordByWord(Word word)
+        {
+            var query = new StoreIndexQuery<string>
+            {
+                Storename = DbConstants.StoreName,
+                IndexName = DbConstants.Chinese,
+                QueryValue = word.Chinese
+            };
+
+            return await DbManager.GetRecordByIndex<string, FlashcardWord>(query);
+        }
+        private async Task<Word> GetWordByFlashcardWord(FlashcardWord flashcardWord)
+        {
+            var query = new StoreIndexQuery<string>
+            {
+                Storename = DbConstants.StoreName,
+                IndexName = DbConstants.Chinese,
+                QueryValue = flashcardWord.Chinese
+            };
+
+            return await DbManager.GetRecordByIndex<string, Word>(query);
+        }
+        #endregion
+
+        #region Get Random Words
+        private async Task<Word> GetRandomWordByGroup(int group)
         {
             var query = new StoreIndexQuery<int>
             {
@@ -33,14 +59,26 @@ namespace ChineseDictionary.Services
                 QueryValue = group
             };
 
-            var result = await DbManager.GetAllRecordsByIndex<int, FlashcardWord>(query);
-            return result[rand.Next(result.Count)];
+            var flashcardWords = await DbManager.GetAllRecordsByIndex<int, FlashcardWord>(query);
+            FlashcardWord flashcardWord = flashcardWords[rand.Next(flashcardWords.Count)];
+            return await GetWordByFlashcardWord(flashcardWord);
         }
 
-        public async Task<List<string>> GetRandomTranslations(FlashcardWord questionWord, int count)
+        public async Task<Word[]> GetRandomWordsByGroup(int group, int count)
         {
-            ExtendedWord word;
-            List<ExtendedWord> words = await DbManager.GetRecords<ExtendedWord>(DbConstants.StoreName);
+            Word[] words = new Word[count];
+            for (int i = 0; i < count; i++)
+                words[i] = await GetRandomWordByGroup(group);
+
+            return words;
+        }
+        #endregion
+
+        #region Get Random Translations
+        private async Task<string[]> GetRandomTranslations(Word questionWord, int count)
+        {
+            Word word;
+            List<Word> words = await DbManager.GetRecords<Word>(DbConstants.StoreName);
             List<string> randomTranslations = new List<string>();
             string[] wordTranslations;
             string translation;
@@ -68,36 +106,49 @@ namespace ChineseDictionary.Services
             string rightTranslation = rightTranslations[rand.Next(rightTranslations.Length)];
             randomTranslations.Insert(rand.Next(randomTranslations.Count), rightTranslation);
 
-            return randomTranslations;
+            return randomTranslations.ToArray();
         }
 
-        public async Task<bool> IsCorrectTranslation(string chinese, string translate)
+        public async Task<string[][]> GetRandomTranslationMatrix(Word[] questionWord, int count)
         {
-            var query = new StoreIndexQuery<string>
-            {
-                Storename = DbConstants.StoreName,
-                IndexName = DbConstants.Chinese,
-                QueryValue = chinese
-            };
+            string[][] translationMatrix = new string[count][];
+            for (int i = 0; i < count; i++)
+                translationMatrix[i] = await GetRandomTranslations(questionWord[i], 4);
 
-            var result = await DbManager.GetRecordByIndex<string, ExtendedWord>(query);
-            return result.Translations.Contains(translate);
+            return translationMatrix;
         }
+        #endregion
 
-        public async Task MoveFlashcards(List<FlashcardWord> words, int group)
+        #region MoveFlashcards
+        public async Task MoveFlashcards(IEnumerable<Word> words, int group)
         {
-            StoreRecord<FlashcardWord> record;
-            foreach (FlashcardWord word in words)
+            FlashcardWord flashcardWord;
+            foreach (Word word in words)
             {
-                word.Day = group;
-                record = new StoreRecord<FlashcardWord>
-                {
-                    Storename = DbConstants.FlashcardsStoreName,
-                    Data = word
-                };
-                
-                await DbManager.UpdateRecord(record);
+                flashcardWord = await GetFlashcardWordByWord(word);
+                await MoveFlashcard(flashcardWord, group);
             }
         }
+
+        public async Task MoveFlashcards(IEnumerable<FlashcardWord> flashcardWords, int group)
+        {
+            foreach (FlashcardWord flashcardWord in flashcardWords)
+                await MoveFlashcard(flashcardWord, group);
+        }
+
+        public async Task MoveFlashcard(FlashcardWord flashcardWord, int group)
+        {
+            StoreRecord<FlashcardWord> record;
+            
+            flashcardWord.Day = group;
+            record = new StoreRecord<FlashcardWord>
+            {
+                Storename = DbConstants.FlashcardsStoreName,
+                Data = flashcardWord
+            };
+
+            await DbManager.UpdateRecord(record);
+        }
+        #endregion
     }
 }

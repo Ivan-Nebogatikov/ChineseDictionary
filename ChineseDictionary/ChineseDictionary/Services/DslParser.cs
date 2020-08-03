@@ -40,7 +40,7 @@ namespace ChineseDictionary.Services
             return relativeWords;
         }
 
-        private static async void AddRecord(IndexedDBManager DbManager, ExtendedWord word)
+        private static async Task AddRecord(IndexedDBManager DbManager, ExtendedWord word)
         {
             await DbManager.AddRecord(new StoreRecord<ExtendedWord>
             {
@@ -55,48 +55,46 @@ namespace ChineseDictionary.Services
             });
         }
 
-        public static async void DBParseAsync(IndexedDBManager DbManager, Stream stream)
+        public static async Task DBParseAsync(IndexedDBManager DbManager, Stream stream)
         {
-            using (StreamReader sr = new StreamReader(stream, System.Text.Encoding.Unicode))
+            using StreamReader sr = new StreamReader(stream, System.Text.Encoding.Unicode);
+            string line;
+            ParserState state = ParserState.Space;
+            ExtendedWord word = null;
+
+            while ((line = sr.ReadLine()) != null)
             {
-                string line;
-                ParserState state = ParserState.Space;
-                ExtendedWord word = null;
-
-                while ((line = sr.ReadLine()) != null)
+                if (line != "" && line[0] != '#')
                 {
-                    if (line != "" && line[0] != '#')
+                    if (line[0] != ' ')
                     {
-                        if (line[0] != ' ')
+                        state = ParserState.Title;
+
+                        if (word != null)
+                            await AddRecord(DbManager, word);
+
+                        word = new ExtendedWord
                         {
-                            state = ParserState.Title;
-
-                            if (word != null)
-                                AddRecord(DbManager, word);
-
-                            word = new ExtendedWord
-                            {
-                                Chinese = RemoveTags(line)
-                            };
-                        }
-                        else
-                            state++;
-
-                        if (state == ParserState.Pinyin)
-                            word.Pinyin = RemoveTags(line);
-
-                        if (state == ParserState.Body)
-                        {
-                            word.RelativeWords = GetRelativeWords(line);
-                            word.Translations = RemoveTags(line).Split(";");
-                        }
+                            Chinese = RemoveTags(line)
+                        };
                     }
                     else
-                        state = ParserState.Space;
-                }
+                        state++;
 
-                AddRecord(DbManager, word);
+                    if (state == ParserState.Pinyin)
+                        word.Pinyin = RemoveTags(line);
+
+                    if (state == ParserState.Body)
+                    {
+                        word.RelativeWords = GetRelativeWords(line);
+                        word.Translations = RemoveTags(line).Split(";");
+                    }
+                }
+                else
+                    state = ParserState.Space;
             }
+
+            await AddRecord(DbManager, word);
         }
     }
 }

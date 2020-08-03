@@ -23,16 +23,16 @@ namespace ChineseDictionary.Services
     {
         private int index = 0;
 
-        private List<FlashcardWord> correct;
-        private List<FlashcardWord> wrong;
+        private Word[] questions;
+        private string[][] translations;
+
+        private List<Word> correct;
+        private List<Word> wrong;
         private List<string> answers;
 
         private TrainState state;
         private TrainType type = TrainType.Options;
 
-        private FlashcardWord word;
-
-        private List<string> optionTranslations;
         private int group;
         private int wordsCount;
 
@@ -44,99 +44,120 @@ namespace ChineseDictionary.Services
             this.navigation = navigation;
         }
 
-        public async Task BeginTrain(IFlashcardsDbService FlashcardsDb, int group, int wordsCount, TrainType type)
+        #region BeginTrains
+        private void BeginTrain(Word[] questions, int group, int wordsCount, TrainType type)
         {
-            if (state == TrainState.Begin)
-            {
-                index = 0;
-                correct = new List<FlashcardWord>();
-                wrong = new List<FlashcardWord>();
-                answers = new List<string>();
-                this.group = group;
-                this.wordsCount = wordsCount;
+            this.questions = questions;
+            this.group = group;
+            this.wordsCount = wordsCount;
+            this.type = type;
 
-                state = TrainState.Training;
-                word = await FlashcardsDb.GetRandomWordByGroup(group);
-                
-                this.type = type;
-                if (type == TrainType.Options)
-                    optionTranslations = await FlashcardsDb.GetRandomTranslations(word, 4);
-            }
+            index = 0;
+            correct = new List<Word>();
+            wrong = new List<Word>();
+            answers = new List<string>();
 
-            if (state == TrainState.Training && type == TrainType.Options)
-                navigation.NavigateTo("/flashcards/options"); // Maybe it's wrong way & redirect need to be moved to a razor file
-
-            if (state == TrainState.Training && type == TrainType.Review)
-                navigation.NavigateTo("/flashcards/review"); // Maybe it's wrong way & redirect need to be moved to a razor file
-
-            if (state == TrainState.End)
-                navigation.NavigateTo("/flashcards/results"); // Maybe it's wrong way & redirect need to be moved to a razor file
+            state = TrainState.Training;
         }
 
-        public async Task AnswerOptions(IFlashcardsDbService FlashcardsDb, string translate)
+        public void BeginTrainReview(Word[] questions, int group, int wordsCount)
         {
-            if (await FlashcardsDb.IsCorrectTranslation(word.Chinese, translate))
-                correct.Add(word);
-            else
-                wrong.Add(word);
+            BeginTrain(questions, group, wordsCount, TrainType.Review);
+        }
 
+        public void BeginTrainOptions(Word[] questions, string[][] translations, int group, int wordsCount)
+        {
+            this.translations = translations;
+            BeginTrain(questions, group, wordsCount, TrainType.Options);
+        }
+        #endregion
+
+        #region Answers
+        public void AnswerOptions(string translate)
+        {
             answers.Add(translate);
-
-            word = await FlashcardsDb.GetRandomWordByGroup(group);
-            optionTranslations = await FlashcardsDb.GetRandomTranslations(word, 4);
-
-            index++;
-
-            if (index >= wordsCount)
-                StopTrain(FlashcardsDb);
+            Answer(questions[index].Translations.Contains(translate));
         }
 
-        public async Task AnswerReview(IFlashcardsDbService FlashcardsDb, bool remember)
+        public void AnswerReview(bool remember)
         {
-            if (remember)
-                correct.Add(word);
+            Answer(remember);
+        }
+
+        private void Answer(bool isCorrect)
+        {
+            if (isCorrect)
+                correct.Add(questions[index]);
             else
-                wrong.Add(word);
-
-            word = await FlashcardsDb.GetRandomWordByGroup(group);
+                wrong.Add(questions[index]);
 
             index++;
+            Console.WriteLine("index: ", index);
 
             if (index >= wordsCount)
-                StopTrain(FlashcardsDb);
+                StopTrain();
         }
+        #endregion
 
-        public void StopTrain(IFlashcardsDbService FlashcardsDb)
+        public void StopTrain()
         {
-            if (state != TrainState.End)
-            {
-                FlashcardsDb.MoveFlashcards(correct, group + 1);
-                state = TrainState.End;
-                navigation.NavigateTo("/flashcards/results"); // Maybe it's wrong way & redirect need to be moved to a razor file
-            }
+            Console.WriteLine("Stop");
+            state = TrainState.End;
+            navigation.NavigateTo("/flashcards/results"); // Maybe it's wrong way & redirect need to be moved to a razor file
         }
 
         public void Restore()
         {
             state = TrainState.Begin;
-            navigation.NavigateTo("/flashcards"); // Maybe it's wrong way & redirect need to be moved to a razor file
         }
 
-        public FlashcardWord GetWord()
+        #region State & type predicates
+        // Maybe functions need to be replaced with properties
+        public bool IsStateBegin()
         {
-            return word;
+            return state == TrainState.Begin;
         }
 
-        public List<string> GetTranslations()
+        public bool IsStateTrainingOptions()
         {
-            return optionTranslations;
+            return state == TrainState.Training && type ==TrainType.Options;
         }
 
-        public List<FlashcardWord> GetCorrect()
+        public bool IsStateTrainingReview()
+        {
+            return state == TrainState.Training && type == TrainType.Review;
+        }
+
+        public bool IsStateEnd()
+        {
+            return state == TrainState.End;
+        }
+
+        #endregion
+
+        #region Getters
+
+        public Word GetWord()
+        {
+            if (index < questions.Length)
+                return questions[index];
+            else
+                return null;
+        }
+
+        public string[] GetTranslations()
+        {
+            if (index < translations.Length)
+                return translations[index];
+            else
+                return null;
+        }
+
+        public List<Word> GetCorrect()
         {
             return correct;
         }
-        public List<FlashcardWord> GetWrong()
+        public List<Word> GetWrong()
         {
             return wrong;
         }
@@ -144,5 +165,12 @@ namespace ChineseDictionary.Services
         {
             return answers;
         }
+
+        public int GetGroup()
+        {
+            return group;
+        }
+
+        #endregion
     }
 }
