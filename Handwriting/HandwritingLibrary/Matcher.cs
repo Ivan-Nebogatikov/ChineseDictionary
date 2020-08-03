@@ -10,6 +10,7 @@ using HandwritingLibrary;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace HandwritingLibrary
 {
@@ -180,7 +181,7 @@ namespace HandwritingLibrary
 
         private CharacterMatch matchOne(int inputStrokeCount, int inputSubStrokes, int subStrokesRange)
         {
-            double score = this.computeMatchScore(inputStrokeCount, inputSubStrokes, subStrokesRange);
+            double score = (double) this.computeMatchScore(inputStrokeCount, inputSubStrokes, subStrokesRange);
 
             if (inputStrokeCount == repochar[1].ToObject<int>() && inputStrokeCount < CharConstants.CORRECT_NUM_STROKES_CAP)
             {
@@ -195,8 +196,10 @@ namespace HandwritingLibrary
         }
 
 
-        //private double computeMatchScore(int strokeCount, int inputSubStrokes, int subStrokesRange)
-        //{
+        private object computeMatchScore(int strokeCount, int inputSubStrokes, int subStrokesRange)
+        {
+            return null;
+        }
         //    double[] inputDirections = cc.Directions;
         //    double[] inputLengths = cc.Lengths;
 
