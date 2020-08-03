@@ -21,10 +21,6 @@ namespace HandwritingLibrary
 
         public double[][] scoreMatrix;
 
-        public CharConstants compareTo;
-
-       
-
         public JArray jarrayObj = new JArray();
         public List<Object> values = new List<Object>();
 
@@ -44,8 +40,6 @@ namespace HandwritingLibrary
         public Matcher(int strokesCount, int subStrokesCount,  int limit)
         {
             
-            this.compareTo = new CharConstants();
-
             this.strokesCount = strokesCount;
             this.subStrokesCount = subStrokesCount;
             
@@ -196,6 +190,7 @@ namespace HandwritingLibrary
         }
 
 
+
         private object computeMatchScore(int strokeCount, int inputSubStrokes, int subStrokesRange)
         {
             return null;
@@ -246,24 +241,57 @@ namespace HandwritingLibrary
         //    return score;
         //}
 
+        //private double computeMatchScore(int strokeCount, int inputSubStrokes, int subStrokesRange)
+        //{
+        //    double[] inputDirections = cc.Directions;
+        //    double[] inputLengths = cc.Lengths;
+
+        //    double[] compareDirections = this.compareTo.Directions;
+        //    double[] compareLengths = this.compareTo.Lengths;
+
+        //    for (int x = 0; x < inputSubStrokes.length; x++)
+        //    {
+
+        //        double inputDirection = inputDirections[x];
+        //        double inputLength = inputLengths[x];
+
+        //        for (int y = 0; y < repochar[2].ToObject<int>(); y++)
+        //        {
+        //           double newScore = Double.NegativeInfinity;
+
+        //            if (Math.Abs(x - y) <= subStrokesRange)
+        //            {
+
+        //                double compareDirection = compareDirections[y];
+        //                double compareLength = compareLengths[y];
+        //                double skip1Score = scoreMatrix[x][y + 1] - (inputLength * SKIP_PENALTY_MULTIPLIER);
+        //                double skip2Score = scoreMatrix[x + 1][y] - (compareLength * SKIP_PENALTY_MULTIPLIER);
+        //                double skipScore = Math.Max(skip1Score, skip2Score);
+        //                double matchScore = this.computeSubStrokeScore(inputDirection, inputLength, compareDirection, compareLength);
+        //                double previousScore = this.scoreMatrix[x][y];
+        //                newScore = Math.Max(previousScore + matchScore, skipScore);
+        //            }
+
+        //            this.scoreMatrix[x + 1][y + 1] = newScore;
+        //        }
+        //    }
+
+
+        //    return this.scoreMatrix[inputSubStrokeCount][compareSubStrokeCount];
+        //}
+
+        //public double computeSubStrokeScore(double direction1, double length1, double direction2, double length2)
+        //{
+
+        //    double directionScore = this.getDirectionScore(direction1, direction2, length1);
+        //    double lengthScore = this.getLengthScore(length1, length2);
+        //    double score = lengthScore * directionScore;
+        //    return score;
+        //}
+
+
         static private double[] DIRECTION_SCORE_TABLE/* = initDirectionScoreTable()*/;
         static private double[] LENGTH_SCORE_TABLE /*initLengthScoreTable()*/;
-
-
-        //static private double[] initDirectionScoreTable()
-        //{
-
-        //    CubicCurve2D dirCurve = new CubicCurve2D(0, 1.0, 0.5, 1.0, 0.25, -2.0, 1.0, 1.0);
-        //    return initCubicCurveScoreTable(dirCurve, 256);
-        //}
-
-        //static private double[] initLengthScoreTable()
-        //{
-
-        //    CubicCurve2D lenCurve = new CubicCurve2D(0, 0, 0.25, 1.0, 0.75, 1.0, 1.0, 1.0);
-        //    return initCubicCurveScoreTable(lenCurve, 129);
-        //}
-
 
 
         static private double[] initCubicCurveScoreTable(CubicCurve2D curve, int numSamples)
