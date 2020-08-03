@@ -3,6 +3,7 @@
 @inject HttpClient Http
 @inject ChineseDictionary.Services.IDictionaryServiceAsync Dictionary
 <<<<<<< HEAD
+<<<<<<< HEAD
 @using System.IO
 ||||||| merged common ancestors
 ||||||||| 95dae23
@@ -11,6 +12,15 @@
 @inject ChineseDictionary.Services.IDictionaryService Dictionary
 @using System.IO
 >>>>>>>>> Temporary merge branch 2
+||||||| merged common ancestors
+||||||||| 95dae23
+@inject ChineseDictionary.Services.IDictionaryService Dictionary
+=========
+@inject ChineseDictionary.Services.IDictionaryService Dictionary
+@using System.IO
+>>>>>>>>> Temporary merge branch 2
+=======
+>>>>>>> 465e6a1e2e210096654c49ab5735d65bbf7eec7e
 
 =======
 
@@ -58,6 +68,7 @@ else
     {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         words = Dictionary.SearchByChinese("", 0, shownItems);
         var response = await Http.GetAsync("https://raw.githubusercontent.com/Oleg42-prog/Lanit-CD/master/short.txt");
         var code = response.StatusCode;
@@ -73,7 +84,12 @@ else
         words = await Dictionary.SearchByChineseAsync("", 0, shownItems);
 ||||||| merged common ancestors
 <<<<<<<<< Temporary merge branch 1
+||||||| merged common ancestors
+<<<<<<<<< Temporary merge branch 1
+=======
+>>>>>>> 465e6a1e2e210096654c49ab5735d65bbf7eec7e
         words = await Dictionary.SearchByChineseAsync("", 0, shownItems);
+<<<<<<< HEAD
 ||||||||| 95dae23
         words = Dictionary.SearchByChinese("", 0, shownItems);
 
@@ -118,6 +134,50 @@ else
 =======
         words = await Dictionary.SearchByChineseAsync("", 0, shownItems);
 >>>>>>> 53190ab6f9ab6731b1e2925086fb003c19094e29
+||||||| merged common ancestors
+||||||||| 95dae23
+        words = Dictionary.SearchByChinese("", 0, shownItems);
+
+        //Some code to show how to work with Indexed DB
+        //var z = (await DbManager.GetRecords<Word>("Dictionary")).ToList();
+        //if (!z.Any())
+        //{
+        //    for (int i = 0; i < 1600; ++i)
+        //    {
+        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = ChineseDictionary.Constants.DbConstants.StoreName, Data = new Word { Chinese = "你好", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
+        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = ChineseDictionary.Constants.DbConstants.StoreName, Data = new Word { Chinese = "你好吗", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
+        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = ChineseDictionary.Constants.DbConstants.StoreName, Data = new Word { Chinese = "你好妈妈", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
+        //    }
+        //}
+        //words = (await DbManager.GetAllRecordsByIndexContains<Word>(new StoreIndexQueryStringContains { Storename = ChineseDictionary.Constants.DbConstants.StoreName, IndexName = ChineseDictionary.Constants.DbConstants.Chinese, QueryValue = "你" })).Take(20).ToList();
+=========
+        words = Dictionary.SearchByChinese("", 0, shownItems);
+        var response = await Http.GetAsync("https://raw.githubusercontent.com/Oleg42-prog/Lanit-CD/master/short.txt");
+        var code = response.StatusCode;
+        using (StreamReader sr = new StreamReader(await response.Content.ReadAsStreamAsync(), System.Text.Encoding.Unicode))
+        {
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                Console.WriteLine(line);
+            }
+        }
+
+        //Some code to show how to work with Indexed DB
+        //var z = (await DbManager.GetRecords<Word>("Dictionary")).ToList();
+        //if (!z.Any())
+        //{
+        //    for (int i = 0; i < 1600; ++i)
+        //    {
+        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = ChineseDictionary.Constants.DbConstants.StoreName, Data = new Word { Chinese = "你好", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
+        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = ChineseDictionary.Constants.DbConstants.StoreName, Data = new Word { Chinese = "你好吗", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
+        //        await DbManager.AddRecord<Word>(new StoreRecord<Word> { Storename = ChineseDictionary.Constants.DbConstants.StoreName, Data = new Word { Chinese = "你好妈妈", Pinyin = "nǐ hǎo", Translations = new List<string> { "привет", "здравствуй" } } });
+        //    }
+        //}
+        //words = (await DbManager.GetAllRecordsByIndexContains<Word>(new StoreIndexQueryStringContains { Storename = ChineseDictionary.Constants.DbConstants.StoreName, IndexName = ChineseDictionary.Constants.DbConstants.Chinese, QueryValue = "你" })).Take(20).ToList();
+>>>>>>>>> Temporary merge branch 2
+=======
+>>>>>>> 465e6a1e2e210096654c49ab5735d65bbf7eec7e
     }
 
     private async Task HandleSearchSubmit()
