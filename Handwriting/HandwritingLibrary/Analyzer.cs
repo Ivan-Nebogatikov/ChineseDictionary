@@ -21,6 +21,8 @@ namespace HandwritingLibrary
         // Result of analysis
         public readonly List<SubStroke> AnalyzedStrokes = new List<SubStroke>();
 
+        
+
         /// <summary>
         /// Analyzes strokes (coordinates need to be in 256x256 system)
         /// </summary>
@@ -72,7 +74,7 @@ namespace HandwritingLibrary
 
         // Gets direction, in radians, from point a to b
         // 0 is to the right, PI / 2 is up, etc.
-        double Dir(Point a, Point b)
+        public double Dir(Point a, Point b)
         {
             double dx = a.X - b.X;
             double dy = a.Y - b.Y;

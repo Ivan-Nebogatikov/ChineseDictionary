@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HandwritingLibrary
 {
-    class CharConstants
+    public class CharConstants
     {
         // magic constants
         public const int MAX_CHARACTER_STROKE_COUNT = 48;

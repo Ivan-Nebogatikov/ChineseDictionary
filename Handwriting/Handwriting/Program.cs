@@ -8,7 +8,7 @@ namespace Handwriting
 {
     class Program
     {
-        
+
 
         static void Main(string[] args)
         {
@@ -19,13 +19,35 @@ namespace Handwriting
             var subStrokes = analyzer.AnalyzedStrokes;
             var strokesCount = strokes.Count;
             var subStrokesCount = subStrokes.Count;
+            int limit = 15;
+            var inputCharacter = fileData;
+
             Console.WriteLine(strokesCount);
             Console.WriteLine(subStrokesCount);
 
-            Matcher mt = new Matcher(strokesCount, subStrokesCount);
+            Matcher mt = new Matcher(strokesCount, subStrokesCount, limit);
+
             mt.DoMatching();
+            //mt.computeSubStrokeScore();
+            //List<Object> GetList()
+            //{
+            //int numOfHieroglyph = mt.jarrayObj.Count;
+            //for (int ix = 0; ix != numOfHieroglyph; ix++)
+            //{
+            //    var item = mt.jarrayObj[ix];
+            //    mt.values.Add(item);
+            //    continue;
+            //}
+            //foreach (Object x in mt.values)
+            //{
+            //    Console.WriteLine(x);
+            //}
 
-
+            MatchCollector mc = new MatchCollector(limit);
+            mc.getMatches();
+           
+            
         }
     }
 }
+    
