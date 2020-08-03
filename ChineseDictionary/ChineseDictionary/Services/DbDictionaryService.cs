@@ -18,7 +18,7 @@ namespace ChineseDictionary.Services
         private HttpClient Http;
         private IndexedDBManager DbManager;
 
-        private async void Load()
+        private async Task Load()
         {
             if (!(await DbManager.GetRecords<Word>(DbConstants.StoreName)).Any())
             {
@@ -37,10 +37,10 @@ namespace ChineseDictionary.Services
         {
             this.Http = Http;
             this.DbManager = DbManager;
-            Load();
+            Load(); // ToDo: Rewrite
         }
 
-        private async Task<IEnumerable<ExtendedWord>> SearchByAsync(string indexName, string queryValue, int skip = 0, int take = int.MaxValue)
+        private async Task<IEnumerable<Word>> SearchByAsync(string indexName, string queryValue, int skip = 0, int take = int.MaxValue)
         {
             var query = new StoreIndexQueryStringContains
             {
@@ -49,17 +49,31 @@ namespace ChineseDictionary.Services
                 QueryValue = queryValue
             };
 
-            return (await DbManager.GetAllRecordsByIndexContains<ExtendedWord>(query)).Skip(skip).Take(take).ToList();
+            return (await DbManager.GetAllRecordsByIndexContains<Word>(query)).Skip(skip).Take(take).ToList();
         }
 
-        public async Task<IEnumerable<ExtendedWord>> SearchByChineseAsync(string chinese, int skip = 0, int take = int.MaxValue)
+        public async Task<IEnumerable<Word>> SearchByChineseAsync(string chinese, int skip = 0, int take = int.MaxValue)
         {
             return await SearchByAsync(DbConstants.Chinese, chinese, skip, take);
         }
 
-        public async Task<IEnumerable<ExtendedWord>> SearchByTranslationAsync(string translation, int skip = 0, int take = int.MaxValue)
+        public async Task<IEnumerable<Word>> SearchByTranslationAsync(string translation, int skip = 0, int take = int.MaxValue)
         {
             return await SearchByAsync(DbConstants.Translations, translation, skip, take);
+        }
+
+        public async Task<Word> GetByChinese(string chinese)
+        {
+            var query = new StoreIndexQuery<string>
+            {
+                Storename = DbConstants.StoreName,
+                IndexName = DbConstants.Chinese,
+                QueryValue = chinese
+            };
+
+            var result = await DbManager.GetRecordByIndex<string, Word>(query);
+
+            return result;
         }
     }
 }

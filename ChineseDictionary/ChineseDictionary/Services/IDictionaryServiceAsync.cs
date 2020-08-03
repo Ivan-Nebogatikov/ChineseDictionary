@@ -8,8 +8,8 @@ namespace ChineseDictionary.Services
 {
     public interface IDictionaryServiceAsync
     {
-        Task<IEnumerable<ExtendedWord>> SearchByChineseAsync(string chinese, int skip = 0, int take = int.MaxValue);
-        Task<IEnumerable<ExtendedWord>> SearchByTranslationAsync(string translation, int skip = 0, int take = int.MaxValue);
-
+        Task<IEnumerable<Word>> SearchByChineseAsync(string chinese, int skip = 0, int take = int.MaxValue);
+        Task<IEnumerable<Word>> SearchByTranslationAsync(string translation, int skip = 0, int take = int.MaxValue);
+        public Task<Word> GetByChinese(string chinese);
     }
 }
