@@ -40,9 +40,9 @@ namespace ChineseDictionary.Services
             return relativeWords;
         }
 
-        private static async Task AddRecord(IndexedDBManager DbManager, ExtendedWord word)
+        private static async Task AddRecord(IndexedDBManager DbManager, Word word)
         {
-            await DbManager.AddRecord(new StoreRecord<ExtendedWord>
+            await DbManager.AddRecord(new StoreRecord<Word>
             {
                 Storename = DbConstants.StoreName,
                 Data = word
@@ -60,7 +60,7 @@ namespace ChineseDictionary.Services
             using StreamReader sr = new StreamReader(stream, System.Text.Encoding.Unicode);
             string line;
             ParserState state = ParserState.Space;
-            ExtendedWord word = null;
+            Word word = null;
 
             while ((line = sr.ReadLine()) != null)
             {
@@ -73,7 +73,7 @@ namespace ChineseDictionary.Services
                         if (word != null)
                             await AddRecord(DbManager, word);
 
-                        word = new ExtendedWord
+                        word = new Word
                         {
                             Chinese = RemoveTags(line)
                         };

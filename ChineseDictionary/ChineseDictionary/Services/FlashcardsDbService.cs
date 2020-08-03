@@ -95,14 +95,7 @@ namespace ChineseDictionary.Services
                 randomTranslations.Add(translation);
             }
 
-            var query = new StoreIndexQuery<string>
-            {
-                Storename = DbConstants.StoreName,
-                IndexName = DbConstants.Chinese,
-                QueryValue = questionWord.Chinese
-            };
-
-            string[] rightTranslations = (await DbManager.GetRecordByIndex<string, ExtendedWord>(query)).Translations.ToArray<string>();
+            string[] rightTranslations = questionWord.Translations.ToArray();
             string rightTranslation = rightTranslations[rand.Next(rightTranslations.Length)];
             randomTranslations.Insert(rand.Next(randomTranslations.Count), rightTranslation);
 
