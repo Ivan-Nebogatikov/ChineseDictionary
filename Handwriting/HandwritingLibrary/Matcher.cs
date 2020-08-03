@@ -232,64 +232,6 @@ namespace HandwritingLibrary
         //    return this.scoreMatrix[inputSubStrokeCount][compareSubStrokeCount];
         //}
 
-        //public double computeSubStrokeScore(double direction1, double length1, double direction2, double length2)
-        //{
-
-        //    double directionScore = this.getDirectionScore(direction1, direction2, length1);
-        //    double lengthScore = this.getLengthScore(length1, length2);
-        //    double score = lengthScore * directionScore;
-        //    return score;
-        //}
-
-        //private double computeMatchScore(int strokeCount, int inputSubStrokes, int subStrokesRange)
-        //{
-        //    double[] inputDirections = cc.Directions;
-        //    double[] inputLengths = cc.Lengths;
-
-        //    double[] compareDirections = this.compareTo.Directions;
-        //    double[] compareLengths = this.compareTo.Lengths;
-
-        //    for (int x = 0; x < inputSubStrokes.length; x++)
-        //    {
-
-        //        double inputDirection = inputDirections[x];
-        //        double inputLength = inputLengths[x];
-
-        //        for (int y = 0; y < repochar[2].ToObject<int>(); y++)
-        //        {
-        //           double newScore = Double.NegativeInfinity;
-
-        //            if (Math.Abs(x - y) <= subStrokesRange)
-        //            {
-
-        //                double compareDirection = compareDirections[y];
-        //                double compareLength = compareLengths[y];
-        //                double skip1Score = scoreMatrix[x][y + 1] - (inputLength * SKIP_PENALTY_MULTIPLIER);
-        //                double skip2Score = scoreMatrix[x + 1][y] - (compareLength * SKIP_PENALTY_MULTIPLIER);
-        //                double skipScore = Math.Max(skip1Score, skip2Score);
-        //                double matchScore = this.computeSubStrokeScore(inputDirection, inputLength, compareDirection, compareLength);
-        //                double previousScore = this.scoreMatrix[x][y];
-        //                newScore = Math.Max(previousScore + matchScore, skipScore);
-        //            }
-
-        //            this.scoreMatrix[x + 1][y + 1] = newScore;
-        //        }
-        //    }
-
-
-        //    return this.scoreMatrix[inputSubStrokeCount][compareSubStrokeCount];
-        //}
-
-        //public double computeSubStrokeScore(double direction1, double length1, double direction2, double length2)
-        //{
-
-        //    double directionScore = this.getDirectionScore(direction1, direction2, length1);
-        //    double lengthScore = this.getLengthScore(length1, length2);
-        //    double score = lengthScore * directionScore;
-        //    return score;
-        //}
-
-
         static private double[] DIRECTION_SCORE_TABLE/* = initDirectionScoreTable()*/;
         static private double[] LENGTH_SCORE_TABLE /*initLengthScoreTable()*/;
 
