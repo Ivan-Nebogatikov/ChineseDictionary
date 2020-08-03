@@ -26,11 +26,6 @@ namespace ChineseDictionary.Services
                 var code = response.StatusCode; // ToDo: condition & error
                 await DslParser.DBParseAsync(DbManager, await response.Content.ReadAsStreamAsync());
             }
-            else
-            {
-                //DbManager.DeleteDb(DbConstants.StoreName);
-                //DbManager.DeleteDb(DbConstants.FlashcardsStoreName);
-            }
         }
 
         public DbDictionaryService(HttpClient Http, IndexedDBManager DbManager)
