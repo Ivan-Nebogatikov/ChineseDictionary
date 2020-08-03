@@ -53,7 +53,7 @@
 
         if (input.Type == "Options")
         {
-            string[][] tranlationMatrix = await FlashcardsDb.GetRandomTranslationMatrix(questions, InfrastructureConstants.FlashcardsOptionsCount);
+            string[][] tranlationMatrix = await FlashcardsDb.GetRandomTranslationMatrix(questions, ConfigConstants.FlashcardsOptionsCount);
             FlashcardsStatus.BeginTrainOptions(questions, tranlationMatrix, input.Group, input.WordsCount);
             navigation.NavigateTo("/flashcards/options");
         }
