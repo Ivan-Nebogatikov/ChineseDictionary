@@ -20,10 +20,6 @@ namespace HandwritingLibrary
 
         public double[][] scoreMatrix;
 
-        public CharConstants compareTo;
-
-       
-
         public JArray jarrayObj = new JArray();
         public List<Object> values = new List<Object>();
 
@@ -43,8 +39,6 @@ namespace HandwritingLibrary
         public Matcher(int strokesCount, int subStrokesCount,  int limit)
         {
             
-            this.compareTo = new CharConstants();
-
             this.strokesCount = strokesCount;
             this.subStrokesCount = subStrokesCount;
             
