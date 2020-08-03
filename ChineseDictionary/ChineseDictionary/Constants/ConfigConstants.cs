@@ -1,6 +1,6 @@
 ﻿namespace ChineseDictionary.Constants
 {
-    public class InfrastructureConstants
+    public class ConfigConstants
     {
         public const int FlashcardsOptionsCount = 4;
     }
