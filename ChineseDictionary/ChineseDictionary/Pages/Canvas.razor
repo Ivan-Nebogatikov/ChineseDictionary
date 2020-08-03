@@ -1,7 +1,6 @@
 ﻿@page "/canvas"
 @inject IJSRuntime JsRuntime
 
-
 <canvas  height="@windowSize.Height"
         width="@windowSize.Width"
         style="border: 2px solid "
@@ -15,22 +14,22 @@
         @ontouchend="@StopPaint" />
 
 @code {
-    List<Stroke> stroke = new List<Stroke>();
-    WindowSize windowSize = new WindowSize();
-    ElementReference canvas;
-    Canvas2DContext ctx;
-    bool isPainting = false;
-    double x;
-    double y;
+        List<Stroke> strokes = new List<Stroke>();
+        WindowSize windowSize = new WindowSize();
+        ElementReference canvas;
+        Canvas2DContext ctx;
+        bool isPainting = false;
+        double x;
+        double y;
 
     protected override async Task OnInitializedAsync()
     {
         windowSize = await JsRuntime.InvokeAsync<WindowSize>("getWindowSize");
-        int SIZe = 500;
+        int SIZE = 500;
         if (windowSize.Width > 500)
         {
-            windowSize.Height = SIZe;
-            windowSize.Width = SIZe;
+            windowSize.Height = SIZE;
+            windowSize.Width = SIZE;
         }
         else
         {
@@ -64,10 +63,10 @@
             {
                 ctx = new Canvas2DContext(JsRuntime, canvas);
             }
-            await ctx.DrawLine(x, y, eX, eY);   
+            await ctx.DrawLine(x, y, eX, eY);
             x = eX;
-            y = eY;
-            stroke.Add(new Stroke());
+            y = eY;            
+                strokes.Last().Points.Add(new Point { X = x, Y = y });            
         }
     }
 
@@ -80,7 +79,7 @@
             ctx = new Canvas2DContext(JsRuntime, canvas);
         }
         isPainting = true;
-        stroke.Add(new Stroke());
+        strokes.Add(new Stroke());
     }
 
     private async Task PaintTouch(TouchEventArgs e)
@@ -91,6 +90,5 @@
     private void StopPaint()
     {
         isPainting = false;
-        stroke.Add(new Stroke());
     }
 }

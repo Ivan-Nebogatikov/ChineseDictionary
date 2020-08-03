@@ -18,7 +18,7 @@ namespace HandwritingLibrary
         public double CenterY;
     }
 
-    public class Stroke // создание одной черты
+    public class Stroke 
     {
         public List<Point> Points = new List<Point>();
     }
