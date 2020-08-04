@@ -6,20 +6,17 @@ namespace HandwritingLibrary
 {
     public class subStroke
     {
+        public readonly double direction;
+        public readonly double length;
+        public readonly double centerX;
+        public readonly double centerY;
+
         public subStroke(double direction, double length, double centerX, double centerY)
         {
-            Direction = direction;
-            Length = length;
-            CenterX = centerX;
-            CenterY = centerY;
-
-
+            this.direction = direction;
+            this.length = length;
+            this.centerX = centerX;
+            this.centerY = centerY;
         }
-
-        public readonly double Direction;
-        public readonly double Length;
-        public readonly double CenterX;
-        public readonly double CenterY;
-
     }
 }

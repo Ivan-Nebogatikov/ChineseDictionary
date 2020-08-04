@@ -18,34 +18,31 @@ namespace HandwritingLibrary
     {
         public int strokesCount;
         public int subStrokesCount;
-
         public double[][] scoreMatrix;
 
         public JArray jarrayObj = new JArray();
         public List<Object> values = new List<Object>();
-
-        private double[][] res;
+        public List<SubStroke> inputSubStrokes = new List<SubStroke>();
 
         private static double looseness = CharConstants.DEFAULT_LOOSENESS;
 
         private MatchCollector matchCollector;
 
-        public JArray repochar;
-
+        
+        public JToken sbin;
 
         private bool running;
 
-        CharConstants cc = new CharConstants();
+        public CharConstants cc = new CharConstants();
 
-        public Matcher(int strokesCount, int subStrokesCount,  int limit)
+        public Matcher(int strokesCount, int subStrokesCount,  List<SubStroke> inputSubStrokes, int limit)
         {
-            
             this.strokesCount = strokesCount;
             this.subStrokesCount = subStrokesCount;
-            
+            this.inputSubStrokes = inputSubStrokes;
             this.matchCollector = new MatchCollector(limit);
             this.buildScoreMatrix();
-
+            
         }
 
 
@@ -53,7 +50,6 @@ namespace HandwritingLibrary
         {
             int strokeCount = strokesCount;
             int subStrokeCount = subStrokesCount;
-
 
             int strokeRange = getStrokesRange(strokeCount);
             int minimumStrokes = Math.Max(strokeCount - strokeRange, 1);
@@ -63,17 +59,13 @@ namespace HandwritingLibrary
             var minSubStrokes = Math.Max(subStrokeCount - subStrokesRange, 1);
             var maxSubStrokes = Math.Min(subStrokeCount + subStrokesRange, CharConstants.MAX_CHARACTER_SUB_STROKE_COUNT);
 
-
-            
             using (StreamReader reader = File.OpenText("orig.json"))
             {
-
                 JObject chars = (JObject)JToken.ReadFrom(new JsonTextReader(reader));
                 chars["substrokes"] = CompactDecoder.Decode(chars["substrokes"].ToString());
+                sbin = chars["substrokes"];
                 var symbols = chars["chars"] as JArray;
                 
-
-
                 for (int i = 0; i <= symbols.Count - 1; i++)
                 {
                     var repoChar = symbols[i];
@@ -87,9 +79,8 @@ namespace HandwritingLibrary
                         if ((cmpSubStrokes >= minSubStrokes) && (cmpSubStrokes <= maxSubStrokes))
                         {
                             jarrayObj.Add(symbols[i]);
-                            CharacterMatch match = this.matchOne(strokeCount, subStrokeCount, subStrokesRange);
+                            CharacterMatch match = this.matchOne(strokeCount, inputSubStrokes, subStrokesRange, repoChar);
                             this.matchCollector.AddMatch(match);
-
                         }
 
                     }
@@ -98,6 +89,7 @@ namespace HandwritingLibrary
 
             }
             //Console.WriteLine(jarrayObj);
+            
 
         }
 
@@ -114,8 +106,7 @@ namespace HandwritingLibrary
             {
                 return CharConstants.MAX_CHARACTER_STROKE_COUNT;
             }
-
-
+            
             double ctrl1X = 0.35;
             double ctrl1Y = strokeCount * 0.4;
 
@@ -157,84 +148,99 @@ namespace HandwritingLibrary
             double AVG_SUBSTROKE_LENGTH = 0.33;
             double SKIP_PENALTY_MULTIPLIER = 1.75;
 
-
             int dim = CharConstants.MAX_CHARACTER_SUB_STROKE_COUNT + 1;
-            scoreMatrix = new double[dim][];
+            this.scoreMatrix = new double[dim][];
             for (int i = 0; i != scoreMatrix.Length; ++i)
                 scoreMatrix[i] = new double[dim];
             for (int i = 0; i < dim; i++)
             {
-
                 double penalty = -AVG_SUBSTROKE_LENGTH * SKIP_PENALTY_MULTIPLIER * i;
-                this.scoreMatrix[i][0] = penalty;
-                this.scoreMatrix[0][i] = penalty;
+                scoreMatrix[i][0] = penalty;
+                scoreMatrix[0][i] = penalty;
             }
+
         }
 
 
-
-        private CharacterMatch matchOne(int inputStrokeCount, int inputSubStrokes, int subStrokesRange)
+        double AVG_SUBSTROKE_LENGTH = 0.33;
+        double SKIP_PENALTY_MULTIPLIER = 1.75;
+        
+        private CharacterMatch matchOne(int inputStrokeCount, List<SubStroke> inputSubStrokes, int subStrokesRange, JToken repoChar)
         {
-            double score = (double) this.computeMatchScore(inputStrokeCount, inputSubStrokes, subStrokesRange);
+            double score = (double) this.computeMatchScore(inputStrokeCount, inputSubStrokes, subStrokesRange, repoChar);
 
-            if (inputStrokeCount == repochar[1].ToObject<int>() && inputStrokeCount < CharConstants.CORRECT_NUM_STROKES_CAP)
+            if (inputStrokeCount == repoChar[1].ToObject<int>() && inputStrokeCount < CharConstants.CORRECT_NUM_STROKES_CAP)
             {
-                // The bonus declines linearly as the number of strokes increases, writing 2 instead of 3 strokes is worse than 9 for 10.
+                
                 double bonus = CharConstants.CORRECT_NUM_STROKES_BONUS * ((double)(Math.Max(CharConstants.CORRECT_NUM_STROKES_CAP - inputStrokeCount, 0) / CharConstants.CORRECT_NUM_STROKES_CAP));
                 score += bonus * score;
             }
-
-            return new CharacterMatch(repochar[0].ToObject<char>(), score);
-
-
+            return new CharacterMatch(repoChar[0].ToObject<char>(), score);
         }
 
 
 
-        private object computeMatchScore(int strokeCount, int inputSubStrokes, int subStrokesRange)
+        private object computeMatchScore(int strokeCount, List<SubStroke> inputSubStrokes, int subStrokesRange, JToken repoChar)
         {
-            return null;
+            //    return null;
+            //}
+            int[] inputDirections = cc.Directions;
+            double[] inputLengths = cc.Lengths;
+           
+
+            for (int x = 0; x < (inputSubStrokes.Count); x++)
+            {
+                int inputDirection = inputDirections[x];
+                double inputLength = inputLengths[x];
+                
+
+                for (int y = 0; y < repoChar[2].ToObject<int>(); y++)
+                {
+                    double newScore = Double.NegativeInfinity;
+
+                    if (Math.Abs(x - y) <= subStrokesRange)
+                    {
+                        var compareDirection = sbin[repoChar[3].ToObject<int>() + y * 3];
+                        var compareLength = sbin[repoChar[3].ToObject<int>() + y * 3 + 1];
+                        
+                        double skip1Score = scoreMatrix[x][y + 1] - (inputLength / 256 * SKIP_PENALTY_MULTIPLIER);
+                        double skip2Score = scoreMatrix[x + 1][y] - ((double)compareLength * SKIP_PENALTY_MULTIPLIER);
+                        double skipScore = Math.Max(skip1Score, skip2Score);
+                        double matchScore = this.computeSubStrokeScore(inputDirection, inputLength, compareDirection.ToObject<int>(), compareLength.ToObject<double>());
+                        double previousScore = this.scoreMatrix[x][y];
+                        newScore = Math.Max(previousScore + matchScore, skipScore);
+                    }
+                    this.scoreMatrix[x + 1][y + 1] = newScore;
+                }
+            }
+            return this.scoreMatrix[inputSubStrokes.Count][repoChar[2].ToObject<int>()];
         }
-        //    double[] inputDirections = cc.Directions;
-        //    double[] inputLengths = cc.Lengths;
 
-        //    double[] compareDirections = this.compareTo.Directions;
-        //    double[] compareLengths = this.compareTo.Lengths;
+        private double computeSubStrokeScore(int inputDir, double inputLen, int repoDir, double repoLen)
+        {
+            double directionScore = getDirectionScore(inputDir, repoDir, inputLen);
+            double lengthScore = getLengthScore(inputLen, repoLen);
+            
+            double score = lengthScore * directionScore;
 
-        //    for (int x = 0; x < inputSubStrokes.length; x++)
-        //    {
+            return score;
+        }
 
-        //        double inputDirection = inputDirections[x];
-        //        double inputLength = inputLengths[x];
+        static private double[] DIRECTION_SCORE_TABLE = initDirectionScoreTable();
+        static private double[] LENGTH_SCORE_TABLE = initLengthScoreTable();
 
-        //        for (int y = 0; y < repochar[2].ToObject<int>(); y++)
-        //        {
-        //           double newScore = Double.NegativeInfinity;
+        static private double[] initDirectionScoreTable()
+        {
+            CubicCurve2D curve = new CubicCurve2D(0, 1.0, 0.5, 1.0, 0.25, -2.0, 1.0, 1.0);
+            return initCubicCurveScoreTable(curve, 256);
+        }
 
-        //            if (Math.Abs(x - y) <= subStrokesRange)
-        //            {
-
-        //                double compareDirection = compareDirections[y];
-        //                double compareLength = compareLengths[y];
-        //                double skip1Score = scoreMatrix[x][y + 1] - (inputLength * SKIP_PENALTY_MULTIPLIER);
-        //                double skip2Score = scoreMatrix[x + 1][y] - (compareLength * SKIP_PENALTY_MULTIPLIER);
-        //                double skipScore = Math.Max(skip1Score, skip2Score);
-        //                double matchScore = this.computeSubStrokeScore(inputDirection, inputLength, compareDirection, compareLength);
-        //                double previousScore = this.scoreMatrix[x][y];
-        //                newScore = Math.Max(previousScore + matchScore, skipScore);
-        //            }
-
-        //            this.scoreMatrix[x + 1][y + 1] = newScore;
-        //        }
-        //    }
-
-
-        //    return this.scoreMatrix[inputSubStrokeCount][compareSubStrokeCount];
-        //}
-
-        static private double[] DIRECTION_SCORE_TABLE/* = initDirectionScoreTable()*/;
-        static private double[] LENGTH_SCORE_TABLE /*initLengthScoreTable()*/;
-
+        
+        static private double[] initLengthScoreTable()
+        {
+            CubicCurve2D curve = new CubicCurve2D(0, 0, 0.25, 1.0, 0.75, 1.0, 1.0, 1.0);
+            return initCubicCurveScoreTable(curve, 129);
+        }
 
         static private double[] initCubicCurveScoreTable(CubicCurve2D curve, int numSamples)
         {
@@ -244,34 +250,30 @@ namespace HandwritingLibrary
             double range = x2 - x1;
 
             double x = x1;
-            double xInc = range / numSamples;
+            double xInc = range / numSamples;  
             double[] scoreTable = new double[numSamples];
-            
+            double[] solutions = new double[1];
 
             for (int i = 0; i < numSamples; i++)
             {
                 double t = curve.GetFirstSolutionForX(Math.Min(x, x2));
                 scoreTable[i] = curve.GetYOnCurve(t);
-
                 x += xInc;
             }
-
             return scoreTable;
         }
 
-        private double getDirectionScore(double direction1, double direction2, double inputLength)
+        private double getDirectionScore(int direction1, int direction2, double inputLength)
         {
-           
-            double theta = Math.Abs(direction1 - direction2);
-            double directionScore = DIRECTION_SCORE_TABLE[(int)theta];
-           
+            int theta = Math.Abs(direction1 - direction2);
+            double directionScore = DIRECTION_SCORE_TABLE[theta];
+
             if (inputLength < 64)
             {
                 double shortLengthBonusMax = Math.Min(1.0, 1.0 - directionScore);
                 double shortLengthBonus = shortLengthBonusMax * (1 - (inputLength / 64));
                 directionScore += shortLengthBonus;
             }
-            
             return directionScore;
         }
 
@@ -289,11 +291,7 @@ namespace HandwritingLibrary
                 result = (((int)length1) << 7) / length2;
                 ratio = (int)Math.Round(result);
             }
-
-
-            double lengthScore = LENGTH_SCORE_TABLE[ratio];
-
-            return lengthScore;
+            return LENGTH_SCORE_TABLE[ratio];
         }
 
         public void Stop()

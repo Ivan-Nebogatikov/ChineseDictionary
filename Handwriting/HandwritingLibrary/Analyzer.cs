@@ -199,6 +199,7 @@ namespace HandwritingLibrary
                 var subStrokes = BuildSubStrokes(rawStrokes[i].Points, pivotIndexes);
                 // Append
                 AnalyzedStrokes.AddRange(subStrokes);
+                Console.WriteLine(AnalyzedStrokes);
             }
         }
 
