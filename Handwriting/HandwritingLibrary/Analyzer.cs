@@ -172,8 +172,13 @@ namespace HandwritingLibrary
             {
                 var ix = pivotIndexes[i];
                 if (ix == prevIx) continue;
-                var direction = Dir(points[prevIx], points[ix]);
-                var normLength = NormDist(points[prevIx], points[ix]);
+                int direction = (int)(Dir(points[prevIx], points[ix]));
+                direction = (int)(Math.Round(direction * 256.0 / Math.PI / 2.0));
+                if (direction == 256)
+                {
+                    direction = 0;
+                }
+                double normLength = NormDist(points[prevIx], points[ix]);
                 Point ptCenter = new Point
                 {
                     X = (points[prevIx].X + points[ix].X) / 2,
@@ -199,7 +204,7 @@ namespace HandwritingLibrary
                 var subStrokes = BuildSubStrokes(rawStrokes[i].Points, pivotIndexes);
                 // Append
                 AnalyzedStrokes.AddRange(subStrokes);
-                Console.WriteLine(AnalyzedStrokes);
+                //Console.WriteLine(AnalyzedStrokes);
             }
         }
 

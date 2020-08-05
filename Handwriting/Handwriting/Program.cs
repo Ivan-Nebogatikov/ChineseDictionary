@@ -21,19 +21,19 @@ namespace Handwriting
             var subStrokesCount = subStrokes.Count;
             int limit = 7;
             List<SubStroke> currentSubStrokes = new List<SubStroke>();
-            currentSubStrokes.AddRange(subStrokes);
+            //currentSubStrokes = analyzer.res 
 
             Console.WriteLine(strokesCount);
             Console.WriteLine(subStrokesCount);
 
 
 
-            //foreach (SubStroke curSubStr in subStrokes)
+            //foreach (Stroke curSubStr in strokes)
             //{
-            //    Console.WriteLine(curSubStr);
+            //    Console.WriteLine(curSubStr.ToString());
             //}
 
-            Matcher mt = new Matcher(strokesCount, subStrokesCount, currentSubStrokes, limit);
+            Matcher mt = new Matcher(strokesCount, subStrokesCount, subStrokes, limit);
 
             mt.DoMatching();
 

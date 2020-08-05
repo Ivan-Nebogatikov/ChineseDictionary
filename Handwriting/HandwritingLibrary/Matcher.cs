@@ -28,7 +28,9 @@ namespace HandwritingLibrary
 
         private MatchCollector matchCollector;
 
-        
+        public List<SubStroke> SubStrokes;
+
+
         public JToken sbin;
 
         private bool running;
@@ -50,6 +52,7 @@ namespace HandwritingLibrary
         {
             int strokeCount = strokesCount;
             int subStrokeCount = subStrokesCount;
+            List<SubStroke> inputSubStrokes = this.inputSubStrokes;
 
             int strokeRange = getStrokesRange(strokeCount);
             int minimumStrokes = Math.Max(strokeCount - strokeRange, 1);
@@ -72,6 +75,18 @@ namespace HandwritingLibrary
                     //char inputCharacter = repoChar[0].ToObject<char>();
                     int cmpStrokeCount = repoChar[1].ToObject<int>();
                     int cmpSubStrokes = repoChar[2].ToObject<int>();
+                    //SubStrokes = new List<SubStroke>();
+                    //JArray jsonSubStrokes = repoChar[2];
+                    //foreach (var x in jsonSubStrokes)
+                    //{
+                    //    JArray jsonSS = x as JArray;
+                    //    SubStroke ss = new SubStroke
+                    //    {
+                    //        Dir = jsonSS[0].ToObject<double>(),
+                    //        Len = jsonSS[1].ToObject<double>(),
+                    //    };
+                    //    SubStrokes.Add(ss);
+                    //}
                     if (cmpStrokeCount < minimumStrokes || cmpStrokeCount > maximumStrokes) continue;
                     if (cmpSubStrokes < minSubStrokes || cmpSubStrokes > maxSubStrokes) continue;
                     if ((cmpStrokeCount >= minimumStrokes) && (cmpStrokeCount <= maximumStrokes))
@@ -182,16 +197,13 @@ namespace HandwritingLibrary
 
         private object computeMatchScore(int strokeCount, List<SubStroke> inputSubStrokes, int subStrokesRange, JToken repoChar)
         {
+
             //    return null;
             //}
-            int[] inputDirections = cc.Directions;
-            double[] inputLengths = cc.Lengths;
-           
-
-            for (int x = 0; x < (inputSubStrokes.Count); x++)
+           for (int x = 0; x < (inputSubStrokes.Count); x++)
             {
-                int inputDirection = inputDirections[x];
-                double inputLength = inputLengths[x];
+                int inputDirection = inputSubStrokes[x].Dir;
+                double inputLength = inputSubStrokes[x].Len;
                 
 
                 for (int y = 0; y < repoChar[2].ToObject<int>(); y++)
@@ -201,12 +213,12 @@ namespace HandwritingLibrary
                     if (Math.Abs(x - y) <= subStrokesRange)
                     {
                         var compareDirection = sbin[repoChar[3].ToObject<int>() + y * 3];
-                        var compareLength = sbin[repoChar[3].ToObject<int>() + y * 3 + 1];
+                        var compareLength = (sbin[repoChar[3].ToObject<double>() + y * 3 + 1]);
                         
                         double skip1Score = scoreMatrix[x][y + 1] - (inputLength / 256 * SKIP_PENALTY_MULTIPLIER);
                         double skip2Score = scoreMatrix[x + 1][y] - ((double)compareLength * SKIP_PENALTY_MULTIPLIER);
                         double skipScore = Math.Max(skip1Score, skip2Score);
-                        double matchScore = this.computeSubStrokeScore(inputDirection, inputLength, compareDirection.ToObject<int>(), compareLength.ToObject<double>());
+                        double matchScore = computeSubStrokeScore(inputDirection, inputLength, compareDirection.ToObject<int>(), compareLength.ToObject<double>());
                         double previousScore = this.scoreMatrix[x][y];
                         newScore = Math.Max(previousScore + matchScore, skipScore);
                     }
@@ -216,7 +228,7 @@ namespace HandwritingLibrary
             return this.scoreMatrix[inputSubStrokes.Count][repoChar[2].ToObject<int>()];
         }
 
-        private double computeSubStrokeScore(int inputDir, double inputLen, int repoDir, double repoLen)
+        private double computeSubStrokeScore(double inputDir, double inputLen, double repoDir, double repoLen)
         {
             double directionScore = getDirectionScore(inputDir, repoDir, inputLen);
             double lengthScore = getLengthScore(inputLen, repoLen);
@@ -263,10 +275,10 @@ namespace HandwritingLibrary
             return scoreTable;
         }
 
-        private double getDirectionScore(int direction1, int direction2, double inputLength)
+        private double getDirectionScore(double direction1, double direction2, double inputLength)
         {
-            int theta = Math.Abs(direction1 - direction2);
-            double directionScore = DIRECTION_SCORE_TABLE[theta];
+            double theta = Math.Abs(direction1 - direction2);
+            double directionScore = DIRECTION_SCORE_TABLE[(int)theta];
 
             if (inputLength < 64)
             {
