@@ -31,16 +31,16 @@ else
     protected override void OnInitialized()
     {
         if (FlashcardsStatus.IsStateBegin())
-            navigation.NavigateTo("/flashcards");
+            navigation.NavigateTo("flashcards");
 
         if (FlashcardsStatus.IsStateTrainingOptions())
-            navigation.NavigateTo("/flashcards/options");
+            navigation.NavigateTo("flashcards/options");
 
         if (FlashcardsStatus.IsStateTrainingReview())
             word = FlashcardsStatus.GetWord();
 
         if (FlashcardsStatus.IsStateEnd())
-            navigation.NavigateTo("/flashcards/results");
+            navigation.NavigateTo("flashcards/results");
     }
 
     private void HandleRemember()

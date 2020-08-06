@@ -46,7 +46,7 @@ else
     protected override void OnInitialized()
     {
         if (FlashcardsStatus.IsStateBegin())
-            navigation.NavigateTo("/flashcards");
+            navigation.NavigateTo("flashcards");
 
         if (FlashcardsStatus.IsStateTrainingOptions())
         {
@@ -55,10 +55,10 @@ else
         }
 
         if (FlashcardsStatus.IsStateTrainingReview())
-            navigation.NavigateTo("/flashcards/review");
+            navigation.NavigateTo("flashcards/review");
 
         if (FlashcardsStatus.IsStateEnd())
-            navigation.NavigateTo("/flashcards/results");
+            navigation.NavigateTo("flashcards/results");
     }
 
     private void HandleCheckSubmit()

@@ -103,7 +103,7 @@ namespace ChineseDictionary.Services
         {
             Console.WriteLine("Stop");
             state = TrainState.End;
-            navigation.NavigateTo("/flashcards/results"); // Maybe it's wrong way & redirect need to be moved to a razor file
+            navigation.NavigateTo("flashcards/results"); // Maybe it's wrong way & redirect need to be moved to a razor file
         }
 
         public void Restore()

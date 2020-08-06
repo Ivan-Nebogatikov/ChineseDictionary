@@ -37,13 +37,13 @@
     protected override void OnInitialized()
     {
         if (FlashcardsStatus.IsStateTrainingOptions())
-            navigation.NavigateTo("/flashcards/options");
+            navigation.NavigateTo("flashcards/options");
 
         if (FlashcardsStatus.IsStateTrainingReview())
-            navigation.NavigateTo("/flashcards/review");
+            navigation.NavigateTo("flashcards/review");
 
         if (FlashcardsStatus.IsStateEnd())
-            navigation.NavigateTo("/flashcards/results");
+            navigation.NavigateTo("flashcards/results");
     }
 
     // ToDo: Add message: loading train
@@ -55,13 +55,13 @@
         {
             string[][] tranlationMatrix = await FlashcardsDb.GetRandomTranslationMatrix(questions, ConfigConstants.FlashcardsOptionsCount);
             FlashcardsStatus.BeginTrainOptions(questions, tranlationMatrix, input.Group, input.WordsCount);
-            navigation.NavigateTo("/flashcards/options");
+            navigation.NavigateTo("flashcards/options");
         }
 
         if (input.Type == "Review")
         {
             FlashcardsStatus.BeginTrainReview(questions, input.Group, input.WordsCount);
-            navigation.NavigateTo("/flashcards/review");
+            navigation.NavigateTo("flashcards/review");
         }
     }
 
