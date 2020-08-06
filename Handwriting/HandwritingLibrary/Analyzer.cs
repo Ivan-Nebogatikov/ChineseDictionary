@@ -179,6 +179,7 @@ namespace HandwritingLibrary
                     direction = 0;
                 }
                 double normLength = NormDist(points[prevIx], points[ix]);
+                normLength = Math.Round(normLength * 255);
                 Point ptCenter = new Point
                 {
                     X = (points[prevIx].X + points[ix].X) / 2,

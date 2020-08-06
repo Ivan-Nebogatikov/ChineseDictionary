@@ -26,7 +26,7 @@ namespace HandwritingLibrary
 
         private static double looseness = CharConstants.DEFAULT_LOOSENESS;
 
-        private MatchCollector matchCollector;
+        private static MatchCollector matchCollector;
 
         public List<SubStroke> SubStrokes;
 
@@ -42,7 +42,7 @@ namespace HandwritingLibrary
             this.strokesCount = strokesCount;
             this.subStrokesCount = subStrokesCount;
             this.inputSubStrokes = inputSubStrokes;
-            this.matchCollector = new MatchCollector(limit);
+            matchCollector = new MatchCollector(limit);
             this.buildScoreMatrix();
             
         }
@@ -95,7 +95,7 @@ namespace HandwritingLibrary
                         {
                             jarrayObj.Add(symbols[i]);
                             CharacterMatch match = this.matchOne(strokeCount, inputSubStrokes, subStrokesRange, repoChar);
-                            this.matchCollector.AddMatch(match);
+                            matchCollector.AddMatch(match);
                         }
 
                     }
@@ -213,7 +213,7 @@ namespace HandwritingLibrary
                     if (Math.Abs(x - y) <= subStrokesRange)
                     {
                         var compareDirection = sbin[repoChar[3].ToObject<int>() + y * 3];
-                        var compareLength = (sbin[repoChar[3].ToObject<double>() + y * 3 + 1]);
+                        var compareLength = (sbin[repoChar[3].ToObject<int>() + y * 3 + 1]);
                         
                         double skip1Score = scoreMatrix[x][y + 1] - (inputLength / 256 * SKIP_PENALTY_MULTIPLIER);
                         double skip2Score = scoreMatrix[x + 1][y] - ((double)compareLength * SKIP_PENALTY_MULTIPLIER);
@@ -306,7 +306,22 @@ namespace HandwritingLibrary
             return LENGTH_SCORE_TABLE[ratio];
         }
 
-        public void Stop()
+        public void getMatches()
+        {
+            char[] result = new char[matchCollector.matches.Count];
+            for (int i = 0; i != matchCollector.matches.Count; i++)
+            {
+                result[i] = matchCollector.matches[i].Character;
+                //Console.OutputEncoding = System.Text.Encoding.UTF7;
+                Console.WriteLine(result[i]);
+            }
+            //return result;
+
+
+        }
+
+
+    public void Stop()
         {
             this.running = false;
         }

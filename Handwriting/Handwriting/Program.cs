@@ -19,35 +19,27 @@ namespace Handwriting
             var subStrokes = analyzer.AnalyzedStrokes;
             var strokesCount = strokes.Count;
             var subStrokesCount = subStrokes.Count;
-            int limit = 7;
-            List<SubStroke> currentSubStrokes = new List<SubStroke>();
-            //currentSubStrokes = analyzer.res 
+            int limit = 20;
+           
+            Console.WriteLine("The amount of the input character's strokes" + strokesCount);
+            Console.WriteLine("The amount of the input character's substrokes" + subStrokesCount);
 
-            Console.WriteLine(strokesCount);
-            Console.WriteLine(subStrokesCount);
-
-
-
-            //foreach (Stroke curSubStr in strokes)
-            //{
-            //    Console.WriteLine(curSubStr.ToString());
-            //}
-
+            //MatchCollector mc = new MatchCollector(limit);
             Matcher mt = new Matcher(strokesCount, subStrokesCount, subStrokes, limit);
 
             mt.DoMatching();
-
-            MatchCollector mc = new MatchCollector(3);
-            ////mc.AddMatch(new CharacterMatch('a', 0.42));
-            ////mc.AddMatch(new CharacterMatch('b', 0.314));
-            ////mc.AddMatch(new CharacterMatch('c', 0.4));
-            ////mc.AddMatch(new CharacterMatch('d', 0.21));
-            ////mc.AddMatch(new CharacterMatch('e', 0.9));
-            char[] matches = mc.getMatches();
-            foreach (char match in matches)
-            {
-                Console.WriteLine(match);
-            }
+            mt.getMatches();
+            
+            //mc.AddMatch(new CharacterMatch('a', 0.42));
+            //mc.AddMatch(new CharacterMatch('b', 0.314));
+            //mc.AddMatch(new CharacterMatch('c', 0.4));
+            //mc.AddMatch(new CharacterMatch('d', 0.21));
+            //mc.AddMatch(new CharacterMatch('e', 0.9));
+            //char[] matches = Matcher.matches;
+            //foreach (char match in matches)
+            //{
+            //    Console.WriteLine(match);
+            //}
         }
     }
 }

@@ -13,7 +13,7 @@ namespace HandwritingLibrary
 {
     public class MatchCollector
     {
-        private List<CharacterMatch> matches = new List<CharacterMatch>();
+        public List<CharacterMatch> matches = new List<CharacterMatch>();
         public readonly int limit;
         public static int count = 0;
 
@@ -68,7 +68,7 @@ namespace HandwritingLibrary
 
         public void AddMatch(CharacterMatch currentMatch)
         {
-            if (count == matches.Count && currentMatch.Score <= matches[(matches.Count - 1)].Score)
+            if (count == matches.Count && currentMatch.Score <= matches[matches.Count - 1].Score)
             {
                 return;
             }
@@ -78,27 +78,30 @@ namespace HandwritingLibrary
             }
             var pos = findSlot(currentMatch.Score);
 
-            for (int i = matches.Count - 1; i > (int)pos; i--)
+            for (int i = matches.Count - 1; i > pos; i--)
             {
                 matches[i] = matches[i - 1];
             }
+            
             if (count < matches.Count)
             {
                 count++;
             }
-            matches[(int)pos] = currentMatch;
+            matches[pos] = currentMatch;
+
         }
 
-        public char [] getMatches()
-        {
-            char[] result = new char[matches.Count];
-            for (int i = 0; i != limit; i++)
-            {
-                result[i] = matches[i].Character;
-            }
-            return result;
-            
-        }
+        //public char [] getMatches()
+        //{
+        //    char[] result = new char[matches.Count];
+        //    for (int i = 0; i != matches.Count; i++)
+        //    {
+        //        result[i] = matches[i].Character;
+        //    }
+        //    return result;
+
+
+        //}
     }
 }
         
