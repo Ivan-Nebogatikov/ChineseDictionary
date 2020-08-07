@@ -47,13 +47,13 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        words = await Dictionary.SearchByChineseAsync("", 0, ConfigConstants.StorageWordsSize);
+        words = await Dictionary.SearchAsync("", 0, ConfigConstants.StorageWordsSize);
     }
 
     private async Task HandleSearchSubmit()
     {
         shownItems = ConfigConstants.FirstShownWordsCount;
-        words = await Dictionary.SearchByChineseAsync(fieldModel.SearchString, 0, ConfigConstants.StorageWordsSize);
+        words = await Dictionary.SearchAsync(fieldModel.SearchString, 0, ConfigConstants.StorageWordsSize);
     }
 
     public async Task AddMore()
@@ -63,7 +63,7 @@ else
         if(shownItems > storageSize)
         {
             string query = fieldModel.SearchString ?? string.Empty;
-            var data = await Dictionary.SearchByChineseAsync(query, storageSize, storageSize + ConfigConstants.StorageWordsSize);
+            var data = await Dictionary.SearchAsync(query, storageSize, storageSize + ConfigConstants.StorageWordsSize);
             storageSize += ConfigConstants.StorageWordsSize;
             words = words.ToList().Concat(data);
         }

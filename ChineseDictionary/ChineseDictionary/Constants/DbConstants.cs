@@ -12,6 +12,7 @@ namespace ChineseDictionary.Constants
         public const string Id = "id";
         public const string Chinese = "chinese";
         public const string Pinyin = "pinyin";
+        public const string PinyinMonotone = "pinyinMonotone";
         public const string Translations = "translations";
         public const string RelativeWords = "relativeWords";
     }
