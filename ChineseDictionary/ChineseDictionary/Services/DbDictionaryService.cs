@@ -37,6 +37,9 @@ namespace ChineseDictionary.Services
 
         public async Task<IEnumerable<Word>> SearchAsync(string query, int skip = 0, int take = int.MaxValue)
         {
+            if (query == "")
+                return await SearchByAsync(DbConstants.Chinese, query, skip, take);
+
             if (query.All(c => c >= 0x61 && c <= 0x7A || c >= 0x41 && c <= 0x5A))
             {
                 // Latin characters
