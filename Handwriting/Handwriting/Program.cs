@@ -25,8 +25,8 @@ namespace Handwriting
                 var subStrokesCount = subStrokes.Count;
                 int limit = 20;
 
-                Console.WriteLine("The amount of the input character's strokes: " + strokesCount);
-                Console.WriteLine("The amount of the input character's substrokes: " + subStrokesCount);
+                Console.WriteLine("Number of the input character's strokes: " + strokesCount);
+                Console.WriteLine("Number of the input character's substrokes: " + subStrokesCount);
 
                 Matcher mt = new Matcher(strokesCount, subStrokesCount, subStrokes, limit);
                 mt.DoMatching(dictionary);
