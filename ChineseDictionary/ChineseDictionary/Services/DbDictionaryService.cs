@@ -24,7 +24,7 @@ namespace ChineseDictionary.Services
             {
                 var response = await Http.GetAsync("https://raw.githubusercontent.com/Oleg42-prog/Lanit-CD/master/short.txt");
                 var code = response.StatusCode; // ToDo: condition & error
-                DslParser.DBParseAsync(DbManager, await response.Content.ReadAsStreamAsync());
+                await DslParser.DBParseAsync(DbManager, await response.Content.ReadAsStreamAsync());
             }
         }
 

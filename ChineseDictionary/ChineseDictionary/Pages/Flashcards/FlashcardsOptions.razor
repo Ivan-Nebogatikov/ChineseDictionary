@@ -1,0 +1,85 @@
+﻿@page "/flashcards/options"
+
+@using ChineseDictionary.Models
+@using System.ComponentModel.DataAnnotations
+
+@inject NavigationManager navigation
+@inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
+
+<h1>Flashcards</h1>
+
+@if (word != null)
+{
+    <h4>@word.Chinese</h4>
+    <EditForm Model="@model" OnValidSubmit="HandleCheckSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        @foreach (string translate in optionTranslations)
+        {
+            <label>
+                <ChineseDictionary.Components.InputRadio name="translate" SelectedValue="@translate" @bind-Value="model.Translate" />
+                @translate
+            </label>
+            <br>
+        }
+
+        <button type="submit">Далее</button>
+    </EditForm>
+
+    <br />
+    <EditForm Model="@model" OnValidSubmit="HandleStopSubmit">
+        <button type="submit">Stop train</button>
+    </EditForm>
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+
+@code {
+
+    Word word;
+    string[] optionTranslations;
+    private Model model = new Model();
+
+    protected override void OnInitialized()
+    {
+        if (FlashcardsStatus.IsStateBegin())
+            navigation.NavigateTo("flashcards");
+
+        if (FlashcardsStatus.IsStateTrainingOptions())
+        {
+            word = FlashcardsStatus.GetWord();
+            optionTranslations = FlashcardsStatus.GetTranslationOptions();
+        }
+
+        if (FlashcardsStatus.IsStateTrainingReview())
+            navigation.NavigateTo("flashcards/review");
+
+        if (FlashcardsStatus.IsStateEnd())
+            navigation.NavigateTo("flashcards/results");
+    }
+
+    private void HandleCheckSubmit()
+    {
+        FlashcardsStatus.Answer(model.Translate);
+        if (FlashcardsStatus.IsStateTrainingOptions())
+        {
+            word = FlashcardsStatus.GetWord();
+            optionTranslations = FlashcardsStatus.GetTranslationOptions();
+        }
+    }
+
+    private void HandleStopSubmit()
+    {
+        FlashcardsStatus.StopTrain();
+    }
+
+    // Maybe move & group with other models
+    public class Model
+    {
+        [Required]
+        public string Translate { get; set; }
+    }
+}
