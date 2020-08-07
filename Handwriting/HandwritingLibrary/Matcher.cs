@@ -64,7 +64,7 @@ namespace HandwritingLibrary
                 if (cmpStrokeCount < minimumStrokes || cmpStrokeCount > maximumStrokes) continue;
                 if (cmpSubStrokes < minSubStrokes || cmpSubStrokes > maxSubStrokes) continue;
                 if ((cmpStrokeCount >= minimumStrokes) && (cmpStrokeCount <= maximumStrokes))
-                {
+                {               
                     if ((cmpSubStrokes >= minSubStrokes) && (cmpSubStrokes <= maxSubStrokes))
                     {
                         jarrayObj.Add(symbols[i]);

@@ -40,55 +40,61 @@ namespace ChineseDictionary.Services
             return relativeWords;
         }
 
+        private static async Task AddRecord(IndexedDBManager DbManager, Word word)
+        {
+            await DbManager.AddRecord(new StoreRecord<Word>
+            {
+                Storename = DbConstants.StoreName,
+                Data = word
+            });
+
+            await DbManager.AddRecord(new StoreRecord<FlashcardWord>
+            {
+                Storename = DbConstants.FlashcardsStoreName,
+                Data = new FlashcardWord { Chinese = word.Chinese, Day = 1 }
+            });
+        }
+
         public static async Task DBParseAsync(IndexedDBManager DbManager, Stream stream)
         {
-            using (StreamReader sr = new StreamReader(stream, System.Text.Encoding.Unicode))
+            using StreamReader sr = new StreamReader(stream, System.Text.Encoding.Unicode);
+            string line;
+            ParserState state = ParserState.Space;
+            Word word = null;
+
+            while ((line = sr.ReadLine()) != null)
             {
-                string line;
-                ParserState state = ParserState.Space;
-                ExtendedWord word = null;
-
-                while ((line = sr.ReadLine()) != null)
+                if (line != "" && line[0] != '#')
                 {
-                    if (line != "" && line[0] != '#')
+                    if (line[0] != ' ')
                     {
-                        if (line[0] != ' ')
+                        state = ParserState.Title;
+
+                        if (word != null)
+                            await AddRecord(DbManager, word);
+
+                        word = new Word
                         {
-                            state = ParserState.Title;
-
-                            if (word != null)
-                                await DbManager.AddRecord<ExtendedWord>(new StoreRecord<ExtendedWord>
-                                {
-                                    Storename = DbConstants.StoreName,
-                                    Data = word
-                                });
-
-                            word = new ExtendedWord
-                            {
-                                Chinese = RemoveTags(line)
-                            };
-                        }
-                        else
-                            state++;
-
-                        if (state == ParserState.Pinyin)
-                            word.Pinyin = RemoveTags(line);
-
-                        if (state == ParserState.Body)
-                        {
-                            word.RelativeWords = GetRelativeWords(line);
-                            word.Translations = RemoveTags(line).Split(";");
-                        }
+                            Chinese = RemoveTags(line)
+                        };
                     }
                     else
-                        state = ParserState.Space;
-                }
+                        state++;
 
-                await DbManager.AddRecord<ExtendedWord>(new StoreRecord<ExtendedWord> { 
-                    Storename = DbConstants.StoreName, 
-                    Data = word 
-                });
+                    if (state == ParserState.Pinyin)
+                        word.Pinyin = RemoveTags(line);
+
+                    if (state == ParserState.Body)
+                    {
+                        word.RelativeWords = GetRelativeWords(line);
+                        word.Translations = RemoveTags(line).Split(";");
+                    }
+                }
+                else
+                    state = ParserState.Space;
             }
+
+            await AddRecord(DbManager, word);
         }
     }
 }
