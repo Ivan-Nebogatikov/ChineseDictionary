@@ -1,0 +1,71 @@
+﻿@page "/flashcards/review"
+
+@using ChineseDictionary.Models
+@using System.ComponentModel.DataAnnotations
+
+@inject NavigationManager navigation
+@inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
+
+<h1>Flashcards</h1>
+
+@if (word != null)
+{
+    <h4>@word.Chinese</h4>
+
+    <button @onclick="HandleRemember">Помню</button>
+    <br />
+    <button @onclick="HandleNotRemember">Не помню</button>
+    <hr />
+    <button @onclick="HandleStopSubmit">Stop train</button>
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+
+@code {
+
+    Word word;
+    private Model model = new Model();
+
+    protected override void OnInitialized()
+    {
+        if (FlashcardsStatus.IsStateBegin())
+            navigation.NavigateTo("flashcards");
+
+        if (FlashcardsStatus.IsStateTrainingOptions())
+            navigation.NavigateTo("flashcards/options");
+
+        if (FlashcardsStatus.IsStateTrainingReview())
+            word = FlashcardsStatus.GetWord();
+
+        if (FlashcardsStatus.IsStateEnd())
+            navigation.NavigateTo("flashcards/results");
+    }
+
+    private void HandleRemember()
+    {
+        FlashcardsStatus.Answer(true);
+        if (FlashcardsStatus.IsStateTrainingReview())
+            word = FlashcardsStatus.GetWord();
+    }
+
+    private void HandleNotRemember()
+    {
+        FlashcardsStatus.Answer(false);
+        if (FlashcardsStatus.IsStateTrainingReview())
+            word = FlashcardsStatus.GetWord();
+    }
+
+    private void HandleStopSubmit()
+    {
+        FlashcardsStatus.StopTrain();
+    }
+
+    // Maybe move & group with other models
+    public class Model
+    {
+        [Required]
+        public string Translate { get; set; }
+    }
+}

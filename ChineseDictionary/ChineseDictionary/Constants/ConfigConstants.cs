@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ChineseDictionary.Constants
+﻿namespace ChineseDictionary.Constants
 {
     public class ConfigConstants
     {
+        public const int FlashcardsOptionsCount = 4;
+
         // Bad names
         public const int FirstShownWordsCount = 20;
         public const int AddShownWordsCount = 20;
