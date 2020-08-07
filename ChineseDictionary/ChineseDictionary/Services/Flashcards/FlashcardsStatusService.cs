@@ -92,7 +92,6 @@ namespace ChineseDictionary.Services
                 wrong.Add(questions[index]);
 
             index++;
-            Console.WriteLine("index: ", index);
 
             if (index >= wordsCount)
                 StopTrain();
@@ -101,7 +100,6 @@ namespace ChineseDictionary.Services
 
         public void StopTrain()
         {
-            Console.WriteLine("Stop");
             state = TrainState.End;
             navigation.NavigateTo("flashcards/results"); // Maybe it's wrong way & redirect need to be moved to a razor file
         }
