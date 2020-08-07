@@ -1,13 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Xml.Schema;
+﻿using System.Collections.Generic;
 
 namespace HandwritingLibrary
 {
@@ -88,20 +79,8 @@ namespace HandwritingLibrary
                 count++;
             }
             matches[pos] = currentMatch;
-
         }
-
-        //public char [] getMatches()
-        //{
-        //    char[] result = new char[matches.Count];
-        //    for (int i = 0; i != matches.Count; i++)
-        //    {
-        //        result[i] = matches[i].Character;
-        //    }
-        //    return result;
-
-
-        //}
+        
     }
 }
         
