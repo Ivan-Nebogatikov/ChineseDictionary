@@ -45,14 +45,14 @@ else
 
     private void HandleRemember()
     {
-        FlashcardsStatus.AnswerReview(true);
+        FlashcardsStatus.Answer(true);
         if (FlashcardsStatus.IsStateTrainingReview())
             word = FlashcardsStatus.GetWord();
     }
 
     private void HandleNotRemember()
     {
-        FlashcardsStatus.AnswerReview(false);
+        FlashcardsStatus.Answer(false);
         if (FlashcardsStatus.IsStateTrainingReview())
             word = FlashcardsStatus.GetWord();
     }

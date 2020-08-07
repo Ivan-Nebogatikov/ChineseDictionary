@@ -23,12 +23,7 @@ namespace ChineseDictionary.Services
     {
         private int index = 0;
 
-        private Word[] questions;
-        private string[][] translations;
-
-        private List<Word> correct;
-        private List<Word> wrong;
-        private List<string> answers;
+        private TrainItem[] trainItems;
 
         private TrainState state;
         private TrainType type = TrainType.Options;
@@ -45,54 +40,44 @@ namespace ChineseDictionary.Services
         }
 
         #region BeginTrains
-        private void BeginTrain(Word[] questions, int group, int wordsCount, TrainType type)
+        private void BeginTrain(TrainItem[] trainItems, int group, int wordsCount, TrainType type)
         {
-            this.questions = questions;
+            this.trainItems = trainItems;
             this.group = group;
             this.wordsCount = wordsCount;
             this.type = type;
 
             index = 0;
-            correct = new List<Word>();
-            wrong = new List<Word>();
-            answers = new List<string>();
-
             state = TrainState.Training;
         }
 
-        public void BeginTrainReview(Word[] questions, int group, int wordsCount)
+        public void BeginTrainReview(TrainItem[] trainItems, int group, int wordsCount)
         {
-            BeginTrain(questions, group, wordsCount, TrainType.Review);
+            BeginTrain(trainItems, group, wordsCount, TrainType.Review);
         }
 
-        public void BeginTrainOptions(Word[] questions, string[][] translations, int group, int wordsCount)
+        public void BeginTrainOptions(TrainItem[] trainItems, int group, int wordsCount)
         {
-            this.translations = translations;
-            BeginTrain(questions, group, wordsCount, TrainType.Options);
+            BeginTrain(trainItems, group, wordsCount, TrainType.Options);
         }
         #endregion
 
         #region Answers
-        public void AnswerOptions(string translate)
+        public void Answer(string translate)
         {
-            answers.Add(translate);
-            Answer(questions[index].Translations.Contains(translate));
+            trainItems[index].GiveAnswer(translate);
+            IndexIncrement();
         }
 
-        public void AnswerReview(bool remember)
+        public void Answer(bool remember)
         {
-            Answer(remember);
+            trainItems[index].GiveAnswer(remember);
+            IndexIncrement();
         }
 
-        private void Answer(bool isCorrect)
+        private void IndexIncrement()
         {
-            if (isCorrect)
-                correct.Add(questions[index]);
-            else
-                wrong.Add(questions[index]);
-
             index++;
-
             if (index >= wordsCount)
                 StopTrain();
         }
@@ -137,31 +122,31 @@ namespace ChineseDictionary.Services
 
         public Word GetWord()
         {
-            if (index < questions.Length)
-                return questions[index];
+            if (index < trainItems.Length)
+                return trainItems[index].Question;
             else
                 return null;
         }
 
-        public string[] GetTranslations()
+        public string[] GetTranslationOptions()
         {
-            if (index < translations.Length)
-                return translations[index];
+            if (index < trainItems.Length)
+                return trainItems[index].TranslationOptions;
             else
                 return null;
         }
 
         public List<Word> GetCorrect()
         {
-            return correct;
+            return trainItems.Where(item => item.IsCorrect).Select(item => item.Question).ToList();
         }
         public List<Word> GetWrong()
         {
-            return wrong;
+            return trainItems.Where(item => !item.IsCorrect).Select(item => item.Question).ToList();
         }
         public List<string> GetAnswers()
         {
-            return answers;
+            return trainItems.Select(item => item.Answer).ToList();
         }
 
         public int GetGroup()

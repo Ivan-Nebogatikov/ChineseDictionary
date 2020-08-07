@@ -49,18 +49,19 @@
     // ToDo: Add message: loading train
     private async Task HandleTrainSubmit()
     {
-        Word[] questions = await FlashcardsDb.GetRandomWordsByGroup(input.Group, input.WordsCount);
+        TrainItem[] trainData;
 
         if (input.Type == "Options")
         {
-            string[][] tranlationMatrix = await FlashcardsDb.GetRandomTranslationMatrix(questions, ConfigConstants.FlashcardsOptionsCount);
-            FlashcardsStatus.BeginTrainOptions(questions, tranlationMatrix, input.Group, input.WordsCount);
+            trainData = await FlashcardsDb.GenerateTrainOptions(input.Group, input.WordsCount);
+            FlashcardsStatus.BeginTrainOptions(trainData, input.Group, input.WordsCount);
             navigation.NavigateTo("flashcards/options");
         }
 
         if (input.Type == "Review")
         {
-            FlashcardsStatus.BeginTrainReview(questions, input.Group, input.WordsCount);
+            trainData = await FlashcardsDb.GenerateTrainReview(input.Group, input.WordsCount);
+            FlashcardsStatus.BeginTrainReview(trainData, input.Group, input.WordsCount);
             navigation.NavigateTo("flashcards/review");
         }
     }

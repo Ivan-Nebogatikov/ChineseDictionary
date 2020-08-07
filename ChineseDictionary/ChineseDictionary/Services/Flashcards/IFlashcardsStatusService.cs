@@ -8,11 +8,11 @@ namespace ChineseDictionary.Services
 {
     interface IFlashcardsStatusService
     {
-        public void BeginTrainReview(Word[] questions, int group, int wordsCount);
-        public void BeginTrainOptions(Word[] questions, string[][] translations, int group, int wordsCount);
+        public void BeginTrainReview(TrainItem[] trainItems, int group, int wordsCount);
+        public void BeginTrainOptions(TrainItem[] trainItems, int group, int wordsCount);
         
-        public void AnswerOptions(string translate);
-        public void AnswerReview(bool remember);
+        public void Answer(string translate);
+        public void Answer(bool remember);
 
         public void StopTrain();
         public void Restore();
@@ -23,7 +23,7 @@ namespace ChineseDictionary.Services
         public bool IsStateEnd();
 
         public Word GetWord();
-        public string[] GetTranslations();
+        public string[] GetTranslationOptions();
         public List<Word> GetCorrect();
         public List<Word> GetWrong();
         public List<string> GetAnswers();

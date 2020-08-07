@@ -51,7 +51,7 @@ else
         if (FlashcardsStatus.IsStateTrainingOptions())
         {
             word = FlashcardsStatus.GetWord();
-            optionTranslations = FlashcardsStatus.GetTranslations();
+            optionTranslations = FlashcardsStatus.GetTranslationOptions();
         }
 
         if (FlashcardsStatus.IsStateTrainingReview())
@@ -63,11 +63,11 @@ else
 
     private void HandleCheckSubmit()
     {
-        FlashcardsStatus.AnswerOptions(model.Translate);
+        FlashcardsStatus.Answer(model.Translate);
         if (FlashcardsStatus.IsStateTrainingOptions())
         {
             word = FlashcardsStatus.GetWord();
-            optionTranslations = FlashcardsStatus.GetTranslations();
+            optionTranslations = FlashcardsStatus.GetTranslationOptions();
         }
     }
 

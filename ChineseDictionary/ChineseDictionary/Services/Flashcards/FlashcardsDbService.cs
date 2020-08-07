@@ -63,15 +63,6 @@ namespace ChineseDictionary.Services
             FlashcardWord flashcardWord = flashcardWords[rand.Next(flashcardWords.Count)];
             return await GetWordByFlashcardWord(flashcardWord);
         }
-
-        public async Task<Word[]> GetRandomWordsByGroup(int group, int count)
-        {
-            Word[] words = new Word[count];
-            for (int i = 0; i < count; i++)
-                words[i] = await GetRandomWordByGroup(group);
-
-            return words;
-        }
         #endregion
 
         #region Get Random Translations
@@ -101,14 +92,37 @@ namespace ChineseDictionary.Services
 
             return randomTranslations.ToArray();
         }
+        #endregion
 
-        public async Task<string[][]> GetRandomTranslationMatrix(Word[] questionWord, int count)
+        #region Generate Train
+        public async Task<TrainItem[]> GenerateTrainOptions(int group, int count)
         {
-            string[][] translationMatrix = new string[count][];
-            for (int i = 0; i < count; i++)
-                translationMatrix[i] = await GetRandomTranslations(questionWord[i], 4);
+            TrainItem[] data = new TrainItem[count];
 
-            return translationMatrix;
+            Word word;
+            string[] translationOptions;
+            for(int i = 0; i < count; i ++)
+            {
+                word = await GetRandomWordByGroup(group);
+                translationOptions = await GetRandomTranslations(word, ConfigConstants.FlashcardsOptionsCount);
+                data[i] = new TrainItem(word, translationOptions);
+            }
+
+            return data;
+        }
+
+        public async Task<TrainItem[]> GenerateTrainReview(int group, int count)
+        {
+            TrainItem[] data = new TrainItem[count];
+
+            Word word;
+            for (int i = 0; i < count; i++)
+            {
+                word = await GetRandomWordByGroup(group);
+                data[i] = new TrainItem(word);
+            }
+
+            return data;
         }
         #endregion
 
