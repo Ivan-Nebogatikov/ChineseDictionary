@@ -9,25 +9,24 @@ namespace HandwritingLibrary
 {
     public class Matcher
     {
-        public int strokesCount;
-        public int subStrokesCount;
-        public double[][] scoreMatrix;
+        int strokesCount;
+        int subStrokesCount;
+        double[][] scoreMatrix;
 
-        public JArray jarrayObj = new JArray();
-        public List<Object> values = new List<Object>();
-        public List<SubStroke> inputSubStrokes = new List<SubStroke>();
+        JArray jarrayObj = new JArray();
+        List<SubStroke> inputSubStrokes = new List<SubStroke>();
 
-        private static double looseness = CharConstants.DEFAULT_LOOSENESS;
+        static double looseness = CharConstants.DEFAULT_LOOSENESS;
 
-        private static MatchCollector matchCollector;
+        MatchCollector matchCollector;
 
-        public List<SubStroke> SubStrokes;
+        List<SubStroke> SubStrokes;
 
-        public JToken subStrInf;
+        JToken subStrInf;
 
-        private bool running;
+        bool running;
 
-        public CharConstants cc = new CharConstants();
+        CharConstants cc = new CharConstants();
 
         public Matcher(int strokesCount, int subStrokesCount,  List<SubStroke> inputSubStrokes, int limit)
         {
