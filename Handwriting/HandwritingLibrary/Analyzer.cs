@@ -74,7 +74,7 @@ namespace HandwritingLibrary
 
         // Gets direction, in radians, from point a to b
         // 0 is to the right, PI / 2 is up, etc.
-        public double Dir(Point a, Point b)
+        private double Dir(Point a, Point b)
         {
             double dx = a.X - b.X;
             double dy = a.Y - b.Y;
@@ -211,5 +211,4 @@ namespace HandwritingLibrary
 
     }
 }
-
 
