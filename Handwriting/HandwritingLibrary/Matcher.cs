@@ -133,7 +133,7 @@ namespace HandwritingLibrary
         
         private CharacterMatch matchOne(int inputStrokeCount, List<SubStroke> inputSubStrokes, int subStrokesRange, JToken repoChar)
         {
-            double score = (double) this.computeMatchScore(inputStrokeCount, inputSubStrokes, subStrokesRange, repoChar);
+            double score = computeMatchScore(inputStrokeCount, inputSubStrokes, subStrokesRange, repoChar);
 
             if (inputStrokeCount == repoChar[1].ToObject<int>() && inputStrokeCount < CharConstants.CORRECT_NUM_STROKES_CAP)
             {
@@ -142,7 +142,7 @@ namespace HandwritingLibrary
             }
             return new CharacterMatch(repoChar[0].ToObject<char>(), score);
         }
-        private object computeMatchScore(int strokeCount, List<SubStroke> inputSubStrokes, int subStrokesRange, JToken repoChar)
+        private double computeMatchScore(int strokeCount, List<SubStroke> inputSubStrokes, int subStrokesRange, JToken repoChar)
         {
            for (int x = 0; x < (inputSubStrokes.Count); x++)
             {
@@ -165,10 +165,10 @@ namespace HandwritingLibrary
                         double previousScore = this.scoreMatrix[x][y];
                         newScore = Math.Max(previousScore + matchScore, skipScore);
                     }
-                    this.scoreMatrix[x + 1][y + 1] = newScore;
+                    scoreMatrix[x + 1][y + 1] = newScore;
                 }
             }
-            return this.scoreMatrix[inputSubStrokes.Count][repoChar[2].ToObject<int>()];
+            return scoreMatrix[inputSubStrokes.Count][repoChar[2].ToObject<int>()];
         }
 
         private double computeSubStrokeScore(double inputDir, double inputLen, double repoDir, double repoLen)
