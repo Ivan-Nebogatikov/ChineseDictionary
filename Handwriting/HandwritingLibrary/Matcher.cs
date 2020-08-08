@@ -62,16 +62,9 @@ namespace HandwritingLibrary
                 int cmpSubStrokes = repoChar[2].ToObject<int>();
                 if (cmpStrokeCount < minimumStrokes || cmpStrokeCount > maximumStrokes) continue;
                 if (cmpSubStrokes < minSubStrokes || cmpSubStrokes > maxSubStrokes) continue;
-                if ((cmpStrokeCount >= minimumStrokes) && (cmpStrokeCount <= maximumStrokes))
-                {               
-                    if ((cmpSubStrokes >= minSubStrokes) && (cmpSubStrokes <= maxSubStrokes))
-                    {
-                        jarrayObj.Add(symbols[i]);
-                        CharacterMatch match = this.matchOne(strokeCount, inputSubStrokes, subStrokesRange, repoChar);
-                        matchCollector.AddMatch(match);
-                    }
-
-                }
+                jarrayObj.Add(symbols[i]);
+                CharacterMatch match = this.matchOne(strokeCount, inputSubStrokes, subStrokesRange, repoChar);
+                matchCollector.AddMatch(match);
             }
 
             char[] resultChars = matchCollector.matches.Select(x => x.Character).ToArray();
