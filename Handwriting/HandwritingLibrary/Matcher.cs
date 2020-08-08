@@ -74,12 +74,7 @@ namespace HandwritingLibrary
                 }
             }
 
-            char[] resultChars = new char[matchCollector.matches.Count];
-            for (int i = 0; i != matchCollector.matches.Count; i++)
-            {
-                resultChars[i] = matchCollector.matches[i].Character;
-                //Console.WriteLine(resultChars[i]);
-            }
+            char[] resultChars = matchCollector.matches.Select(x => x.Character).ToArray();
             return resultChars;
         }
 
