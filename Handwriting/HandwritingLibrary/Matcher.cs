@@ -192,22 +192,22 @@ namespace HandwritingLibrary
             return score;
         }
 
-        static private double[] DIRECTION_SCORE_TABLE = initDirectionScoreTable();
-        static private double[] LENGTH_SCORE_TABLE = initLengthScoreTable();
+        private static double[] DIRECTION_SCORE_TABLE = initDirectionScoreTable();
+        private static double[] LENGTH_SCORE_TABLE = initLengthScoreTable();
 
-        static private double[] initDirectionScoreTable()
+        private static double[] initDirectionScoreTable()
         {
             CubicCurve2D curve = new CubicCurve2D(0, 1.0, 0.5, 1.0, 0.25, -2.0, 1.0, 1.0);
             return initCubicCurveScoreTable(curve, 256);
         }
 
-        static private double[] initLengthScoreTable()
+        private static double[] initLengthScoreTable()
         {
             CubicCurve2D curve = new CubicCurve2D(0, 0, 0.25, 1.0, 0.75, 1.0, 1.0, 1.0);
             return initCubicCurveScoreTable(curve, 129);
         }
 
-        static private double[] initCubicCurveScoreTable(CubicCurve2D curve, int numSamples)
+        private static double[] initCubicCurveScoreTable(CubicCurve2D curve, int numSamples)
         {
             double x1 = curve.X1;
             double x2 = curve.X2;
