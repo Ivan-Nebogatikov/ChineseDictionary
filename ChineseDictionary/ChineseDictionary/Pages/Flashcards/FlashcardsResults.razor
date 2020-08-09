@@ -1,0 +1,63 @@
+﻿@page "/flashcards/results"
+
+@using ChineseDictionary.Models
+@using ChineseDictionary.Constants
+@using System.ComponentModel.DataAnnotations
+
+@inject NavigationManager navigation
+@inject ChineseDictionary.Services.IFlashcardsDbService FlashcardsDb
+@inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
+
+<h1>Flashcards</h1>
+
+<br />
+<h2>Correct:</h2>
+@foreach (var word in correct)
+{
+    <p>
+        <h4>@word.Chinese</h4>
+    </p>
+}
+
+<hr>
+
+<h2>Wrong:</h2>
+@foreach (var word in wrong)
+{
+    <p>
+        <h4>@word.Chinese</h4>
+    </p>
+}
+
+<br />
+<button @onclick="RestoreHandle">Restore</button>
+
+@code {
+    private List<Word> correct;
+    private List<Word> wrong;
+
+    protected override void OnInitialized()
+    {
+        if (FlashcardsStatus.IsStateBegin())
+            navigation.NavigateTo("flashcards");
+
+        if (FlashcardsStatus.IsStateTrainingOptions())
+            navigation.NavigateTo("flashcards/options");
+
+        if (FlashcardsStatus.IsStateTrainingReview())
+            navigation.NavigateTo("flashcards/review");
+
+        if (FlashcardsStatus.IsStateEnd())
+        {
+            correct = FlashcardsStatus.GetCorrect();
+            wrong = FlashcardsStatus.GetWrong();
+        }
+    }
+
+    private void RestoreHandle()
+    {
+        FlashcardsStatus.Restore();
+        FlashcardsDb.MoveFlashcards(correct, FlashcardsStatus.GetGroup());
+        navigation.NavigateTo("flashcards");
+    }
+}
