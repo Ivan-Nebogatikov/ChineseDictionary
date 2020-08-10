@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.30128.74
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChineseDictionary", "ChineseDictionary\ChineseDictionary.csproj", "{3BDC5BDC-8CCB-44BF-8C8B-34E88447863B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AB71D73A-FB39-4F74-9ADF-FBFF4D7EF0FE} = {AB71D73A-FB39-4F74-9ADF-FBFF4D7EF0FE}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandwritingLibrary", "..\Handwriting\HandwritingLibrary\HandwritingLibrary.csproj", "{AB71D73A-FB39-4F74-9ADF-FBFF4D7EF0FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +20,10 @@ Global
 		{3BDC5BDC-8CCB-44BF-8C8B-34E88447863B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BDC5BDC-8CCB-44BF-8C8B-34E88447863B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BDC5BDC-8CCB-44BF-8C8B-34E88447863B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB71D73A-FB39-4F74-9ADF-FBFF4D7EF0FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB71D73A-FB39-4F74-9ADF-FBFF4D7EF0FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB71D73A-FB39-4F74-9ADF-FBFF4D7EF0FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB71D73A-FB39-4F74-9ADF-FBFF4D7EF0FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

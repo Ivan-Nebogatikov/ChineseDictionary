@@ -18,15 +18,19 @@
             context.lineJoin = 'round';
             context.lineWidth = 5;
             context.beginPath();
-            context.moveTo(eX - canvas.offsetLeft, eY - canvas.offsetTop);           
+            context.moveTo(eX - canvas.offsetLeft, eY - canvas.offsetTop);
             context.lineTo(sX - canvas.offsetLeft, sY - canvas.offsetTop);
             context.closePath();
             context.stroke();
         },
-
+        clearCanvas: (canvas, ctx) => {
+            let context = getContext(canvas);
+            context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+        },
         setContextPropertyValue: (canvas, propertyName, propertyValue) => {
             let context = getContext(canvas);
             context[propertyName] = propertyValue;
         }
     };
+
 })(window);
