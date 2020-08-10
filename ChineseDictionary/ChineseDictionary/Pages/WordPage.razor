@@ -1,9 +1,9 @@
 ﻿@page "/search/{text}"
 @using ChineseDictionary.Models
+@inject IJSRuntime JSRuntime
 @inject ChineseDictionary.Services.IDictionaryServiceAsync DictionaryService
+@using ChineseDictionary.Constants
 
-<h1>@Text</h1>
-<br />
 
 @if (word is null)
 {
@@ -11,6 +11,12 @@
 }
 else
 {
+    @foreach (ColoredCharacter colorChar in coloredCharacters)
+    {
+        <h1 style="color:@colorChar.color"><b>@colorChar.character</b></h1>
+    }
+    <br />
+
     <h5>@word.Pinyin</h5>
     <br />
     <br />
@@ -29,7 +35,9 @@ else
         <ul>
             @foreach (Example example in word.Examples)
             {
-                <li>@example.Chinese<br /> @example.Translation</li>
+                <li>
+                    @example.Chinese <br />@example.Translation
+                </li>
             }
         </ul>
     }
@@ -40,12 +48,30 @@ else
         <ul>
             @foreach (string relativeWord in word.RelativeWords)
             {
-                <li><a href="search/@relativeWord"> @relativeWord </a></li>
+                <li>
+                    <a href="search/@relativeWord"> @relativeWord </a>
+                </li>
             }
-        </ul>
+        </ul>      
     }
 
+    <h5>Stroke order:</h5>
+    <div id="character-target-div"></div>
+    <button id="animate-button"
+            style="
+    color: white;
+    background-color: #337ab7;
+    border-radius: 4px;
+    border: none;
+    font-size: 20px;
+    padding: 7px 20px;
+    ">
+        Animate
+    </button>
+    <br />
+    <br />
     <h5><a href="search">To Search</a></h5>
+
 }
 
 @code {
@@ -53,9 +79,32 @@ else
     [Parameter]
     public string Text { get; set; }
 
-    private ExtendedWord word;
+    private Word word;
+
+    List<ColoredCharacter> coloredCharacters;
+
     protected override async Task OnInitializedAsync()
     {
         word = await DictionaryService.GetByChinese(Text);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("removeListeners");
+        }
+        if (word != null)
+        {
+            foreach (ColoredCharacter colChar in coloredCharacters)
+            {
+                await JSRuntime.InvokeAsync<string>("drawCharacter", colChar.character, colChar.color);
+            }
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        coloredCharacters = PaintingOfCharacters.PaintCharacter(word.Pinyin, word.Chinese);
     }
 }

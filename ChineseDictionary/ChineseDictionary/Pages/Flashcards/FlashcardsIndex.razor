@@ -1,0 +1,82 @@
+﻿@page "/flashcards"
+
+@using ChineseDictionary.Models
+@using ChineseDictionary.Constants
+@using System.ComponentModel.DataAnnotations
+
+@inject NavigationManager navigation
+@inject ChineseDictionary.Services.IFlashcardsDbService FlashcardsDb
+@inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
+
+
+<h1>Flashcards</h1>
+
+<EditForm Model="@input" OnValidSubmit="HandleTrainSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    Number of words:
+    <InputNumber id="WordsCount" @bind-Value="input.WordsCount" />
+    <br>
+    Group of flashcards:
+    <InputNumber id="FlashcardsGroup" @bind-Value="input.Group" />
+    <br>
+    <InputSelect @bind-Value="input.Type">
+        <option value="">Select type of train ...</option>
+        <option value="Options">4 Options</option>
+        <option value="Review">Review</option>
+    </InputSelect>
+    <button type="submit">Train!</button>
+</EditForm>
+
+
+@code {
+
+    private InputFlashcardsModel input = new InputFlashcardsModel();
+
+    protected override void OnInitialized()
+    {
+        if (FlashcardsStatus.IsStateTrainingOptions())
+            navigation.NavigateTo("flashcards/options");
+
+        if (FlashcardsStatus.IsStateTrainingReview())
+            navigation.NavigateTo("flashcards/review");
+
+        if (FlashcardsStatus.IsStateEnd())
+            navigation.NavigateTo("flashcards/results");
+    }
+
+    // ToDo: Add message: loading train
+    private async Task HandleTrainSubmit()
+    {
+        TrainItem[] trainData;
+
+        if (input.Type == "Options")
+        {
+            trainData = await FlashcardsDb.GenerateTrainOptions(input.Group, input.WordsCount);
+            FlashcardsStatus.BeginTrainOptions(trainData, input.Group, input.WordsCount);
+            navigation.NavigateTo("flashcards/options");
+        }
+
+        if (input.Type == "Review")
+        {
+            trainData = await FlashcardsDb.GenerateTrainReview(input.Group, input.WordsCount);
+            FlashcardsStatus.BeginTrainReview(trainData, input.Group, input.WordsCount);
+            navigation.NavigateTo("flashcards/review");
+        }
+    }
+
+    public class InputFlashcardsModel
+    {
+        [Required]
+        [Range(1, 20, ErrorMessage = "Words count should be in [1; 20]")]
+        public int WordsCount { get; set; } // Rewrite to select
+
+        [Required]
+        [Range(1, 20, ErrorMessage = "Group should be in [1; 20]")]
+        public int Group { get; set; }
+
+        [Required]
+        public string Type { get; set; }
+    }
+}
