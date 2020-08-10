@@ -1,7 +1,8 @@
 ﻿@page "/canvas"
 @inject IJSRuntime JsRuntime
 
-<canvas  height="@windowSize.Height"
+<canvas id="canvas"
+        height="@windowSize.Height"
         width="@windowSize.Width"
         style="border: 2px solid "
         @onmousedown="@StartPaintMouse"
@@ -12,15 +13,21 @@
         @ontouchstart="@StartPaintTouch"
         @ontouchmove="@PaintTouch"
         @ontouchend="@StopPaint" />
+<button type="button" class="btn btn-primary"
+        @onclick="ClearCanvas">
+    Очистить
+</button>
+
+
 
 @code {
-        List<Stroke> strokes = new List<Stroke>();
-        WindowSize windowSize = new WindowSize();
-        ElementReference canvas;
-        Canvas2DContext ctx;
-        bool isPainting = false;
-        double x;
-        double y;
+    List<Stroke> strokes = new List<Stroke>();
+    WindowSize windowSize = new WindowSize();
+    ElementReference canvas;
+    Canvas2DContext ctx;
+    bool isPainting = false;
+    double x;
+    double y;
 
     protected override async Task OnInitializedAsync()
     {
@@ -65,8 +72,8 @@
             }
             await ctx.DrawLine(x, y, eX, eY);
             x = eX;
-            y = eY;            
-                strokes.Last().Points.Add(new Point { X = x, Y = y });            
+            y = eY;
+            strokes.Last().Points.Add(new Point { X = x, Y = y });
         }
     }
 
@@ -90,5 +97,10 @@
     private void StopPaint()
     {
         isPainting = false;
+    }
+
+    public async Task ClearCanvas()
+    {
+        await JsRuntime.InvokeAsync<object>("__blazorCanvasInterop.clearCanvas", canvas);
     }
 }
