@@ -12,13 +12,13 @@ namespace HandwritingLibrary
 
     public class SubStroke
     {
-        public double Dir;
+        public int Dir;
         public double Len;
         public double CenterX;
         public double CenterY;
     }
 
-    public class Stroke
+    public class Stroke 
     {
         public List<Point> Points = new List<Point>();
     }
