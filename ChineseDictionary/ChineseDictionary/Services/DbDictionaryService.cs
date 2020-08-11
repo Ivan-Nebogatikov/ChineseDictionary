@@ -40,25 +40,25 @@ namespace ChineseDictionary.Services
             if (string.IsNullOrEmpty(query))
                 return await SearchByAsync(DbConstants.Chinese, query, skip, take);
 
-            if (query.All(c => c >= 0x61 && c <= 0x7A || c >= 0x41 && c <= 0x5A))
+            if (query.All(c => c >= 0x61 && c <= 0x7A || c >= 0x41 && c <= 0x5A || char.IsPunctuation(c)))
             {
                 // Latin characters
                 return await SearchByAsync(DbConstants.PinyinMonotone, query, skip, take);
             }
 
-            if (query.All(c => c < 0x410))
+            if (query.All(c => c < 0x410 || char.IsPunctuation(c)))
             {
                 // Latin with diacritic & control characters
                 return await SearchByAsync(DbConstants.Pinyin, query, skip, take);
             }
 
-            if (query.All(c => c >= 0x410 && c <= 0x451))
+            if (query.All(c => c >= 0x410 && c <= 0x451 || char.IsPunctuation(c)))
             {
                 // Cyrillic characters
                 return await SearchByAsync(DbConstants.Translations, query, skip, take);
             }
 
-            if (query.All(c => c >= 0x3400))
+            if (query.All(c => c >= 0x3400 || char.IsPunctuation(c)))
             {
                 // Chinese characters
                 return await SearchByAsync(DbConstants.Chinese, query, skip, take);
