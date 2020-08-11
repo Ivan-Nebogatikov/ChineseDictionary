@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TG.Blazor.IndexedDB;
 using ChineseDictionary.Constants;
+using System.Text;
 
 namespace ChineseDictionary.Services
 {
@@ -57,13 +58,13 @@ namespace ChineseDictionary.Services
 
         private static string Monotone(string s)
         {
-            string ss = "";
+            StringBuilder ss = new StringBuilder();
             foreach (char c in s)
                 if (monotoneTable.ContainsKey(c))
-                    ss += monotoneTable[c];
+                    ss.Append(monotoneTable[c]);
                 else
-                    ss += c;
-            return ss;
+                    ss.Append(c);
+            return ss.ToString();
         }
 
         private static async Task AddRecord(IndexedDBManager DbManager, Word word)
