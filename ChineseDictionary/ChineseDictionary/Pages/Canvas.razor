@@ -31,7 +31,7 @@
     WindowSize windowSize = new WindowSize();
     ElementReference canvas;
     Canvas2DContext ctx;
-    JObject dictionary;
+    static JObject dictionary;
     bool isPainting = false;
     double x;
     double y;
@@ -50,8 +50,12 @@
             windowSize.Width = (int)(windowSize.Width * 0.9);
             windowSize.Height = windowSize.Width;
         }
-        dictionary = JObject.Parse(await Http.GetStringAsync("orig.json"));
-        dictionary["substrokes"] = CompactDecoder.Decode(dictionary["substrokes"].ToString());
+        if (dictionary == null)
+        {
+            dictionary = JObject.Parse(await Http.GetStringAsync("orig.json"));
+            dictionary["substrokes"] = CompactDecoder.Decode(dictionary["substrokes"].ToString());
+        }
+
     }
 
     private void StartPaintMouse(MouseEventArgs e)
@@ -108,20 +112,22 @@
 
     private void StopPaint()
     {
+        if (isPainting)
+        {
+            var analyzer = new Analyzer(strokes);
+            var subStrokes = analyzer.AnalyzedStrokes;
+            var strokesCount = strokes.Count;
+            var subStrokesCount = subStrokes.Count;
+            int limit = 20;
+
+            Console.WriteLine("Number of the input character's strokes: " + strokesCount);
+            Console.WriteLine("Number of the input character's substrokes: " + subStrokesCount);
+
+            Matcher mt = new Matcher(strokesCount, subStrokesCount, subStrokes, limit);
+            mt.DoMatching(dictionary);
+        }
+
         isPainting = false;
-        var analyzer = new Analyzer(strokes);
-        var subStrokes = analyzer.AnalyzedStrokes;
-        var strokesCount = strokes.Count;
-        var subStrokesCount = subStrokes.Count;
-        int limit = 20;
-
-        Console.WriteLine("Number of the input character's strokes: " + strokesCount);
-        Console.WriteLine("Number of the input character's substrokes: " + subStrokesCount);
-
-        Matcher mt = new Matcher(strokesCount, subStrokesCount, subStrokes, limit);
-        mt.DoMatching(dictionary);
-
-
     }
 
     public async Task ClearCanvas()
