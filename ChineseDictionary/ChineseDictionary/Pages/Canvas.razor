@@ -1,5 +1,6 @@
 ﻿@page "/canvas"
 @inject IJSRuntime JsRuntime
+@inject HttpClient Http
 
 <canvas id="canvas"
         height="@windowSize.Height"
@@ -18,13 +19,19 @@
     Очистить
 </button>
 
-
+@using HandwritingLibrary;
+@using Newtonsoft.Json;
+@using System;
+@using System.Collections.Generic;
+@using System.IO;
+@using Newtonsoft.Json.Linq;
 
 @code {
     List<Stroke> strokes = new List<Stroke>();
     WindowSize windowSize = new WindowSize();
     ElementReference canvas;
     Canvas2DContext ctx;
+    JObject dictionary;
     bool isPainting = false;
     double x;
     double y;
@@ -43,16 +50,19 @@
             windowSize.Width = (int)(windowSize.Width * 0.9);
             windowSize.Height = windowSize.Width;
         }
+        dictionary = Newtonsoft.Json.Linq.JObject.FromObject(await Http.GetFromJsonAsync<object>("orig.json"));
     }
 
     private void StartPaintMouse(MouseEventArgs e)
     {
         StartPainting(e.ClientX, e.ClientY);
+
     }
 
     private async Task PaintMouse(MouseEventArgs e)
     {
         await Paint(e.ClientX, e.ClientY);
+
     }
 
     private void StartPaintTouch(TouchEventArgs e)
@@ -89,14 +99,28 @@
         strokes.Add(new Stroke());
     }
 
-    private async Task PaintTouch(TouchEventArgs e)
+    public async Task PaintTouch(TouchEventArgs e)
     {
         await Paint(e.Touches.First().ClientX, e.Touches.First().ClientY);
+
     }
 
     private void StopPaint()
     {
         isPainting = false;
+        var analyzer = new Analyzer(strokes);
+        var subStrokes = analyzer.AnalyzedStrokes;
+        var strokesCount = strokes.Count;
+        var subStrokesCount = subStrokes.Count;
+        int limit = 20;
+
+        Console.WriteLine("Number of the input character's strokes: " + strokesCount);
+        Console.WriteLine("Number of the input character's substrokes: " + subStrokesCount);
+
+        Matcher mt = new Matcher(strokesCount, subStrokesCount, subStrokes, limit);
+        mt.DoMatching(dictionary);
+
+
     }
 
     public async Task ClearCanvas()
