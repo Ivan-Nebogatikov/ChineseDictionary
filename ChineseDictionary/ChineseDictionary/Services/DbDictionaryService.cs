@@ -52,7 +52,7 @@ namespace ChineseDictionary.Services
                 return await SearchByAsync(DbConstants.Pinyin, query, skip, take);
             }
 
-            if (query.All(c => c >= 0x410 && c <= 0451))
+            if (query.All(c => c >= 0x410 && c <= 0x451))
             {
                 // Cyrillic characters
                 return await SearchByAsync(DbConstants.Translations, query, skip, take);
