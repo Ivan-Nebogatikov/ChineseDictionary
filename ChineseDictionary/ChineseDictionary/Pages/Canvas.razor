@@ -50,7 +50,8 @@
             windowSize.Width = (int)(windowSize.Width * 0.9);
             windowSize.Height = windowSize.Width;
         }
-        dictionary = Newtonsoft.Json.Linq.JObject.FromObject(await Http.GetFromJsonAsync<object>("orig.json"));
+        dictionary = JObject.Parse(await Http.GetStringAsync("orig.json"));
+        dictionary["substrokes"] = CompactDecoder.Decode(dictionary["substrokes"].ToString());
     }
 
     private void StartPaintMouse(MouseEventArgs e)
