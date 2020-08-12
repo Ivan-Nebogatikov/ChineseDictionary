@@ -1,24 +1,34 @@
 ﻿@page "/canvas"
 @inject IJSRuntime JsRuntime
 
-<canvas id="canvas"
-        height="@windowSize.Height"
-        width="@windowSize.Width"
-        style="border: 2px solid "
-        @onmousedown="@StartPaintMouse"
-        @onmousemove="@PaintMouse"
-        @onmouseup="@StopPaint"
-        @onmouseout="@StopPaint"
-        @ref="@canvas"
-        @ontouchstart="@StartPaintTouch"
-        @ontouchmove="@PaintTouch"
-        @ontouchend="@StopPaint" />
-<button type="button" class="btn btn-primary"
-        @onclick="ClearCanvas">
-    Очистить
-</button>
-
-
+<div>
+    <button class="new"></button>
+    <button class="new"></button>
+    <button class="new"></button>
+    <button class="new"></button>
+    <button class="new"></button>
+    <button class="new"></button>
+</div>
+<div>
+    <canvas id="canvas"
+            height="@windowSize.Height"
+            width="@windowSize.Width"
+            style="border: 2px solid "
+            @onmousedown="@StartPaintMouse"
+            @onmousemove="@PaintMouse"
+            @onmouseup="@StopPaint"
+            @onmouseout="@StopPaint"
+            @ref="@canvas"
+            @ontouchstart="@StartPaintTouch"
+            @ontouchmove="@PaintTouch"
+            @ontouchend="@StopPaint" />
+</div>
+<div class="text-left">
+    <button type="button" class="btn btn-danger btn-xs"
+            @onclick="ClearCanvas">
+        Очистить
+    </button>
+</div>
 
 @code {
     List<Stroke> strokes = new List<Stroke>();
