@@ -1,0 +1,101 @@
+﻿@page "/flashcards/writting"
+
+@using ChineseDictionary.Models
+@using System.ComponentModel.DataAnnotations
+
+@inject NavigationManager navigation
+@inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
+
+@inject IJSRuntime JSRuntime
+
+<h1>Writting</h1>
+<br/>
+
+@if (word != null)
+{
+    <h4>@word.Chinese</h4>
+
+    <div id='character-quizzing'></div>
+
+    <button @onclick="HandleNext">Next</button>
+    <br /><br/>
+    <button @onclick="HandleStopSubmit">Stop train</button>
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+
+@code {
+
+    Word word;
+    private Model model = new Model();
+    private static Action action;
+
+    protected override void OnInitialized()
+    {
+        if (FlashcardsStatus.IsStateBegin())
+            navigation.NavigateTo("flashcards");
+
+        if (FlashcardsStatus.IsStateTrainingOptions())
+            navigation.NavigateTo("flashcards/options");
+
+        if (FlashcardsStatus.IsStateTrainingReview())
+            navigation.NavigateTo("flashcards/review");
+
+        if (FlashcardsStatus.IsStateTrainingWritting())
+            word = FlashcardsStatus.GetWord();
+
+        if (FlashcardsStatus.IsStateEnd())
+            navigation.NavigateTo("flashcards/results");
+
+        action = OnMistake;
+    }
+
+    private void HandleNext()
+    {
+        FlashcardsStatus.Answer(true);
+        if (FlashcardsStatus.IsStateTrainingWritting())
+            word = FlashcardsStatus.GetWord();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("removeListenersQuiz");
+        }
+        if (word != null)
+        {
+            foreach (char character in word.Chinese)
+            {
+                await JSRuntime.InvokeAsync<string>("writtingCharacter", character);
+            }
+        }
+    }
+
+    private void HandleStopSubmit()
+    {
+        FlashcardsStatus.StopTrain();
+    }
+
+    private void OnMistake()
+    {
+        FlashcardsStatus.Answer(false);
+        if (FlashcardsStatus.IsStateTrainingWritting())
+            word = FlashcardsStatus.GetWord();
+    }
+
+    [JSInvokable]
+    public static void Mistakes()
+    {
+        action.Invoke();
+    }
+
+    // Maybe move & group with other models
+    public class Model
+    {
+        [Required]
+        public string Translate { get; set; }
+    }
+}

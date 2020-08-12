@@ -25,6 +25,7 @@
         <option value="">Select type of train ...</option>
         <option value="Options">4 Options</option>
         <option value="Review">Review</option>
+        <option value="Writting">Writting</option>
     </InputSelect>
     <button type="submit">Train!</button>
 </EditForm>
@@ -41,6 +42,9 @@
 
         if (FlashcardsStatus.IsStateTrainingReview())
             navigation.NavigateTo("flashcards/review");
+
+        if (FlashcardsStatus.IsStateTrainingWritting())
+            navigation.NavigateTo("flashcards/writting");
 
         if (FlashcardsStatus.IsStateEnd())
             navigation.NavigateTo("flashcards/results");
@@ -63,6 +67,13 @@
             trainData = await FlashcardsDb.GenerateTrainReview(input.Group, input.WordsCount);
             FlashcardsStatus.BeginTrainReview(trainData, input.Group, input.WordsCount);
             navigation.NavigateTo("flashcards/review");
+        }
+
+        if (input.Type == "Writting")
+        {
+            trainData = await FlashcardsDb.GenerateTrainWritting(input.Group, input.WordsCount);
+            FlashcardsStatus.BeginTrainWritting(trainData, input.Group, input.WordsCount);
+            navigation.NavigateTo("flashcards/writting");
         }
     }
 
