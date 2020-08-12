@@ -1,106 +1,121 @@
 ﻿@page "/canvas"
 @inject IJSRuntime JsRuntime
 
-<canvas id="canvas"
-        height="@windowSize.Height"
-        width="@windowSize.Width"
-        style="border: 2px solid "
-        @onmousedown="@StartPaintMouse"
-        @onmousemove="@PaintMouse"
-        @onmouseup="@StopPaint"
-        @onmouseout="@StopPaint"
-        @ref="@canvas"
-        @ontouchstart="@StartPaintTouch"
-        @ontouchmove="@PaintTouch"
-        @ontouchend="@StopPaint" />
-<button type="button" class="btn btn-primary"
-        @onclick="ClearCanvas">
-    Очистить
-</button>
+
+    <div>
+        <button class="new"></button>
+        <button class="new"></button>
+        <button class="new"></button>
+        <button class="new"></button>
+        <button class="new"></button>
+        <button class="new"></button>
+    </div>
+    <div>
+        <canvas id="canvas"
+                height="@windowSize.Height"
+                width="@windowSize.Width"
+                style="border: 2px solid "
+                @onmousedown="@StartPaintMouse"
+                @onmousemove="@PaintMouse"
+                @onmouseup="@StopPaint"
+                @onmouseout="@StopPaint"
+                @ref="@canvas"
+                @ontouchstart="@StartPaintTouch"
+                @ontouchmove="@PaintTouch"
+                @ontouchend="@StopPaint" />
+    </div>
+    <div class="text-left">
+        <button type="button" class="btn btn-danger btn-xs"
+                @onclick="ClearCanvas">
+            Очистить
+        </button>
+    </div>
 
 
 
-@code {
-    List<Stroke> strokes = new List<Stroke>();
-    WindowSize windowSize = new WindowSize();
-    ElementReference canvas;
-    Canvas2DContext ctx;
-    bool isPainting = false;
-    double x;
-    double y;
 
-    protected override async Task OnInitializedAsync()
-    {
-        windowSize = await JsRuntime.InvokeAsync<WindowSize>("getWindowSize");
-        int SIZE = 500;
-        if (windowSize.Width > 500)
+
+    @code {
+        List<Stroke> strokes = new List<Stroke>();
+        WindowSize windowSize = new WindowSize();
+        ElementReference canvas;
+        Canvas2DContext ctx;
+        bool isPainting = false;
+        double x;
+        double y;
+
+        protected override async Task OnInitializedAsync()
         {
-            windowSize.Height = SIZE;
-            windowSize.Width = SIZE;
+            windowSize = await JsRuntime.InvokeAsync<WindowSize>("getWindowSize");
+            int SIZE = 500;
+            if (windowSize.Width > 500)
+            {
+                windowSize.Height = SIZE;
+                windowSize.Width = SIZE;
+            }
+            else
+            {
+                windowSize.Width = (int)(windowSize.Width * 0.9);
+                windowSize.Height = windowSize.Width;
+            }
         }
-        else
+
+        private void StartPaintMouse(MouseEventArgs e)
         {
-            windowSize.Width = (int)(windowSize.Width * 0.9);
-            windowSize.Height = windowSize.Width;
+            StartPainting(e.ClientX, e.ClientY);
         }
-    }
 
-    private void StartPaintMouse(MouseEventArgs e)
-    {
-        StartPainting(e.ClientX, e.ClientY);
-    }
-
-    private async Task PaintMouse(MouseEventArgs e)
-    {
-        await Paint(e.ClientX, e.ClientY);
-    }
-
-    private void StartPaintTouch(TouchEventArgs e)
-    {
-        StartPainting(e.Touches.First().ClientX, e.Touches.First().ClientY);
-    }
-
-    private async Task Paint(double pointX, double pointY)
-    {
-        if (isPainting)
+        private async Task PaintMouse(MouseEventArgs e)
         {
-            var eX = pointX;
-            var eY = pointY;
+            await Paint(e.ClientX, e.ClientY);
+        }
+
+        private void StartPaintTouch(TouchEventArgs e)
+        {
+            StartPainting(e.Touches.First().ClientX, e.Touches.First().ClientY);
+        }
+
+        private async Task Paint(double pointX, double pointY)
+        {
+            if (isPainting)
+            {
+                var eX = pointX;
+                var eY = pointY;
+                if (ctx == null)
+                {
+                    ctx = new Canvas2DContext(JsRuntime, canvas);
+                }
+                await ctx.DrawLine(x, y, eX, eY);
+                x = eX;
+                y = eY;
+                strokes.Last().Points.Add(new Point { X = x, Y = y });
+            }
+        }
+
+        private void StartPainting(double pointX, double pointY)
+        {
+            x = pointX;
+            y = pointY;
             if (ctx == null)
             {
                 ctx = new Canvas2DContext(JsRuntime, canvas);
             }
-            await ctx.DrawLine(x, y, eX, eY);
-            x = eX;
-            y = eY;
-            strokes.Last().Points.Add(new Point { X = x, Y = y });
+            isPainting = true;
+            strokes.Add(new Stroke());
         }
-    }
 
-    private void StartPainting(double pointX, double pointY)
-    {
-        x = pointX;
-        y = pointY;
-        if (ctx == null)
+        private async Task PaintTouch(TouchEventArgs e)
         {
-            ctx = new Canvas2DContext(JsRuntime, canvas);
+            await Paint(e.Touches.First().ClientX, e.Touches.First().ClientY);
         }
-        isPainting = true;
-        strokes.Add(new Stroke());
-    }
 
-    private async Task PaintTouch(TouchEventArgs e)
-    {
-        await Paint(e.Touches.First().ClientX, e.Touches.First().ClientY);
-    }
+        private void StopPaint()
+        {
+            isPainting = false;
+        }
 
-    private void StopPaint()
-    {
-        isPainting = false;
+        public async Task ClearCanvas()
+        {
+            await JsRuntime.InvokeAsync<object>("__blazorCanvasInterop.clearCanvas", canvas);
+        }
     }
-
-    public async Task ClearCanvas()
-    {
-        await JsRuntime.InvokeAsync<object>("__blazorCanvasInterop.clearCanvas", canvas);
-    }
-}
