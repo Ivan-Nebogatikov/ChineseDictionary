@@ -157,5 +157,38 @@ namespace ChineseDictionary.Services
             await DbManager.UpdateRecord(record);
         }
         #endregion
+
+        private async Task AddRecord(Word word)
+        {
+            await DbManager.AddRecord(new StoreRecord<FlashcardWord>
+            {
+                Storename = DbConstants.FlashcardsStoreName,
+                Data = new FlashcardWord { Chinese = word.Chinese, Day = 1, LastTrainDate = 0 }
+            });
+        }
+
+        public async Task AddWord(Word word)
+        {
+            if (!await IsWordInFlashcards(word))
+                await AddRecord(word);
+        }
+
+        public async Task<bool> IsWordInFlashcards(Word word)
+        {
+            return !(await GetFlashcardWordByWord(word) is null);
+        }
+
+        public async Task<string> NextTrainDate(Word word)
+        {
+            FlashcardWord flashcardWord = await GetFlashcardWordByWord(word);
+            DateTime lastTrainDate = new DateTime(flashcardWord.LastTrainDate);
+            TimeSpan groupDays = new TimeSpan(flashcardWord.Day, 0, 0, 0);
+            DateTime nextTrainDate = lastTrainDate.Add(groupDays);
+
+            if(nextTrainDate > DateTime.Now)
+                return lastTrainDate.Add(groupDays).ToLongDateString();
+            else
+                return ContentConstants.MessageWordCanTrain;
+        }
     }
 }

@@ -74,12 +74,6 @@ namespace ChineseDictionary.Services
                 Storename = DbConstants.StoreName,
                 Data = word
             });
-
-            await DbManager.AddRecord(new StoreRecord<FlashcardWord>
-            {
-                Storename = DbConstants.FlashcardsStoreName,
-                Data = new FlashcardWord { Chinese = word.Chinese, Day = 1 }
-            });
         }
 
         public static async Task DBParseAsync(IndexedDBManager DbManager, Stream stream)
