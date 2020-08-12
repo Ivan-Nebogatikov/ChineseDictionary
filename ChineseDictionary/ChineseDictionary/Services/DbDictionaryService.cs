@@ -64,7 +64,7 @@ namespace ChineseDictionary.Services
                 return await SearchByAsync(DbConstants.Chinese, query, skip, take);
             }
 
-            return null;
+            return new List<Word>();
         }
 
         private async Task<IEnumerable<Word>> SearchByAsync(string indexName, string queryValue, int skip, int take)
