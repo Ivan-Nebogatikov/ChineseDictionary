@@ -11,6 +11,7 @@ namespace ChineseDictionary.Models
         public string Chinese { get; set; }
 
         public string Pinyin { get; set; }
+        public string PinyinMonotone { get; set; }
 
         public ICollection<string> Translations { get; set; } = new List<string>();
 
