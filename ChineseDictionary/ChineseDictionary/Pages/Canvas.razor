@@ -2,12 +2,10 @@
 @inject IJSRuntime JsRuntime
 
 <div>
-    <button class="new"></button>
-    <button class="new"></button>
-    <button class="new"></button>
-    <button class="new"></button>
-    <button class="new"></button>
-    <button class="new"></button>
+    @for (var i = 0; i < 6; ++i)
+    {
+        <button class="new"></button>
+    }
 </div>
 <div>
     <canvas id="canvas"

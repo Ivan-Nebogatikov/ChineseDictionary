@@ -7,7 +7,7 @@ namespace ChineseDictionary.I18nText
 
         public string this[string key] => global::Toolbelt.Blazor.I18nText.I18nTextExtensions.GetFieldValue(this, key);
 
-        /// <summary>"Канвас"</summary>
+        /// <summary>"Рукописный ввод"</summary>
         public string Canvas;
 
         /// <summary>"Карточки"</summary>
