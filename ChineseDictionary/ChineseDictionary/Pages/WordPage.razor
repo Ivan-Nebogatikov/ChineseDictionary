@@ -73,24 +73,13 @@ else
     <br />
     <br />
 
-    <button style="
-    color: white;
-    background-color: #337ab7;
-    border-radius: 4px;
-    border: none;
-    font-size: 20px;
-    padding: 7px 20px;
-    ">
-        Add to train
-    </button>
-
-    @if (FlashcardsDb.IsWordInFlashcards(word))
+    @if (isWordInFlashcards)
     {
-        <h6>Следующая тренировка: @FlashcardsDb.NextTrainDate(word)</h6>
+        <h6>Следующая тренировка: @nextTrainDate</h6>
     }
     else
     {
-        <button @onclick="AddWord2Train">Restore</button>
+        <button @onclick="AddWord2Train">Добавить слово в тренировку</button>
     }
 
     <br />
@@ -106,12 +95,17 @@ else
     public string Text { get; set; }
 
     private Word word;
+    private bool isWordInFlashcards;
+    private string nextTrainDate;
 
     List<ColoredCharacter> coloredCharacters;
 
     protected override async Task OnInitializedAsync()
     {
         word = await DictionaryService.GetByChinese(Text);
+        isWordInFlashcards = await FlashcardsDb.IsWordInFlashcards(word);
+        if (isWordInFlashcards)
+            nextTrainDate = await FlashcardsDb.NextTrainDate(word);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
