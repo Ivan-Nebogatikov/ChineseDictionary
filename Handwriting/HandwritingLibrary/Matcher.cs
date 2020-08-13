@@ -51,7 +51,6 @@ namespace HandwritingLibrary
             var minSubStrokes = Math.Max(subStrokeCount - subStrokesRange, 1);
             var maxSubStrokes = Math.Min(subStrokeCount + subStrokesRange, CharConstants.MAX_CHARACTER_SUB_STROKE_COUNT);
 
-            data["substrokes"] = CompactDecoder.Decode(data["substrokes"].ToString());
             subStrInf = data["substrokes"];
             var symbols = data["chars"] as JArray;
 
@@ -67,7 +66,7 @@ namespace HandwritingLibrary
                 matchCollector.AddMatch(match);
             }
 
-            char[] resultChars = matchCollector.matches.Select(x => x.Character).ToArray();
+            char[] resultChars = matchCollector.matches.Where(x => x != null).Select(x => x.Character).ToArray();
             return resultChars;
         }
 
