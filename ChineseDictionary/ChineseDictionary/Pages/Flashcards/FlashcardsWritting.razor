@@ -31,6 +31,7 @@ else
     Word word;
     private Model model = new Model();
     private static Action action;
+    private int numbOfMistakes = 0;
 
     protected override void OnInitialized()
     {
@@ -54,9 +55,19 @@ else
 
     private void HandleNext()
     {
-        FlashcardsStatus.Answer(true);
+        if (numbOfMistakes < 4)
+        {
+            FlashcardsStatus.Answer(true);
+        }
+        else
+        {
+            FlashcardsStatus.Answer(false);
+        }
         if (FlashcardsStatus.IsStateTrainingWritting())
+        {
+            numbOfMistakes = 0;
             word = FlashcardsStatus.GetWord();
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -81,9 +92,8 @@ else
 
     private void OnMistake()
     {
-        FlashcardsStatus.Answer(false);
-        if (FlashcardsStatus.IsStateTrainingWritting())
-            word = FlashcardsStatus.GetWord();
+        numbOfMistakes++;
+        Console.WriteLine(numbOfMistakes);
     }
 
     [JSInvokable]
