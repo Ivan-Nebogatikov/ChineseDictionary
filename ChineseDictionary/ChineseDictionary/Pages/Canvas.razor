@@ -1,30 +1,48 @@
 ﻿@page "/canvas"
+@using HandwritingLibrary;
+@using System;
+@using System.Collections.Generic;
+@using Newtonsoft.Json.Linq;
 @inject IJSRuntime JsRuntime
 @inject HttpClient Http
 
-<canvas id="canvas"
-        height="@windowSize.Height"
-        width="@windowSize.Width"
-        style="border: 2px solid "
-        @onmousedown="@StartPaintMouse"
-        @onmousemove="@PaintMouse"
-        @onmouseup="@StopPaint"
-        @onmouseout="@StopPaint"
-        @ref="@canvas"
-        @ontouchstart="@StartPaintTouch"
-        @ontouchmove="@PaintTouch"
-        @ontouchend="@StopPaint" />
-<button type="button" class="btn btn-primary"
-        @onclick="ClearCanvas">
-    Очистить
-</button>
-
-@using HandwritingLibrary;
-@using Newtonsoft.Json;
-@using System;
-@using System.Collections.Generic;
-@using System.IO;
-@using Newtonsoft.Json.Linq;
+<div>
+    @if (characters != null)
+    {
+        @foreach (char ch in characters)
+        {
+            string hier = ch.ToString();
+            <button style="width:46px;height:46px;margin-bottom:10px" class="btn btn-warning" name="filled">@hier</button>
+        }
+    }
+    else
+    {
+        @for (var i = 0; i < 11; ++i)
+        {
+            <button style="width:42px;height:42px;margin-bottom:10px" class="btn btn-warning" name="empty"></button>
+        }
+    }
+</div>
+<div>
+    <canvas id="canvas"
+            height="@windowSize.Height"
+            width="@windowSize.Width"
+            style="border: 2px solid "
+            @onmousedown="@StartPaintMouse"
+            @onmousemove="@PaintMouse"
+            @onmouseup="@StopPaint"
+            @onmouseout="@StopPaint"
+            @ref="@canvas"
+            @ontouchstart="@StartPaintTouch"
+            @ontouchmove="@PaintTouch"
+            @ontouchend="@StopPaint" />
+</div>
+<div class="text-left">
+    <button type="button" class="btn btn-danger btn-xs"
+            @onclick="ClearCanvas">
+        Очистить
+    </button>
+</div>
 
 @code {
     List<Stroke> strokes = new List<Stroke>();
@@ -32,10 +50,11 @@
     ElementReference canvas;
     Canvas2DContext ctx;
     static JObject dictionary;
+    char[] characters;
     bool isPainting = false;
     double x;
     double y;
-
+    
     protected override async Task OnInitializedAsync()
     {
         windowSize = await JsRuntime.InvokeAsync<WindowSize>("getWindowSize");
@@ -55,19 +74,16 @@
             dictionary = JObject.Parse(await Http.GetStringAsync("orig.json"));
             dictionary["substrokes"] = CompactDecoder.Decode(dictionary["substrokes"].ToString());
         }
-
     }
 
     private void StartPaintMouse(MouseEventArgs e)
     {
         StartPainting(e.ClientX, e.ClientY);
-
     }
 
     private async Task PaintMouse(MouseEventArgs e)
     {
         await Paint(e.ClientX, e.ClientY);
-
     }
 
     private void StartPaintTouch(TouchEventArgs e)
@@ -104,29 +120,27 @@
         strokes.Add(new Stroke());
     }
 
-    public async Task PaintTouch(TouchEventArgs e)
+    private async Task PaintTouch(TouchEventArgs e)
     {
         await Paint(e.Touches.First().ClientX, e.Touches.First().ClientY);
-
     }
 
     private void StopPaint()
     {
-        if (isPainting == true)
+        if (isPainting)
         {
             var analyzer = new Analyzer(strokes);
             var subStrokes = analyzer.AnalyzedStrokes;
             var strokesCount = strokes.Count;
             var subStrokesCount = subStrokes.Count;
-            int limit = 20;
+            int limit = 10;
 
             Console.WriteLine("Number of the input character's strokes: " + strokesCount);
             Console.WriteLine("Number of the input character's substrokes: " + subStrokesCount);
 
             Matcher mt = new Matcher(strokesCount, subStrokesCount, subStrokes, limit);
-            mt.DoMatching(dictionary);
+            characters = mt.DoMatching(dictionary);
         }
-
         isPainting = false;
     }
 

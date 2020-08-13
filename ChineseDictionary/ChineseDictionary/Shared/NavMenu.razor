@@ -1,4 +1,6 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@inject Toolbelt.Blazor.I18nText.I18nText I18nText
+
+<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">ChineseDictionary</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -9,22 +11,22 @@
     <ul class="nav flex-column">
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+                <span class="oi oi-home" aria-hidden="true"></span> @localization.Home
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="search">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Search
+                <span class="oi oi-list-rich" aria-hidden="true"></span> @localization.Search
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="flashcards">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Flashcards
+                <span class="oi oi-list-rich" aria-hidden="true"></span> @localization.Flashcards
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="canvas">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Canvas
+                <span class="oi oi-list-rich" aria-hidden="true"></span> @localization.Canvas
             </NavLink>
         </li>
     </ul>
@@ -33,7 +35,14 @@
 @code {
     private bool collapseNavMenu = true;
 
+    private Strings localization = new Strings();
+
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        localization = await I18nText.GetTextTableAsync<Strings>(this);
+    }
 
     private void ToggleNavMenu()
     {
