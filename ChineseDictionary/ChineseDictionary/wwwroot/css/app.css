@@ -139,7 +139,14 @@ app {
     right: 0.75rem;
     top: 0.5rem;
 }
-
+button.new {
+    width: 80px;
+    height: 80px;
+    top: 20%;
+    border: 1px solid #333;
+    margin-bottom: 10px;
+    padding-left: 10px;
+}
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
         display: none;

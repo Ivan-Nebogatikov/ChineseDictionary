@@ -23,7 +23,7 @@
             context.closePath();
             context.stroke();
         },
-        clearCanvas: (canvas, ctx) => {
+        clearCanvas: (canvas) => {
             let context = getContext(canvas);
             context.clearRect(0, 0, context.canvas.width, context.canvas.height);
         },

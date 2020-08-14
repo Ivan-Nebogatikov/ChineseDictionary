@@ -6,7 +6,7 @@ namespace HandwritingLibrary
     {
         public List<CharacterMatch> matches = new List<CharacterMatch>();
         public readonly int limit;
-        public static int count = 0;
+        public int count = 0;
 
         public MatchCollector(int limit)
         {
