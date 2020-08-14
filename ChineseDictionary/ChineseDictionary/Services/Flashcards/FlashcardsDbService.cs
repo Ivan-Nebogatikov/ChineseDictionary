@@ -148,6 +148,7 @@ namespace ChineseDictionary.Services
             StoreRecord<FlashcardWord> record;
             
             flashcardWord.Day = group;
+            flashcardWord.LastTrainDate = DateTime.Now.Ticks;
             record = new StoreRecord<FlashcardWord>
             {
                 Storename = DbConstants.FlashcardsStoreName,
