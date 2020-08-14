@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
 
 <div class="sidebar">
     <NavMenu />
@@ -6,10 +7,19 @@
 
 <div class="main">
     <div class="top-row px-4">
-        <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
+        <a href="http://blazor.net" target="_blank" class="ml-md-auto">@localization.About</a>
     </div>
 
     <div class="content px-4">
         @Body
     </div>
 </div>
+
+@code {
+    private Strings localization = new Strings();
+
+    protected override async Task OnInitializedAsync()
+    {
+        localization = await I18nText.GetTextTableAsync<Strings>(this);
+    }
+}
