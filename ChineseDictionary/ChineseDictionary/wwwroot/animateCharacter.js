@@ -15,17 +15,21 @@ function removeListeners() {
 	document.getElementById('character-target-div').innerHTML = "";
 }
 
-function writtingCharacter(character) {
+
+function writtingCharacter(character, color) {
 	var writer = HanziWriter.create('character-quizzing', character, {
 		width: 100,
 		height: 100,
 		showCharacter: false,
-		padding: 5
+		padding: 5,
+		strokeColor: color
 	});
 	writer.quiz({
 		onMistake: function () {
 			DotNet.invokeMethodAsync('ChineseDictionary', 'Mistakes')
-			//console.log('Hi')
+		},
+		onComplete: function () {
+			DotNet.invokeMethodAsync('ChineseDictionary', 'Complete')
 		}
 	});
 }

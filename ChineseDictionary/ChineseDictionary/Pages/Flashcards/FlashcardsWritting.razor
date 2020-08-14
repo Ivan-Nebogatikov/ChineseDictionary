@@ -30,8 +30,14 @@ else
 
     Word word;
     private Model model = new Model();
-    private static Action action;
+
+    private static Action mistake;
+    private static Action complete;
+
     private int numbOfMistakes = 0;
+    private int numbOfComplete = 0;
+
+    List<ColoredCharacter> coloredCharacters;
 
     protected override void OnInitialized()
     {
@@ -50,12 +56,13 @@ else
         if (FlashcardsStatus.IsStateEnd())
             navigation.NavigateTo("flashcards/results");
 
-        action = OnMistake;
+        mistake = OnMistake;
+        complete = OnComplete;
     }
 
     private void HandleNext()
     {
-        if (numbOfMistakes < 4)
+        if (numbOfComplete == word.Chinese.Length & numbOfMistakes < 4)
         {
             FlashcardsStatus.Answer(true);
         }
@@ -66,8 +73,14 @@ else
         if (FlashcardsStatus.IsStateTrainingWritting())
         {
             numbOfMistakes = 0;
+            numbOfComplete = 0;
             word = FlashcardsStatus.GetWord();
         }
+    }
+
+    protected override void OnParametersSet()
+    {
+        coloredCharacters = PaintingOfCharacters.PaintCharacter(word.Pinyin, word.Chinese);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -78,9 +91,10 @@ else
         }
         if (word != null)
         {
-            foreach (char character in word.Chinese)
+            coloredCharacters = PaintingOfCharacters.PaintCharacter(word.Pinyin, word.Chinese);
+            foreach (ColoredCharacter colChar in coloredCharacters)
             {
-                await JSRuntime.InvokeAsync<string>("writtingCharacter", character);
+                await JSRuntime.InvokeAsync<string>("writtingCharacter", colChar.character, colChar.color);
             }
         }
     }
@@ -93,13 +107,23 @@ else
     private void OnMistake()
     {
         numbOfMistakes++;
-        Console.WriteLine(numbOfMistakes);
+    }
+
+    private void OnComplete()
+    {
+        numbOfComplete++;
     }
 
     [JSInvokable]
     public static void Mistakes()
     {
-        action.Invoke();
+        mistake.Invoke();
+    }
+
+    [JSInvokable]
+    public static void Complete()
+    {
+        complete.Invoke();
     }
 
     // Maybe move & group with other models
