@@ -1,12 +1,29 @@
 ﻿@page "/canvas"
 
+@using HandwritingLibrary;
+@using System;
+@using System.Collections.Generic;
+@using Newtonsoft.Json.Linq;
+
 @inject IJSRuntime JsRuntime
 @inject Toolbelt.Blazor.I18nText.I18nText I18nText
+@inject HttpClient Http
 
 <div>
-    @for (var i = 0; i < 6; ++i)
+    @if (characters != null)
     {
-        <button class="new"></button>
+        @foreach (char ch in characters)
+        {
+            string hier = ch.ToString();
+            <button style="width:46px;height:46px;margin-bottom:10px" class="btn btn-warning" name="filled">@hier</button>
+        }
+    }
+    else
+    {
+        @for (var i = 0; i < 11; ++i)
+        {
+            <button style="width:42px;height:42px;margin-bottom:10px" class="btn btn-warning" name="empty"></button>
+        }
     }
 </div>
 <div>
@@ -35,6 +52,8 @@
     WindowSize windowSize = new WindowSize();
     ElementReference canvas;
     Canvas2DContext ctx;
+    static JObject dictionary;
+    char[] characters;
     bool isPainting = false;
     double x;
     double y;
@@ -54,6 +73,11 @@
         {
             windowSize.Width = (int)(windowSize.Width * 0.9);
             windowSize.Height = windowSize.Width;
+        }
+        if (dictionary == null)
+        {
+            dictionary = JObject.Parse(await Http.GetStringAsync("orig.json"));
+            dictionary["substrokes"] = CompactDecoder.Decode(dictionary["substrokes"].ToString());
         }
     }
 
@@ -108,6 +132,20 @@
 
     private void StopPaint()
     {
+        if (isPainting)
+        {
+            var analyzer = new Analyzer(strokes);
+            var subStrokes = analyzer.AnalyzedStrokes;
+            var strokesCount = strokes.Count;
+            var subStrokesCount = subStrokes.Count;
+            int limit = 10;
+
+            Console.WriteLine("Number of the input character's strokes: " + strokesCount);
+            Console.WriteLine("Number of the input character's substrokes: " + subStrokesCount);
+
+            Matcher mt = new Matcher(strokesCount, subStrokesCount, subStrokes, limit);
+            characters = mt.DoMatching(dictionary);
+        }
         isPainting = false;
     }
 
