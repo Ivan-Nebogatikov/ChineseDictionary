@@ -25,12 +25,12 @@
             <br>
         }
 
-        <button type="submit">@localization.Next</button>
+        <button type="submit" class="btn btn-success">@localization.Next</button>
     </EditForm>
 
     <br />
     <EditForm Model="@model" OnValidSubmit="HandleStopSubmit">
-        <button type="submit">@localization.StopTrain</button>
+        <button type="submit" class="btn btn-danger">@localization.StopTrain</button>
     </EditForm>
 }
 else

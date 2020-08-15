@@ -13,11 +13,11 @@
 {
     <h4>@word.Chinese</h4>
 
-    <button @onclick="HandleRemember">@localization.Rremember</button>
+    <button class="btn btn-success" @onclick="HandleRemember">@localization.Rremember</button>
     <br />
-    <button @onclick="HandleNotRemember">@localization.DontRremember</button>
+    <button class="btn btn-danger" @onclick="HandleNotRemember">@localization.DontRremember</button>
     <hr />
-    <button @onclick="HandleStopSubmit">@localization.StopTrain</button>
+    <button class="btn btn-primary" @onclick="HandleStopSubmit">@localization.StopTrain</button>
 }
 else
 {

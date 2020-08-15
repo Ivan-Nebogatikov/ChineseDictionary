@@ -7,14 +7,17 @@ namespace ChineseDictionary.I18nText
 
         public string this[string key] => global::Toolbelt.Blazor.I18nText.I18nTextExtensions.GetFieldValue(this, key);
 
-        /// <summary>"О blazor"</summary>
-        public string About;
+        /// <summary>"Анимация"</summary>
+        public string Animate;
 
         /// <summary>"Рукописный ввод"</summary>
         public string Canvas;
 
         /// <summary>"Очистить"</summary>
         public string Clear;
+
+        /// <summary>"Правильно:"</summary>
+        public string Correct;
 
         /// <summary>"Не помню"</summary>
         public string DontRremember;
@@ -46,13 +49,13 @@ namespace ChineseDictionary.I18nText
         /// <summary>"Далее"</summary>
         public string Next;
 
-        /// <summary>"Номер слова:"</summary>
+        /// <summary>"Количество слов:"</summary>
         public string NumberOfWords;
 
         /// <summary>"Синонимы:"</summary>
         public string RelativeWords;
 
-        /// <summary>"Восстановить"</summary>
+        /// <summary>"Сбросить"</summary>
         public string Restore;
 
         /// <summary>"Обзор"</summary>
@@ -73,11 +76,17 @@ namespace ChineseDictionary.I18nText
         /// <summary>"Закончить тренировку"</summary>
         public string StopTrain;
 
-        /// <summary>"Пожалуйста, пройдите [опрос]({0}) и поделитесь с нами своим мнением."</summary>
+        /// <summary>"Порядок черт:"</summary>
+        public string StrokeOrder;
+
+        /// <summary>"Пожалуйста, пройдите опрос и поделитесь с нами своим мнением."</summary>
         public string SurveyPrompt;
 
         /// <summary>"Как Blazor работает?"</summary>
         public string SurveyTitle;
+
+        /// <summary>"Назад"</summary>
+        public string ToSearch;
 
         /// <summary>"Тренироваться!"</summary>
         public string Train;
@@ -87,5 +96,8 @@ namespace ChineseDictionary.I18nText
 
         /// <summary>"Добро пожаловать в ChineseDictionary! Мы являемся лучшим словарем по мнению Билла Гейтса."</summary>
         public string WelcomeToYourNewApp;
+
+        /// <summary>"Неправильно:"</summary>
+        public string Wrong;
     }
 }

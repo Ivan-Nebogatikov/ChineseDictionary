@@ -12,7 +12,7 @@
 <h1>@localization.Flashcards</h1>
 
 <br />
-<h2>Correct:</h2>
+<h2>@localization.Correct</h2>
 @foreach (var word in correct)
 {
     <p>
@@ -22,7 +22,7 @@
 
 <hr>
 
-<h2>Wrong:</h2>
+<h2>@localization.Wrong</h2>
 @foreach (var word in wrong)
 {
     <p>
@@ -31,7 +31,7 @@
 }
 
 <br />
-<button @onclick="RestoreHandle">@localization.Restore</button>
+<button class="btn btn-secondary" @onclick="RestoreHandle">@localization.Restore</button>
 
 @code {
     private List<Word> correct;

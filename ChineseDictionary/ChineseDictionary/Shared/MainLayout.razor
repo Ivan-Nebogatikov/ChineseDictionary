@@ -7,23 +7,22 @@
 
 <div class="main">
     <div class="top-row px-4">
-        <a href="http://blazor.net" target="_blank" class="ml-md-auto">@localization.About</a>
+        <div class="col"></div>
+        <div class="col-auto">
+            <span class="oi oi-globe" aria-hidden="true"></span>
+        </div>
+        <div class="col-auto">
+            <select target="_blank" class="ml-md-auto" @onchange="OnChangeCurrentLang">
+                <option value="en" selected="@(CurrentLang == "en")">English</option>
+                <option value="ru" selected="@(CurrentLang == "ru")">Русский</option>
+            </select>
+        </div>
     </div>
-
     <div class="content px-4">
         @Body
         <div class="footer">
             <div class="form-row align-items-center text-muted px-4">
                 <div class="col"></div>
-                <div class="col-auto">
-                    <span class="oi oi-globe" aria-hidden="true"></span>
-                </div>
-                <div class="col-auto">
-                    <select class="form-control form-control-sm" @onchange="OnChangeCurrentLang">
-                        <option value="en" selected="@(CurrentLang == "en")">English</option>
-                        <option value="ja" selected="@(CurrentLang == "ru")">Русский</option>
-                    </select>
-                </div>
             </div>
         </div>
     </div>

@@ -8,7 +8,7 @@
   "WelcomeToYourNewApp": "Welcome to your new app.",
   "HelloWorld": "Hello World!",
   "SurveyTitle": "How is Blazor working for you?",
-  "SurveyPrompt": "Please take our [brief survey]({0}) and tell us what you think.",
+  "SurveyPrompt": "Please take our brief survey and tell us what you think.",
   "Clear": "Clear",
   "Train": "Train!",
   "Review": "Review",
@@ -18,12 +18,16 @@
   "StopTrain": "Stop train",
   "NumberOfWords": "Number of words:",
   "GroupOfFlashcards": "Group of flashcards:",
-  "Sorry": "Sorry, there's nothing at this address.",
-  "About": "About",
+  "Sorry": "Sorry, there's nothing at this address.",  
   "Rremember": "Rremember",
   "DontRremember": "Don't remember",
   "Restore": "Restore",
   "Translation": "Translation:",
   "Examples": "Examples:",
-  "RelativeWords": "Relative words:"
+  "RelativeWords": "Relative words:",
+  "Correct": "Correct:",
+  "Wrong": "Wrong:",
+  "Animate": "Animate",
+  "StrokeOrder": "Stroke order:",
+  "ToSearch": "To Search"
 }
