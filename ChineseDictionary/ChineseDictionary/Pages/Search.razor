@@ -1,16 +1,17 @@
 ﻿@page "/search"
-@using ChineseDictionary.Models
-@using System.ComponentModel.DataAnnotations
+
 @inject HttpClient Http
 @inject ChineseDictionary.Services.IDictionaryServiceAsync Dictionary
-
-@using TG.Blazor.IndexedDB
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
 @inject IndexedDBManager DbManager
 @inject DbStore DbStore
 
+@using ChineseDictionary.Models
+@using System.ComponentModel.DataAnnotations
+@using TG.Blazor.IndexedDB
 @using ChineseDictionary.Constants
 
-<h1>Search</h1>
+<h1>@localization.Search</h1>
 
 <EditForm Model="@fieldModel" OnValidSubmit="HandleSearchSubmit">
     <DataAnnotationsValidator />
@@ -18,12 +19,12 @@
 
     <InputText id="SearchString" @bind-Value="fieldModel.SearchString" />
 
-    <button type="submit">Search</button>
+    <button type="submit" class="btn btn-success">@localization.Search</button>
 </EditForm>
 
 @if (words == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>@localization.Loading</em></p>
 }
 else
 {
@@ -34,21 +35,21 @@ else
             <em>@string.Join(", ", word.Translations)</em>
         </p>
     }
-    <button @onclick="AddMore">More</button>
+    <button type="button" class="btn btn-primary"@onclick="AddMore">@localization.More</button>
 }
 
 @code {
-
     private InputFieldModel fieldModel = new InputFieldModel();
-
+    private Strings localization = new Strings();
     private int shownItems = ConfigConstants.FirstShownWordsCount;
     private int storageSize = ConfigConstants.StorageWordsSize;
-
     private IEnumerable<Word> words;
 
     protected override async Task OnInitializedAsync()
     {
+        localization = await I18nText.GetTextTableAsync<Strings>(this);
         words = await Dictionary.SearchAsync("", 0, ConfigConstants.StorageWordsSize);
+
     }
 
     private async Task HandleSearchSubmit()
@@ -61,7 +62,7 @@ else
     {
         shownItems += ConfigConstants.AddShownWordsCount;
 
-        if(shownItems > storageSize)
+        if (shownItems > storageSize)
         {
             string query = fieldModel.SearchString ?? string.Empty;
             var data = await Dictionary.SearchAsync(query, storageSize, storageSize + ConfigConstants.StorageWordsSize);
