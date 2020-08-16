@@ -15,8 +15,10 @@ function removeListeners() {
 	document.getElementById('character-target-div').innerHTML = "";
 }
 
-
-function writtingCharacter(character, color) {
+function writting(character, color) {
+	numbOfMistakes = 0;
+	document.getElementById('mistakesCounter').innerHTML = 'You have made 0 mistakes';
+	document.getElementById('mistakesCounter').style.color = '#000000';
 	var writer = HanziWriter.create('character-quizzing', character, {
 		width: 100,
 		height: 100,
@@ -26,7 +28,12 @@ function writtingCharacter(character, color) {
 	});
 	writer.quiz({
 		onMistake: function () {
-			DotNet.invokeMethodAsync('ChineseDictionary', 'Mistakes')
+			numbOfMistakes++;
+			DotNet.invokeMethodAsync('ChineseDictionary', 'Mistakes');
+			var div = document.getElementById('mistakesCounter');
+			div.innerHTML = 'You have made ' + numbOfMistakes + ' mistakes';
+			if (numbOfMistakes > 3)
+				document.getElementById('mistakesCounter').style.color = '#FF0000';
 		},
 		onComplete: function () {
 			DotNet.invokeMethodAsync('ChineseDictionary', 'Complete')

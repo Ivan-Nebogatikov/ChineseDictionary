@@ -15,11 +15,14 @@
 {
     <h4>@word.Chinese</h4>
 
-    <div id='character-quizzing'></div>
+    <div id='character-quizzing'></div><br/>
+
+    <div id='mistakesCounter'></div><br />
 
     <button @onclick="HandleNext">Next</button>
     <br /><br/>
     <button @onclick="HandleStopSubmit">Stop train</button>
+    <br/><br/>
 }
 else
 {
@@ -94,7 +97,7 @@ else
             coloredCharacters = PaintingOfCharacters.PaintCharacter(word.Pinyin, word.Chinese);
             foreach (ColoredCharacter colChar in coloredCharacters)
             {
-                await JSRuntime.InvokeAsync<string>("writtingCharacter", colChar.character, colChar.color);
+                await JSRuntime.InvokeAsync<string>("writting", colChar.character, colChar.color);
             }
         }
     }
