@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using ChineseDictionary.Services;
 using TG.Blazor.IndexedDB;
 using ChineseDictionary.Constants;
+using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 namespace ChineseDictionary
 {
@@ -19,6 +20,7 @@ namespace ChineseDictionary
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
+            builder.Services.AddI18nText();
 
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddIndexedDB(dbStore =>
@@ -34,6 +36,7 @@ namespace ChineseDictionary
                     {
                         new IndexSpec { Name = DbConstants.Chinese, KeyPath = DbConstants.Chinese, Auto = false },
                         new IndexSpec { Name = DbConstants.Pinyin, KeyPath = DbConstants.Pinyin, Auto = false },
+                        new IndexSpec { Name = DbConstants.PinyinMonotone, KeyPath = DbConstants.PinyinMonotone, Auto = false },
                         new IndexSpec { Name = DbConstants.Translations, KeyPath = DbConstants.Translations, Auto = false },
                         new IndexSpec { Name = DbConstants.RelativeWords, KeyPath = DbConstants.RelativeWords, Auto = false },
                     }

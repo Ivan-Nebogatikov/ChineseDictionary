@@ -39,7 +39,39 @@ namespace ChineseDictionary.Services
             Load(); // ToDo: Rewrite
         }
 
-        private async Task<IEnumerable<Word>> SearchByAsync(string indexName, string queryValue, int skip = 0, int take = int.MaxValue)
+        public async Task<IEnumerable<Word>> SearchAsync(string query, int skip = 0, int take = int.MaxValue)
+        {
+            if (string.IsNullOrEmpty(query))
+                return await SearchByAsync(DbConstants.Chinese, query, skip, take);
+
+            if (query.All(c => c >= 0x61 && c <= 0x7A || c >= 0x41 && c <= 0x5A || char.IsPunctuation(c) || char.IsWhiteSpace(c)))
+            {
+                // Latin characters
+                return await SearchByAsync(DbConstants.PinyinMonotone, query, skip, take);
+            }
+
+            if (query.All(c => c < 0x410 || char.IsPunctuation(c) || char.IsWhiteSpace(c)))
+            {
+                // Latin with diacritic & control characters
+                return await SearchByAsync(DbConstants.Pinyin, query, skip, take);
+            }
+
+            if (query.All(c => c >= 0x410 && c <= 0x451 || char.IsPunctuation(c) || char.IsWhiteSpace(c)))
+            {
+                // Cyrillic characters
+                return await SearchByAsync(DbConstants.Translations, query, skip, take);
+            }
+
+            if (query.All(c => c >= 0x3400 || char.IsPunctuation(c) || char.IsWhiteSpace(c)))
+            {
+                // Chinese characters
+                return await SearchByAsync(DbConstants.Chinese, query, skip, take);
+            }
+
+            return new List<Word>();
+        }
+
+        private async Task<IEnumerable<Word>> SearchByAsync(string indexName, string queryValue, int skip, int take)
         {
             var query = new StoreIndexQueryStringContains
             {
@@ -49,16 +81,6 @@ namespace ChineseDictionary.Services
             };
 
             return (await DbManager.GetAllRecordsByIndexContains<Word>(query)).Skip(skip).Take(take).ToList();
-        }
-
-        public async Task<IEnumerable<Word>> SearchByChineseAsync(string chinese, int skip = 0, int take = int.MaxValue)
-        {
-            return await SearchByAsync(DbConstants.Chinese, chinese, skip, take);
-        }
-
-        public async Task<IEnumerable<Word>> SearchByTranslationAsync(string translation, int skip = 0, int take = int.MaxValue)
-        {
-            return await SearchByAsync(DbConstants.Translations, translation, skip, take);
         }
 
         public async Task<Word> GetByChinese(string chinese)

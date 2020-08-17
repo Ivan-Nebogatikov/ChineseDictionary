@@ -4,13 +4,25 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+    <I18nTextFallBackLanguage>ru</I18nTextFallBackLanguage> 
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="i18ntext\Strings.en.json" />
+    <Content Remove="i18ntext\Strings.ru.json" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.5" />
     <PackageReference Include="System.Net.Http.Json" Version="3.2.0" />
+    <PackageReference Include="Toolbelt.Blazor.I18nText" Version="9.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Handwriting\HandwritingLibrary\HandwritingLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +43,24 @@
     <Content Update="wwwroot\indexedDb.Blazor.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="E:\ChineseDictionary\ChineseDictionary\ChineseDictionary\i18ntext\MyText.en.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="E:\ChineseDictionary\ChineseDictionary\ChineseDictionary\i18ntext\Strings.en.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="E:\ChineseDictionary\ChineseDictionary\ChineseDictionary\i18ntext\Strings.ru.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -1,88 +1,94 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-//namespace HandwritingLibrary
-//{
-//    class MatchCollector
-//    {
-//        private readonly int maxSize;
+namespace HandwritingLibrary
+{
+    public class MatchCollector
+    {
+        public List<CharacterMatch> matches = new List<CharacterMatch>();
+        public readonly int limit;
+        public int count = 0;
 
-//        public MatchCollector(int limit)
-//        {
-//            this.limit = limit;
-//        }
+        public MatchCollector(int limit)
+        {
+            this.limit = limit;
+            for (int i = 0; i < limit; i++)
+            {
+                matches.Add(null);
+            }
+        }
 
-//        int count = 0;
-//        var matches = [];
+        public int findSlot(double score)
+        {
+            int ix;
+            for (ix = 0; ix < count; ix++)
+            {
+                if (matches[ix].Score < score)
+                {
+                    return ix;
+                }
+            }
+            return ix;
+        }
 
-//        for (var i = 0; i != limit; ++i) _matches.push(null);
+        public bool removeExistingLower(CharacterMatch currentMatch)
+        {
+            var ix = -1;
+            for (var i = 0; i != count; i++)
+            {
+                if (matches[i].Character == currentMatch.Character)
+                {
+                    ix = i;
+                    break;
+                }
+            }
+            if (ix == -1)
+            {
+                return false;
+            }
+            if (currentMatch.Score <= matches[ix].Score)
+            {
+                return true;
+            }
+            for (var i = ix; i < (matches.Count - 1); i++)
+            {
+                matches[i] = matches[i + 1];
+                count--;
+            }
+            return false;
+        }
 
-//        function findSlot(score)
-//        {
-//            var ix;
-//            for (ix = 0; ix < _count; ++ix)
-//            {
-//                if (_matches[ix].score < score) return ix;
-//            }
-//            return ix;
-//        }
+        public void AddMatch(CharacterMatch currentMatch)
+        {
+            if (count == matches.Count && currentMatch.Score <= matches[matches.Count - 1].Score)
+            {
+                return;
+            }
+            if (removeExistingLower(currentMatch))
+            {
+                return;
+            }
+            var pos = findSlot(currentMatch.Score);
 
-//        function removeExistingLower(match)
-//        {
-//            var ix = -1;
-//            for (var i = 0; i != _count; ++i)
-//            {
-//                if (_matches[i].character == match.character)
-//                {
-//                    ix = i;
-//                    break;
-//                }
-//            }
-//            // Not there yet: we're good, match doesn't need to be skipped
-//            if (ix == -1) return false;
-//            // New score is not better: skip this match
-//            if (match.score <= _matches[ix].score) return true;
-//            // Remove existing match; don't skip new. Means shifting array left.
-//            for (var i = ix; i < _matches.length - 1; ++i)
-//                _matches[i] = _matches[i + 1];
-//            --_count;
-//            return false;
-//        }
+            for (int i = matches.Count - 1; i > pos; i--)
+            {
+                matches[i] = matches[i - 1];
+            }
+            
+            if (count < matches.Count)
+            {
+                count++;
+            }
+            matches[pos] = currentMatch;
+        }
+        
+    }
+}
+        
 
-//        private int doFileMatch(match)
-//        {
-//            // Already at limit: don't bother if new match's score is smaller than current minimum
-//            if (_count == _matches.length && match.score <= _matches[_matches.length - 1].score)
-//                return;
-//            // Remove if we already have this character with a lower score
-//            // If "true", we should skip new match (already there with higher score)
-//            if (removeExistingLower(match)) return;
-//            // Where does new match go? (Keep array sorted largest score to smallest.)
-//            var pos = findSlot(match.score);
-//            // Slide rest to the right
-//            for (var i = _matches.length - 1; i > pos; --i)
-//                _matches[i] = _matches[i - 1];
-//            // Replace at position
-//            _matches[pos] = match;
-//            // Increase count if we're just now filling up
-//            if (_count < _matches.length) ++_count;
-//        }
 
-//        function doGetMatches()
-//        {
-//            return _matches.slice(0, _count);
-//        }
 
-//        return
-//        {
-//            fileMatch: function(match)
-//            {
-//            doFileMatch(match);
-//            };
-//            getMatches: function() { return doGetMatches();
-//        }
-//    }
 
-//}
+
+
+
 
