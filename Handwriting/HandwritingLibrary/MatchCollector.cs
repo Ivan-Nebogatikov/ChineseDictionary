@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq.Expressions;
 
 namespace HandwritingLibrary
 {
@@ -88,12 +86,3 @@ namespace HandwritingLibrary
         }
     }
 }
-        
-
-
-
-
-
-
-
-
