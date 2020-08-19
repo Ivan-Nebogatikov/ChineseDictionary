@@ -49,14 +49,14 @@ namespace HandwritingLibrary
             {
                 return true;
             }
-            for (var i = ix; i < (matches.Count - 1); i++)
+            for (var i = ix; i < matches.Count - 1; ++i)
             {
                 matches[i] = matches[i + 1];
-                count--;
             }
+            count--;
             return false;
         }
-
+            
         public void AddMatch(CharacterMatch currentMatch)
         {
             if (count == matches.Count && currentMatch.Score <= matches[matches.Count - 1].Score)
@@ -68,27 +68,15 @@ namespace HandwritingLibrary
                 return;
             }
             var pos = findSlot(currentMatch.Score);
-
             for (int i = matches.Count - 1; i > pos; i--)
             {
                 matches[i] = matches[i - 1];
             }
-            
             if (count < matches.Count)
             {
                 count++;
             }
             matches[pos] = currentMatch;
         }
-        
     }
 }
-        
-
-
-
-
-
-
-
-
