@@ -1,4 +1,4 @@
-﻿@page "/canvas"
+﻿@*@page "/canvas"
 
 @using HandwritingLibrary;
 @using System;
@@ -153,4 +153,4 @@
     {
         await JsRuntime.InvokeAsync<object>("__blazorCanvasInterop.clearCanvas", canvas);
     }
-}
+}*@

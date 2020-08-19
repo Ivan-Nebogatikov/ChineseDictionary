@@ -1,25 +1,72 @@
 ﻿@page "/search"
+@page "/canvas"
 
 @inject HttpClient Http
 @inject ChineseDictionary.Services.IDictionaryServiceAsync Dictionary
 @inject Toolbelt.Blazor.I18nText.I18nText I18nText
 @inject IndexedDBManager DbManager
 @inject DbStore DbStore
+@inject IJSRuntime JsRuntime
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
 
 @using ChineseDictionary.Models
 @using System.ComponentModel.DataAnnotations
 @using TG.Blazor.IndexedDB
 @using ChineseDictionary.Constants
+@using HandwritingLibrary;
+@using System;
+@using System.Collections.Generic;
+@using Newtonsoft.Json.Linq;
+@using System;
+@using System.Web;
 
-<h1>@localization.Search</h1>
+<div>
+    @if (characters != null)
+    {
+        @foreach (char ch in characters)
+        {
+            string hier = ch.ToString();
+            <button onclick="" style="position:relative; left: 700px; top: 15px; width:30px;height:30px;margin-bottom:20px; font-size:11.5pt; text-align:left" class="btn btn-warning" name="filled">@hier</button>
+        }
+    }
+    else
+    {
+        @for (var i = 0; i < 9; ++i)
+        {
+            <button style="position: relative; left: 700px; top: 15px; width: 30px; height: 30px; margin-bottom:20px" class="btn btn-warning" name="empty"></button>
+        }
+    }
+</div>
+<div>
+    <canvas id="canvas"
+            height="@windowSize.Height"
+            width="@windowSize.Width"
+            style="border: 2px solid; position:relative; top: 20px; float:right"
+            @onmousedown="@StartPaintMouse"
+            @onmousemove="@PaintMouse"
+            @onmouseup="@StopPaint"
+            @onmouseout="@StopPaint"
+            @ref="@canvas"
+            @ontouchstart="@StartPaintTouch"
+            @ontouchmove="@PaintTouch"
+            @ontouchend="@StopPaint" />
+</div>
+<div class="text-left">
+    <button type="button" class="btn btn-danger btn-xs d-block mx-auto" style="position:absolute; left:1040px; top:380px"
+            @onclick="ClearCanvas">
+        @localization.Clear
+    </button>
+</div>
+
+<h1 style="position:absolute; top:73px; margin-bottom:70px">@localization.Search</h1> @*ПОИСК*@
 
 <EditForm Model="@fieldModel" OnValidSubmit="HandleSearchSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <InputText id="SearchString" @bind-Value="fieldModel.SearchString" />
+    <InputText id="SearchString" style="position:absolute; top: 130px; margin-bottom:15px" @bind-Value="fieldModel.SearchString" /> @*ПОИСКОВАЯ СТРОКА*@
 
-    <button type="submit" class="btn btn-success">@localization.Search</button>
+    <button type="submit" class="btn btn-success" style="position:absolute; height:33px; top:128px; left:500px">@localization.Search</button> @*SEARCH*@
 </EditForm>
 
 @if (words == null)
@@ -30,12 +77,12 @@ else
 {
     @foreach (var word in words.Take(shownItems))
     {
-        <p>
+        <p style="position:relative; margin-top:40px">
             <h4><a href="search/@word.Chinese">@word.Chinese</a></h4><h5>@word.Pinyin</h5> <br />
             <em>@string.Join(", ", word.Translations)</em>
         </p>
     }
-    <button type="button" class="btn btn-primary"@onclick="AddMore">@localization.More</button>
+    <button type="button" class="btn btn-primary" @onclick="AddMore">@localization.More</button>
 }
 
 @code {
@@ -45,11 +92,112 @@ else
     private int storageSize = ConfigConstants.StorageWordsSize;
     private IEnumerable<Word> words;
 
+    List<Stroke> strokes = new List<Stroke>();
+    WindowSize windowSize = new WindowSize();
+    ElementReference canvas;
+    Canvas2DContext ctx;
+    static JObject dictionary;
+    char[] characters;
+    bool isPainting = false;
+    double x;
+    double y;
+
     protected override async Task OnInitializedAsync()
     {
         localization = await I18nText.GetTextTableAsync<Strings>(this);
         words = await Dictionary.SearchAsync("", 0, ConfigConstants.StorageWordsSize);
+        windowSize = await JsRuntime.InvokeAsync<WindowSize>("getWindowSize");
+        int SIZE = 240;
+        if (windowSize.Width > 240)
+        {
+            windowSize.Height = SIZE;
+            windowSize.Width = SIZE;
+        }
+        else
+        {
+            windowSize.Width = (int)(windowSize.Width * 0.9);
+            windowSize.Height = windowSize.Width;
+        }
+        //windowLocation.Left = LEFT;
+        //windowLocation.Top = TOP;
+        if (dictionary == null)
+        {
+            dictionary = JObject.Parse(await Http.GetStringAsync("orig.json"));
+            dictionary["substrokes"] = CompactDecoder.Decode(dictionary["substrokes"].ToString());
+        }
+    }
 
+    private void StartPaintMouse(MouseEventArgs e)
+    {
+        StartPainting(e.ClientX, e.ClientY);
+    }
+
+    private async Task PaintMouse(MouseEventArgs e)
+    {
+        await Paint(e.ClientX, e.ClientY);
+    }
+
+    private void StartPaintTouch(TouchEventArgs e)
+    {
+        StartPainting(e.Touches.First().ClientX, e.Touches.First().ClientY);
+    }
+
+    private async Task Paint(double pointX, double pointY)
+    {
+        if (isPainting)
+        {
+            var eX = pointX;
+            var eY = pointY;
+            if (ctx == null)
+            {
+                ctx = new Canvas2DContext(JsRuntime, canvas);
+            }
+            await ctx.DrawLine(x, y, eX, eY);
+            x = eX;
+            y = eY;
+            strokes.Last().Points.Add(new Point { X = x, Y = y });
+        }
+    }
+
+    private void StartPainting(double pointX, double pointY)
+    {
+        x = pointX;
+        y = pointY;
+        if (ctx == null)
+        {
+            ctx = new Canvas2DContext(JsRuntime, canvas);
+        }
+        isPainting = true;
+        strokes.Add(new Stroke());
+    }
+
+    private async Task PaintTouch(TouchEventArgs e)
+    {
+        await Paint(e.Touches.First().ClientX, e.Touches.First().ClientY);
+    }
+
+    private void StopPaint()
+    {
+        if (isPainting)
+        {
+            var analyzer = new Analyzer(strokes);
+            var subStrokes = analyzer.AnalyzedStrokes;
+            var strokesCount = strokes.Count;
+            var subStrokesCount = subStrokes.Count;
+            int limit = 10;
+
+            Console.WriteLine("Number of the input character's strokes: " + strokesCount);
+            Console.WriteLine("Number of the input character's substrokes: " + subStrokesCount);
+
+            Matcher mt = new Matcher(strokesCount, subStrokesCount, subStrokes, limit);
+            characters = mt.DoMatching(dictionary);
+        }
+        isPainting = false;
+    }
+
+    public async Task ClearCanvas()
+    {
+        await JsRuntime.InvokeAsync<object>("__blazorCanvasInterop.clearCanvas", canvas);
     }
 
     private async Task HandleSearchSubmit()
