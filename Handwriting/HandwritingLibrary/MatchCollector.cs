@@ -45,10 +45,6 @@ namespace HandwritingLibrary
             {
                 return false;
             }
-            if (ix == -1)
-            {
-                return false;
-            }
             if (currentMatch.Score <= matches[ix].Score)
             {
                 return true;
@@ -72,12 +68,10 @@ namespace HandwritingLibrary
                 return;
             }
             var pos = findSlot(currentMatch.Score);
-
             for (int i = matches.Count - 1; i > pos; i--)
             {
                 matches[i] = matches[i - 1];
             }
-
             if (count < matches.Count)
             {
                 count++;
