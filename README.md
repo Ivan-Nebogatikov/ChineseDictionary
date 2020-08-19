@@ -4,6 +4,18 @@
 
 This is a Chinese Dictionary.
 
+You can test it: https://ivan-nebogatikov.github.io/ChineseDictionary/
+
+Features:
+- Dictionary
+  - Search and word pages
+  - Search by handwriting
+  - Animate character stroke order
+- Flashcards
+  - Remember or not
+  - Select from 4
+  - Stroke order
+
 Based on Blazor WebAssembly PWA.
 
 We use 
