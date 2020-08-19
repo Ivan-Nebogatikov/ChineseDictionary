@@ -1,9 +1,12 @@
 ﻿@page "/canvas"
+
 @using HandwritingLibrary;
 @using System;
 @using System.Collections.Generic;
 @using Newtonsoft.Json.Linq;
+
 @inject IJSRuntime JsRuntime
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
 @inject HttpClient Http
 
 <div>
@@ -38,9 +41,9 @@
             @ontouchend="@StopPaint" />
 </div>
 <div class="text-left">
-    <button type="button" class="btn btn-danger btn-xs"
+    <button type="button" class="btn btn-danger btn-xs d-block mx-auto"
             @onclick="ClearCanvas">
-        Очистить
+        @localization.Clear
     </button>
 </div>
 
@@ -54,9 +57,11 @@
     bool isPainting = false;
     double x;
     double y;
+    private Strings localization = new Strings();
 
     protected override async Task OnInitializedAsync()
     {
+        localization = await I18nText.GetTextTableAsync<Strings>(this);
         windowSize = await JsRuntime.InvokeAsync<WindowSize>("getWindowSize");
         int SIZE = 500;
         if (windowSize.Width > 500)
