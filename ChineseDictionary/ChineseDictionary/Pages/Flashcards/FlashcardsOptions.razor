@@ -10,38 +10,41 @@
 
 @if (word != null)
 {
-    <h4>@word.Chinese</h4>
-    <EditForm Model="@model" OnValidSubmit="HandleCheckSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+    <p>
+        <br />
+        <h1>@word.Chinese</h1>
+    </p>
+        <EditForm Model="@model" OnValidSubmit="HandleCheckSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-        @foreach (string translate in optionTranslations)
-        {
-            <label>
-                <ChineseDictionary.Components.InputRadio name="translate" SelectedValue="@translate" @bind-Value="model.Translate" />
-                @translate
-            </label>
-            <br>
+            @foreach (string translate in optionTranslations)
+            {
+                <label>
+                    <ChineseDictionary.Components.InputRadio name="translate" SelectedValue="@translate" @bind-Value="model.Translate" />
+                    @translate
+                </label>
+                <br>
+            }
+
+            <button type="submit">Далее</button>
+        </EditForm>
+
+        <br />
+        <EditForm Model="@model" OnValidSubmit="HandleStopSubmit">
+            <button type="submit">Stop train</button>
+        </EditForm>
         }
-
-        <button type="submit">Далее</button>
-    </EditForm>
-
-    <br />
-    <EditForm Model="@model" OnValidSubmit="HandleStopSubmit">
-        <button type="submit">Stop train</button>
-    </EditForm>
-}
-else
-{
+        else
+        {
     <p><em>Loading...</em></p>
-}
+    }
 
-@code {
+    @code {
 
-    Word word;
-    string[] optionTranslations;
-    private Model model = new Model();
+        Word word;
+        string[] optionTranslations;
+private Model model = new Model();
 
     protected override void OnInitialized()
     {
@@ -82,4 +85,4 @@ else
         [Required]
         public string Translate { get; set; }
     }
-}
+    }

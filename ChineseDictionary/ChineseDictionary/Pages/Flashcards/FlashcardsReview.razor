@@ -10,10 +10,13 @@
 
 @if (word != null)
 {
-    <h4>@word.Chinese</h4>
-
-    <button @onclick="HandleRemember">Помню</button>
+<p>
     <br />
+    <h1>@word.Chinese</h1>
+</p>
+    <br />
+    <button @onclick="HandleRemember">Помню</button>
+
     <button @onclick="HandleNotRemember">Не помню</button>
     <hr />
     <button @onclick="HandleStopSubmit">Stop train</button>

@@ -14,12 +14,15 @@
 <EditForm Model="@input" OnValidSubmit="HandleTrainSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
-
-    Number of words:
-    <InputNumber id="WordsCount" @bind-Value="input.WordsCount" />
+    <p>
+        <br />
+        Number of words:
+        <InputNumber id="WordsCount" @bind-Value="input.WordsCount" />
+    </p>
     <br>
     Group of flashcards:
     <InputNumber id="FlashcardsGroup" @bind-Value="input.Group" />
+    <br />
     <br>
     <InputSelect @bind-Value="input.Type">
         <option value="">Select type of train ...</option>

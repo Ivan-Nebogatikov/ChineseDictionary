@@ -9,13 +9,13 @@
 @inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
 
 <h1>Flashcards</h1>
-
+<br />
 <br />
 <h2>Correct:</h2>
 @foreach (var word in correct)
 {
     <p>
-        <h4>@word.Chinese</h4>
+        <h1>@word.Chinese</h1>
     </p>
 }
 
@@ -25,7 +25,7 @@
 @foreach (var word in wrong)
 {
     <p>
-        <h4>@word.Chinese</h4>
+        <h1>@word.Chinese</h1>
     </p>
 }
 
