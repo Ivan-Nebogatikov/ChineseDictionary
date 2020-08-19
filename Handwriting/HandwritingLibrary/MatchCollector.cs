@@ -7,7 +7,6 @@ namespace HandwritingLibrary
     public class MatchCollector
     {
         public List<CharacterMatch> matches = new List<CharacterMatch>();
-        private Dictionary<char, CharacterMatch> matchMap = new Dictionary<char, CharacterMatch>();
         public readonly int limit;
         public int count = 0;
 
