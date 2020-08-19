@@ -54,7 +54,7 @@
     bool isPainting = false;
     double x;
     double y;
-    
+
     protected override async Task OnInitializedAsync()
     {
         windowSize = await JsRuntime.InvokeAsync<WindowSize>("getWindowSize");
