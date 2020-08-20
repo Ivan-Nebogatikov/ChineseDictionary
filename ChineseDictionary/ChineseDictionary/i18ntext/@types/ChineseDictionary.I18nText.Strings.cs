@@ -43,6 +43,9 @@ namespace ChineseDictionary.I18nText
         /// <summary>"Загрузка..."</summary>
         public string Loading;
 
+        /// <summary>"Количество Ваших ошибок:"</summary>
+        public string Mistakes;
+
         /// <summary>"Больше"</summary>
         public string More;
 
@@ -96,6 +99,9 @@ namespace ChineseDictionary.I18nText
 
         /// <summary>"Добро пожаловать в ChineseDictionary! Мы являемся лучшим словарем по мнению Билла Гейтса."</summary>
         public string WelcomeToYourNewApp;
+
+        /// <summary>"Написание"</summary>
+        public string Writting;
 
         /// <summary>"Неправильно:"</summary>
         public string Wrong;

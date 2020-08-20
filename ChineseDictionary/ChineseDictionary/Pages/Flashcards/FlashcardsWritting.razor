@@ -4,28 +4,34 @@
 @using System.ComponentModel.DataAnnotations
 
 @inject NavigationManager navigation
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
 @inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
 
 @inject IJSRuntime JSRuntime
 
-<h1>Writting</h1>
-<br/>
+<h1>@localization.Writting</h1>
+<br />
 
 @if (word != null)
 {
     <h4>@word.Chinese</h4>
 
-    <div id='character-quizzing'></div><br/>
-    <ChineseDictionary.Components.MistakesComponent @ref="mistakesComponent" /><br/><br/>
+    <div id='character-quizzing'></div>
+    <br />
+    <ChineseDictionary.Components.MistakesComponent @ref="mistakesComponent" />
+    <br />
+    <br />
 
-    <button @onclick="HandleNext">Next</button>
-    <br /><br/>
-    <button @onclick="HandleStopSubmit">Stop train</button>
-    <br/><br/>
+    <button @onclick="HandleNext">@localization.Next</button>
+    <br />
+    <br />
+    <button @onclick="HandleStopSubmit">@localization.StopTrain</button>
+    <br />
+    <br />
 }
 else
 {
-    <p><em>Loading...</em></p>
+    <p><em>@localization.Loading</em></p>
 }
 
 @code {
@@ -43,6 +49,13 @@ else
     private ChineseDictionary.Components.MistakesComponent mistakesComponent;
 
     List<ColoredCharacter> coloredCharacters;
+
+    private Strings localization = new Strings();
+
+    protected override async Task OnInitializedAsync()
+    {
+        localization = await I18nText.GetTextTableAsync<Strings>(this);
+    }
 
     protected override void OnInitialized()
     {
