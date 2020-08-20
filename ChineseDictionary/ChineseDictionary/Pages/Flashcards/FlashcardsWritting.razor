@@ -44,7 +44,6 @@ else
 
     private int numbOfMistakes = 0;
     private int numbOfComplete = 0;
-    private string mistakesColor = "#000000";
 
     private ChineseDictionary.Components.MistakesComponent mistakesComponent;
 
@@ -92,9 +91,8 @@ else
         {
             numbOfMistakes = 0;
             numbOfComplete = 0;
-            mistakesColor = "#000000";
             word = FlashcardsStatus.GetWord();
-            mistakesComponent.UpdateMistakesCount(numbOfMistakes, mistakesColor);
+            mistakesComponent.UpdateMistakesCount(numbOfMistakes);
         }
     }
 
@@ -127,11 +125,7 @@ else
     private void OnMistake()
     {
         numbOfMistakes++;
-        if (numbOfMistakes > 3)
-        {
-            mistakesColor = "#FF0000";
-        }
-        mistakesComponent.UpdateMistakesCount(numbOfMistakes, mistakesColor);
+        mistakesComponent.UpdateMistakesCount(numbOfMistakes);
     }
 
     private void OnComplete()
