@@ -21,6 +21,8 @@ namespace HandwritingLibrary
         // Result of analysis
         public readonly List<SubStroke> AnalyzedStrokes = new List<SubStroke>();
 
+        
+
         /// <summary>
         /// Analyzes strokes (coordinates need to be in 256x256 system)
         /// </summary>
@@ -72,7 +74,7 @@ namespace HandwritingLibrary
 
         // Gets direction, in radians, from point a to b
         // 0 is to the right, PI / 2 is up, etc.
-        double Dir(Point a, Point b)
+        private double Dir(Point a, Point b)
         {
             double dx = a.X - b.X;
             double dy = a.Y - b.Y;
@@ -171,7 +173,13 @@ namespace HandwritingLibrary
                 var ix = pivotIndexes[i];
                 if (ix == prevIx) continue;
                 var direction = Dir(points[prevIx], points[ix]);
-                var normLength = NormDist(points[prevIx], points[ix]);
+                direction = Convert.ToInt32(Math.Round(direction * 256.0 / Math.PI / 2.0));
+                if (direction == 256)
+                {
+                    direction = 0;
+                }
+                double normLength = NormDist(points[prevIx], points[ix]);
+                normLength = Math.Round(normLength * 255);
                 Point ptCenter = new Point
                 {
                     X = (points[prevIx].X + points[ix].X) / 2,
@@ -179,7 +187,7 @@ namespace HandwritingLibrary
                 };
                 double centerX = NormDist(new Point { X = 0, Y = ptCenter.Y }, ptCenter);
                 double centerY = NormDist(new Point { X = ptCenter.X, Y = 0 }, ptCenter);
-                res.Add(new SubStroke { Dir = direction, Len = normLength, CenterX = centerX, CenterY = centerY });
+                res.Add(new SubStroke { Dir = (int)direction, Len = normLength, CenterX = centerX, CenterY = centerY });
                 prevIx = ix;
             }
             return res;
@@ -197,10 +205,10 @@ namespace HandwritingLibrary
                 var subStrokes = BuildSubStrokes(rawStrokes[i].Points, pivotIndexes);
                 // Append
                 AnalyzedStrokes.AddRange(subStrokes);
+                //Console.WriteLine(AnalyzedStrokes);
             }
         }
 
     }
 }
-
 

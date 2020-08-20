@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TG.Blazor.IndexedDB;
 using ChineseDictionary.Constants;
+using System.Text;
 
 namespace ChineseDictionary.Services
 {
@@ -38,6 +39,32 @@ namespace ChineseDictionary.Services
                     relativeWords.Add(match.Groups[1].Value);
 
             return relativeWords;
+        }
+
+        // Seems horrible, but it's okay
+        private static Dictionary<char, char> monotoneTable = new Dictionary<char, char>
+        {
+            ['ā'] = 'a', ['á'] = 'a', ['ǎ'] = 'a', ['à'] = 'a',
+            ['ē'] = 'e', ['é'] = 'e', ['ě'] = 'e', ['è'] = 'e',
+            ['ī'] = 'i', ['í'] = 'i', ['ǐ'] = 'i', ['ì'] = 'i',
+            ['ō'] = 'o', ['ó'] = 'o', ['ǒ'] = 'o', ['ò'] = 'o',
+            ['ū'] = 'u', ['ǖ'] = 'u', ['ú'] = 'u', ['ǘ'] = 'u', ['ǔ'] = 'u', ['ǚ'] = 'u', ['ù'] = 'u', ['ǜ'] = 'u', ['ü'] = 'u',
+            ['Ā'] = 'A', ['Á'] = 'A', ['Ǎ'] = 'A', ['À'] = 'A',
+            ['Ē'] = 'E', ['É'] = 'E', ['Ě'] = 'E', ['È'] = 'E',
+            ['Ī'] = 'I', ['Í'] = 'I', ['Ǐ'] = 'I', ['Ì'] = 'I',
+            ['Ō'] = 'O', ['Ó'] = 'O', ['Ǒ'] = 'O', ['Ò'] = 'O',
+            ['Ū'] = 'U', ['Ǖ'] = 'U', ['Ú'] = 'U', ['Ǘ'] = 'U', ['Ǔ'] = 'U', ['Ǚ'] = 'U', ['Ù'] = 'U', ['Ǜ'] = 'U', ['Ü'] = 'U'
+        };
+
+        private static string Monotone(string s)
+        {
+            StringBuilder ss = new StringBuilder();
+            foreach (char c in s)
+                if (monotoneTable.ContainsKey(c))
+                    ss.Append(monotoneTable[c]);
+                else
+                    ss.Append(c);
+            return ss.ToString();
         }
 
         private static async Task AddRecord(IndexedDBManager DbManager, Word word)
@@ -82,7 +109,10 @@ namespace ChineseDictionary.Services
                         state++;
 
                     if (state == ParserState.Pinyin)
+                    {
                         word.Pinyin = RemoveTags(line);
+                        word.PinyinMonotone = Monotone(word.Pinyin);
+                    }
 
                     if (state == ParserState.Body)
                     {
