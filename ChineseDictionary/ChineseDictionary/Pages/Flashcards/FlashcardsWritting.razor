@@ -16,8 +16,7 @@
     <h4>@word.Chinese</h4>
 
     <div id='character-quizzing'></div><br/>
-
-    <div id='mistakesCounter'></div><br />
+    <ChineseDictionary.Components.MistakesComponent @ref="mistakesComponent" /><br/><br/>
 
     <button @onclick="HandleNext">Next</button>
     <br /><br/>
@@ -39,6 +38,9 @@ else
 
     private int numbOfMistakes = 0;
     private int numbOfComplete = 0;
+    private string mistakesColor = "#000000";
+
+    private ChineseDictionary.Components.MistakesComponent mistakesComponent;
 
     List<ColoredCharacter> coloredCharacters;
 
@@ -77,7 +79,9 @@ else
         {
             numbOfMistakes = 0;
             numbOfComplete = 0;
+            mistakesColor = "#000000";
             word = FlashcardsStatus.GetWord();
+            mistakesComponent.UpdateMistakesCount(numbOfMistakes, mistakesColor);
         }
     }
 
@@ -110,6 +114,11 @@ else
     private void OnMistake()
     {
         numbOfMistakes++;
+        if (numbOfMistakes > 3)
+        {
+            mistakesColor = "#FF0000";
+        }
+        mistakesComponent.UpdateMistakesCount(numbOfMistakes, mistakesColor);
     }
 
     private void OnComplete()

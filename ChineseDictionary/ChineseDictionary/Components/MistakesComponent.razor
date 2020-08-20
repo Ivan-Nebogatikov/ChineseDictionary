@@ -1,0 +1,14 @@
+﻿<h5 style="color: @mistakes_color">You have made mistakes: @mistakes_count</h5>
+
+
+@code {
+    private int mistakes_count = 0;
+    private string mistakes_color = "#000000";
+    
+    public void UpdateMistakesCount(int new_count, string new_color)
+    {
+        this.mistakes_count = new_count;
+        this.mistakes_color = new_color;
+        this.StateHasChanged();
+    }
+}
