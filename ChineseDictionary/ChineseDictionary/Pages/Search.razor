@@ -34,12 +34,13 @@
         @foreach (char ch in characters)
         {
             string hier = ch.ToString();
-            <button type="button" style="width:30px;height:30px;margin-bottom:20px; font-size:11.5pt; text-align:left" class="btn btn-warning" @onclick="AddHierToSearchStr">@hier</button>
+            <button class="button-char btn-warning button-char" @onclick="AddHierToSearchStr">@hier</button>
 
             async Task AddHierToSearchStr()
             {
                 fieldModel.SearchString = fieldModel.SearchString + hier;
-                Console.WriteLine(hier);
+                ClearCanvas();
+                characters = null;
             }
         }
     }
@@ -47,7 +48,7 @@
     {
         @for (var i = 0; i < 9; ++i)
         {
-            <button style="width: 30px; height: 30px; margin-bottom:20px" class="btn btn-warning" name="empty"></button>
+            <button class="button-char btn-warning button-char"> </button>
         }
     }
 </div>
@@ -104,11 +105,7 @@ else
     bool isPainting = false;
     double x;
     double y;
-    int strokesCount;
-    int subStrokesCount;
-
-    private string addedHier;
-
+    
     protected override async Task OnInitializedAsync()
     {
         localization = await I18nText.GetTextTableAsync<Strings>(this);
@@ -187,8 +184,8 @@ else
         {
             var analyzer = new Analyzer(strokes);
             var subStrokes = analyzer.AnalyzedStrokes;
-            strokesCount = strokes.Count;
-            subStrokesCount = subStrokes.Count;
+            var strokesCount = strokes.Count;
+            var subStrokesCount = subStrokes.Count;
             int limit = 10;
 
             Console.WriteLine("Number of the input character's strokes: " + strokesCount);
