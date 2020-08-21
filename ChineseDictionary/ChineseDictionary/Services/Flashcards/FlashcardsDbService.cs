@@ -29,7 +29,7 @@ namespace ChineseDictionary.Services
         {
             var query = new StoreIndexQuery<string>
             {
-                Storename = DbConstants.StoreName,
+                Storename = DbConstants.FlashcardsStoreName,
                 IndexName = DbConstants.Chinese,
                 QueryValue = word.Chinese
             };
