@@ -17,15 +17,15 @@
 @using System.Collections.Generic;
 @using Newtonsoft.Json.Linq;
 
-<h1 style="position:absolute; top:73px; margin-bottom:70px">@localization.Search</h1>
+<h1 style="margin-bottom:70px">@localization.Search</h1>
 
 <EditForm Model="@fieldModel" OnValidSubmit="HandleSearchSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <InputText id="SearchString" style="position:absolute; top: 130px; margin-bottom:15px" @bind-Value="fieldModel.SearchString"/> 
+    <InputText id="SearchString" style="margin-bottom:15px" @bind-Value="fieldModel.SearchString"/> 
 
-    <button type="submit" class="btn btn-success" style="position:absolute; height:33px; top:128px; left:500px">@localization.Search</button>
+    <button type="submit" class="btn btn-success">@localization.Search</button>
 </EditForm>
 
 <div>
@@ -34,7 +34,7 @@
         @foreach (char ch in characters)
         {
             string hier = ch.ToString();
-            <button type="button" style="position:relative; top: 110px; width:30px;height:30px;margin-bottom:20px; font-size:11.5pt; text-align:left" class="btn btn-warning" name="filled" @onclick="AddHierToSearchStr">@hier</button>
+            <button type="button" style="width:30px;height:30px;margin-bottom:20px; font-size:11.5pt; text-align:left" class="btn btn-warning" @onclick="AddHierToSearchStr">@hier</button>
 
             async Task AddHierToSearchStr()
             {
@@ -47,7 +47,7 @@
     {
         @for (var i = 0; i < 9; ++i)
         {
-            <button style="position: relative; top: 110px; width: 30px; height: 30px; margin-bottom:20px" class="btn btn-warning" name="empty"></button>
+            <button style="width: 30px; height: 30px; margin-bottom:20px" class="btn btn-warning" name="empty"></button>
         }
     }
 </div>
@@ -55,7 +55,7 @@
     <canvas id="canvas"
             height="@windowSize.Height"
             width="@windowSize.Width"
-            style="border: 2px solid; position:relative; top: 100px; left:27px"
+            style="border: 2px solid"
             @onmousedown="@StartPaintMouse"
             @onmousemove="@PaintMouse"
             @onmouseup="@StopPaint"
@@ -66,7 +66,7 @@
             @ontouchend="@StopPaint" />
 </div>
 <div class="text-left">
-    <button type="button" class="btn btn-danger btn-xs d-block mx-auto" style="position:absolute;top:480px; left:378px"
+    <button style="float:left; margin-bottom:70px" type="button" class="btn btn-danger btn-xs d-block mx-auto"
             @onclick="ClearCanvas">
         @localization.Clear
     </button>
@@ -74,18 +74,18 @@
 
 @if (words == null)
 {
-    <p style="position:absolute; top:290px"><em>@localization.Loading</em></p>
+    <p><em>@localization.Loading</em></p>
 }
 else
 {
     @foreach (var word in words.Take(shownItems))
     {
-        <p style="position:relative; top:120px; margin-top:40px">
+        <p style="margin-top:45px">
             <h4><a href="search/@word.Chinese">@word.Chinese</a></h4><h5>@word.Pinyin</h5> <br/>
             <em>@string.Join(", ", word.Translations)</em>
         </p>
     }
-    <button style="position:relative; top:120px" type="button" class="btn btn-primary" @onclick="AddMore">@localization.More</button>
+    <button type="button" class="btn btn-primary" @onclick="AddMore">@localization.More</button>
 }
 
 @code {
