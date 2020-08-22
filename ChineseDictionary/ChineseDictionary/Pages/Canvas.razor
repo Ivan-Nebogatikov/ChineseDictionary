@@ -63,10 +63,10 @@
     {
         localization = await I18nText.GetTextTableAsync<Strings>(this);
         windowSize = await JsRuntime.InvokeAsync<WindowSize>("getWindowSize");
-        int SIZE = 500;
+        const int SIZE = 500;
         if (windowSize.Width > 500)
         {
-            windowSize.Height = SIZE;
+            windowSize.Height = SIZE; 
             windowSize.Width = SIZE;
         }
         else

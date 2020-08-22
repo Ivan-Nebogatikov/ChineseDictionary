@@ -7,6 +7,9 @@ namespace ChineseDictionary.I18nText
 
         public string this[string key] => global::Toolbelt.Blazor.I18nText.I18nTextExtensions.GetFieldValue(this, key);
 
+        /// <summary>"Добавить слово в тренировку"</summary>
+        public string AddWordToTrain;
+
         /// <summary>"Анимация"</summary>
         public string Animate;
 
@@ -82,8 +85,11 @@ namespace ChineseDictionary.I18nText
         /// <summary>"Пожалуйста, пройдите опрос и поделитесь с нами своим мнением."</summary>
         public string SurveyPrompt;
 
-        /// <summary>"Как Blazor работает?"</summary>
+        /// <summary>"Пора проверить насколько ты хорош!"</summary>
         public string SurveyTitle;
+
+        /// <summary>"Время тренироваться!"</summary>
+        public string TimeToTrain;
 
         /// <summary>"Назад"</summary>
         public string ToSearch;

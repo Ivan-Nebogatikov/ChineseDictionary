@@ -11,7 +11,10 @@
 
 @if (word != null)
 {
-    <h4>@word.Chinese</h4>
+<p>
+    <br/>
+    <h1>@word.Chinese</h1>
+</p>
     <EditForm Model="@model" OnValidSubmit="HandleCheckSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />

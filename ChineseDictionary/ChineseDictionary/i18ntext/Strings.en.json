@@ -7,7 +7,7 @@
   "Loading": "Loading...",
   "WelcomeToYourNewApp": "Welcome to your new app.",
   "HelloWorld": "Hello World!",
-  "SurveyTitle": "How is Blazor working for you?",
+  "SurveyTitle": "It's time to check how good you are!",
   "SurveyPrompt": "Please take our brief survey and tell us what you think.",
   "Clear": "Clear",
   "Train": "Train!",
@@ -18,7 +18,7 @@
   "StopTrain": "Stop train",
   "NumberOfWords": "Number of words:",
   "GroupOfFlashcards": "Group of flashcards:",
-  "Sorry": "Sorry, there's nothing at this address.",  
+  "Sorry": "Sorry, there's nothing at this address.",
   "Rremember": "Rremember",
   "DontRremember": "Don't remember",
   "Restore": "Restore",
@@ -29,5 +29,7 @@
   "Wrong": "Wrong:",
   "Animate": "Animate",
   "StrokeOrder": "Stroke order:",
-  "ToSearch": "To Search"
+  "ToSearch": "To Search",
+  "TimeToTrain": "Time to train!",
+  "AddWordToTrain": "Add word to train"
 }

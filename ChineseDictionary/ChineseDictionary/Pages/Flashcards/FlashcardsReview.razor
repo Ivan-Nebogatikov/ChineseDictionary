@@ -11,10 +11,12 @@
 
 @if (word != null)
 {
-    <h4>@word.Chinese</h4>
-
-    <button class="btn btn-success" @onclick="HandleRemember">@localization.Rremember</button>
+<p>
     <br />
+    <h1>@word.Chinese</h1>
+</p>
+<br />
+    <button class="btn btn-success" @onclick="HandleRemember">@localization.Rremember</button>    
     <button class="btn btn-danger" @onclick="HandleNotRemember">@localization.DontRremember</button>
     <hr />
     <button class="btn btn-primary" @onclick="HandleStopSubmit">@localization.StopTrain</button>
