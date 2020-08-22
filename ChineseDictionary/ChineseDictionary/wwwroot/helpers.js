@@ -3,18 +3,9 @@
 };
 
 ((window) => {
-    let canvasContextCache = {};
-
-    let getContext = (canvas) => {
-        if (!canvasContextCache[canvas]) {
-            canvasContextCache[canvas] = canvas.getContext('2d');
-        }
-        return canvasContextCache[canvas];
-    };
-
     window.__blazorCanvasInterop = {
         drawLine: (canvas, sX, sY, eX, eY) => {
-            let context = getContext(canvas);
+            let context = canvas.getContext('2d');
             context.lineJoin = 'round';
             context.lineWidth = 5;
             context.beginPath();
@@ -24,11 +15,11 @@
             context.stroke();
         },
         clearCanvas: (canvas) => {
-            let context = getContext(canvas);
+            let context = canvas.getContext('2d');
             context.clearRect(0, 0, context.canvas.width, context.canvas.height);
         },
         setContextPropertyValue: (canvas, propertyName, propertyValue) => {
-            let context = getContext(canvas);
+            let context = canvas.getContext('2d');
             context[propertyName] = propertyValue;
         }
     };

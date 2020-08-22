@@ -1,0 +1,154 @@
+﻿@page "/flashcards/writting"
+
+@using ChineseDictionary.Models
+@using System.ComponentModel.DataAnnotations
+
+@inject NavigationManager navigation
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
+@inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
+
+@inject IJSRuntime JSRuntime
+
+<h1>@localization.Writting</h1>
+<br />
+
+@if (word != null)
+{
+    <h4>@word.Chinese</h4>
+
+    <div id='character-quizzing'></div>
+    <br />
+    <ChineseDictionary.Components.MistakesComponent @ref="mistakesComponent" />
+    <br />
+    <br />
+
+    <button @onclick="HandleNext">@localization.Next</button>
+    <br />
+    <br />
+    <button @onclick="HandleStopSubmit">@localization.StopTrain</button>
+    <br />
+    <br />
+}
+else
+{
+    <p><em>@localization.Loading</em></p>
+}
+
+@code {
+
+    Word word;
+    private Model model = new Model();
+
+    private static Action mistake;
+    private static Action complete;
+
+    private int numbOfMistakes = 0;
+    private int numbOfComplete = 0;
+
+    private ChineseDictionary.Components.MistakesComponent mistakesComponent;
+
+    List<ColoredCharacter> coloredCharacters;
+
+    private Strings localization = new Strings();
+
+    protected override async Task OnInitializedAsync()
+    {
+        localization = await I18nText.GetTextTableAsync<Strings>(this);
+    }
+
+    protected override void OnInitialized()
+    {
+        if (FlashcardsStatus.IsStateBegin())
+            navigation.NavigateTo("flashcards");
+
+        if (FlashcardsStatus.IsStateTrainingOptions())
+            navigation.NavigateTo("flashcards/options");
+
+        if (FlashcardsStatus.IsStateTrainingReview())
+            navigation.NavigateTo("flashcards/review");
+
+        if (FlashcardsStatus.IsStateTrainingWritting())
+            word = FlashcardsStatus.GetWord();
+
+        if (FlashcardsStatus.IsStateEnd())
+            navigation.NavigateTo("flashcards/results");
+
+        mistake = OnMistake;
+        complete = OnComplete;
+    }
+
+    private void HandleNext()
+    {
+        if (numbOfComplete == word.Chinese.Length & numbOfMistakes < 4)
+        {
+            FlashcardsStatus.Answer(true);
+        }
+        else
+        {
+            FlashcardsStatus.Answer(false);
+        }
+        if (FlashcardsStatus.IsStateTrainingWritting())
+        {
+            numbOfMistakes = 0;
+            numbOfComplete = 0;
+            word = FlashcardsStatus.GetWord();
+            mistakesComponent.UpdateMistakesCount(numbOfMistakes);
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        coloredCharacters = PaintingOfCharacters.PaintCharacter(word.Pinyin, word.Chinese);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("removeListenersQuiz");
+        }
+        if (word != null)
+        {
+            coloredCharacters = PaintingOfCharacters.PaintCharacter(word.Pinyin, word.Chinese);
+            foreach (ColoredCharacter colChar in coloredCharacters)
+            {
+                await JSRuntime.InvokeAsync<string>("writting", colChar.character, colChar.color);
+            }
+        }
+    }
+
+    private void HandleStopSubmit()
+    {
+        FlashcardsStatus.StopTrain();
+    }
+
+    private void OnMistake()
+    {
+        numbOfMistakes++;
+        mistakesComponent.UpdateMistakesCount(numbOfMistakes);
+    }
+
+    private void OnComplete()
+    {
+        numbOfComplete++;
+    }
+
+    [JSInvokable]
+    public static void Mistakes()
+    {
+        mistake.Invoke();
+    }
+
+    [JSInvokable]
+    public static void Complete()
+    {
+        complete.Invoke();
+    }
+
+    // Maybe move & group with other models
+    public class Model
+    {
+        [Required]
+        public string Translate { get; set; }
+    }
+}

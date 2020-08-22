@@ -1,0 +1,30 @@
+﻿@inject Toolbelt.Blazor.I18nText.I18nText I18nText
+
+<h5 style="color: @mistakesColor">@localization.Mistakes @mistakesCount</h5>
+
+
+@code {
+    private int mistakesCount = 0;
+    private string mistakesColor = "#000000";
+
+    private Strings localization = new Strings();
+
+    protected override async Task OnInitializedAsync()
+    {
+        localization = await I18nText.GetTextTableAsync<Strings>(this);
+    }
+
+        public void UpdateMistakesCount(int new_count)
+    {
+        this.mistakesCount = new_count;
+        if (mistakesCount < 4)
+        {
+            mistakesColor = "#000000";
+        }
+        else
+        {
+            mistakesColor = "#FF0000";
+        }
+        this.StateHasChanged();
+    }
+}

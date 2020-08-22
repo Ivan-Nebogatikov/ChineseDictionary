@@ -1,14 +1,16 @@
 ﻿@page "/search/{text}"
-@using ChineseDictionary.Models
+
 @inject IJSRuntime JSRuntime
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
 @inject ChineseDictionary.Services.IFlashcardsDbService FlashcardsDb
 @inject ChineseDictionary.Services.IDictionaryServiceAsync DictionaryService
-@using ChineseDictionary.Constants
 
+@using ChineseDictionary.Constants
+@using ChineseDictionary.Models
 
 @if (word is null)
 {
-    <em>Loading...</em>
+    <em>@localization.Loading</em>
 }
 else
 {
@@ -22,7 +24,7 @@ else
     <br />
     <br />
 
-    <h5>Translation:</h5>
+    <h5>@localization.Translation</h5>
     <ul>
         @foreach (string translation in word.Translations)
         {
@@ -32,7 +34,7 @@ else
 
     @if (word.Examples.Any())
     {
-        <h5>Examples:</h5>
+        <h5>@localization.Examples</h5>
         <ul>
             @foreach (Example example in word.Examples)
             {
@@ -45,7 +47,7 @@ else
 
     @if (word.RelativeWords.Any())
     {
-        <h5>Relative words:</h5>
+        <h5>@localization.RelativeWords</h5>
         <ul>
             @foreach (string relativeWord in word.RelativeWords)
             {
@@ -57,7 +59,7 @@ else
 
     }
 
-    <h5>Stroke order:</h5>
+    <h5>@localization.StrokeOrder</h5>
     <div id="character-target-div"></div>
     <button id="animate-button"
             style="
@@ -68,7 +70,7 @@ else
     font-size: 20px;
     padding: 7px 20px;
     ">
-        Animate
+        @localization.Animate
     </button>
     <br />
     <br />
@@ -85,12 +87,11 @@ else
     <br />
     <br />
 
-    <h5><a href="search">To Search</a></h5>
+    <h5><a href="search">@localization.ToSearch</a></h5>
 
 }
 
 @code {
-
     [Parameter]
     public string Text { get; set; }
 
@@ -99,9 +100,11 @@ else
     private string nextTrainDate;
 
     List<ColoredCharacter> coloredCharacters;
+    private Strings localization = new Strings();
 
     protected override async Task OnInitializedAsync()
     {
+        localization = await I18nText.GetTextTableAsync<Strings>(this);
         word = await DictionaryService.GetByChinese(Text);
         isWordInFlashcards = await FlashcardsDb.IsWordInFlashcards(word);
         if (isWordInFlashcards)

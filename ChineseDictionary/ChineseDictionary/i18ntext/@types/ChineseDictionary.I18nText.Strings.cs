@@ -7,16 +7,103 @@ namespace ChineseDictionary.I18nText
 
         public string this[string key] => global::Toolbelt.Blazor.I18nText.I18nTextExtensions.GetFieldValue(this, key);
 
+        /// <summary>"Анимация"</summary>
+        public string Animate;
+
         /// <summary>"Рукописный ввод"</summary>
         public string Canvas;
+
+        /// <summary>"Очистить"</summary>
+        public string Clear;
+
+        /// <summary>"Правильно:"</summary>
+        public string Correct;
+
+        /// <summary>"Не помню"</summary>
+        public string DontRremember;
+
+        /// <summary>"Примеры:"</summary>
+        public string Examples;
 
         /// <summary>"Карточки"</summary>
         public string Flashcards;
 
+        /// <summary>"4 варианта"</summary>
+        public string FourOptions;
+
+        /// <summary>"Группа карточек:"</summary>
+        public string GroupOfFlashcards;
+
+        /// <summary>"Привет! :) "</summary>
+        public string HelloWorld;
+
         /// <summary>"Старт"</summary>
         public string Home;
 
+        /// <summary>"Загрузка..."</summary>
+        public string Loading;
+
+        /// <summary>"Количество Ваших ошибок:"</summary>
+        public string Mistakes;
+
+        /// <summary>"Больше"</summary>
+        public string More;
+
+        /// <summary>"Далее"</summary>
+        public string Next;
+
+        /// <summary>"Количество слов:"</summary>
+        public string NumberOfWords;
+
+        /// <summary>"Синонимы:"</summary>
+        public string RelativeWords;
+
+        /// <summary>"Сбросить"</summary>
+        public string Restore;
+
+        /// <summary>"Обзор"</summary>
+        public string Review;
+
+        /// <summary>"Помню"</summary>
+        public string Rremember;
+
         /// <summary>"Поиск"</summary>
         public string Search;
+
+        /// <summary>"Выберите тип тренировки..."</summary>
+        public string SelectTypeOfTrain;
+
+        /// <summary>"Извините, по этому адресу ничего нет."</summary>
+        public string Sorry;
+
+        /// <summary>"Закончить тренировку"</summary>
+        public string StopTrain;
+
+        /// <summary>"Порядок черт:"</summary>
+        public string StrokeOrder;
+
+        /// <summary>"Пожалуйста, пройдите опрос и поделитесь с нами своим мнением."</summary>
+        public string SurveyPrompt;
+
+        /// <summary>"Как Blazor работает?"</summary>
+        public string SurveyTitle;
+
+        /// <summary>"Назад"</summary>
+        public string ToSearch;
+
+        /// <summary>"Тренироваться!"</summary>
+        public string Train;
+
+        /// <summary>"Перевод:"</summary>
+        public string Translation;
+
+        /// <summary>"Добро пожаловать в ChineseDictionary! Мы являемся лучшим словарем по мнению Билла Гейтса."</summary>
+        public string WelcomeToYourNewApp;
+
+        /// <summary>"Написание"</summary>
+        public string Writting;
+
+        /// <summary>"Неправильно:"</summary>
+        public string Wrong;
     }
 }

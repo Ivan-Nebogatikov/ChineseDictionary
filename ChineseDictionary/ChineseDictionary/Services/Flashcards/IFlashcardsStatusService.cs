@@ -10,6 +10,7 @@ namespace ChineseDictionary.Services
     {
         public void BeginTrainReview(TrainItem[] trainItems, int group, int wordsCount);
         public void BeginTrainOptions(TrainItem[] trainItems, int group, int wordsCount);
+        public void BeginTrainWritting(TrainItem[] trainItems, int group, int wordsCount);
         
         public void Answer(string translate);
         public void Answer(bool remember);
@@ -20,6 +21,7 @@ namespace ChineseDictionary.Services
         public bool IsStateBegin();
         public bool IsStateTrainingOptions();
         public bool IsStateTrainingReview();
+        public bool IsStateTrainingWritting();
         public bool IsStateEnd();
 
         public Word GetWord();

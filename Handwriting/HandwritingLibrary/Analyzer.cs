@@ -199,16 +199,19 @@ namespace HandwritingLibrary
             // Process each stroke
             for (var i = 0; i != rawStrokes.Count; ++i)
             {
-                // Identify pivot points
-                var pivotIndexes = GetPivotIndexes(rawStrokes[i].Points);
-                // Abstract away substrokes
-                var subStrokes = BuildSubStrokes(rawStrokes[i].Points, pivotIndexes);
-                // Append
-                AnalyzedStrokes.AddRange(subStrokes);
-                //Console.WriteLine(AnalyzedStrokes);
+                List<Point> rawPoints = rawStrokes[i].Points;
+                if (rawPoints.Count >= 2)
+                {
+                    // Identify pivot points
+                    var pivotIndexes = GetPivotIndexes(rawStrokes[i].Points);
+                    // Abstract away substrokes
+                    var subStrokes = BuildSubStrokes(rawStrokes[i].Points, pivotIndexes);
+                    // Append
+                    AnalyzedStrokes.AddRange(subStrokes);
+                    //Console.WriteLine(AnalyzedStrokes);
+                }
             }
         }
-
     }
 }
 

@@ -17,7 +17,8 @@ namespace ChineseDictionary.Services
     public enum TrainType
     {
         Options,
-        Review
+        Review,
+        Writting
     }
     public class FlashcardsStatusService : IFlashcardsStatusService
     {
@@ -59,6 +60,10 @@ namespace ChineseDictionary.Services
         public void BeginTrainOptions(TrainItem[] trainItems, int group, int wordsCount)
         {
             BeginTrain(trainItems, group, wordsCount, TrainType.Options);
+        }
+        public void BeginTrainWritting(TrainItem[] trainItems, int group, int wordsCount)
+        {
+            BeginTrain(trainItems, group, wordsCount, TrainType.Writting);
         }
         #endregion
 
@@ -109,6 +114,11 @@ namespace ChineseDictionary.Services
         public bool IsStateTrainingReview()
         {
             return state == TrainState.Training && type == TrainType.Review;
+        }
+
+        public bool IsStateTrainingWritting()
+        {
+            return state == TrainState.Training && type == TrainType.Writting;
         }
 
         public bool IsStateEnd()

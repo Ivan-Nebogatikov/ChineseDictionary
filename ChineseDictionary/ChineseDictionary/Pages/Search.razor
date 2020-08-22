@@ -1,54 +1,218 @@
 ﻿@page "/search"
-@using ChineseDictionary.Models
-@using System.ComponentModel.DataAnnotations
+@page "/canvas"
+
 @inject HttpClient Http
 @inject ChineseDictionary.Services.IDictionaryServiceAsync Dictionary
-
-@using TG.Blazor.IndexedDB
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
 @inject IndexedDBManager DbManager
 @inject DbStore DbStore
+@inject IJSRuntime JsRuntime
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
 
+@using ChineseDictionary.Models
+@using TG.Blazor.IndexedDB
 @using ChineseDictionary.Constants
+@using HandwritingLibrary;
+@using System;
+@using System.Collections.Generic;
+@using Newtonsoft.Json.Linq;
 
-<h1>Search</h1>
+<h1 style="margin-bottom:70px">@localization.Search</h1>
 
-<EditForm Model="@fieldModel" OnValidSubmit="HandleSearchSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+<div>
+    <button class="btn btn-info button-handwriting" style="display:inline-block" @onclick="OnCollapsedClicked"></button>
 
-    <InputText id="SearchString" @bind-Value="fieldModel.SearchString" />
+    <EditForm Model="@fieldModel" OnValidSubmit="HandleSearchSubmit" style="display:inline-block">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-    <button type="submit">Search</button>
-</EditForm>
+        <InputText id="SearchString" style="margin-bottom:15px" @bind-Value="fieldModel.SearchString" />
+
+        <button type="submit" class="btn btn-success">@localization.Search</button>
+    </EditForm>
+</div>
+
+@if (!isCollapsed)
+{
+    <div>
+        @if (characters != null)
+        {
+            @foreach (char ch in characters)
+            {
+                string hier = ch.ToString();
+                <button class="btn btn-warning button-char" @onclick="AddHierToSearchStr">@hier</button>
+
+                async Task AddHierToSearchStr()
+                {
+                    fieldModel.SearchString = fieldModel.SearchString + hier;
+                    await ClearCanvas();
+                    characters = null;
+                }
+            }
+        }
+        else
+        {
+            @for (var i = 0; i < 7; ++i)
+            {
+                <button class="btn btn-warning button-char"> </button>
+            }
+        }
+    </div>
+
+    <div>
+        <canvas id="canvas"
+                height="@windowSize.Height"
+                width="@windowSize.Width"
+                style="border: 2px solid"
+                @onmousedown="@StartPaintMouse"
+                @onmousemove="@PaintMouse"
+                @onmouseup="@StopPaint"
+                @onmouseout="@StopPaint"
+                @ref="@canvas"
+                @ontouchstart="@StartPaintTouch"
+                @ontouchmove="@PaintTouch"
+                @ontouchend="@StopPaint" />
+    </div>
+    <div style="display: flex; width: 240px; align-items: center; justify-content: center;">
+        <button class="btn btn-danger"
+                @onclick="ClearCanvas">
+            @localization.Clear
+        </button>
+    </div>
+}
+
 
 @if (words == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>@localization.Loading</em></p>
 }
 else
 {
     @foreach (var word in words.Take(shownItems))
     {
-        <p>
+        <p style="margin-top:25px">
             <h4><a href="search/@word.Chinese">@word.Chinese</a></h4><h5>@word.Pinyin</h5> <br />
             <em>@string.Join(", ", word.Translations)</em>
         </p>
     }
-    <button @onclick="AddMore">More</button>
+    <button type="button" class="btn btn-primary" @onclick="AddMore">@localization.More</button>
 }
 
 @code {
+    private const int limit = 7;
 
     private InputFieldModel fieldModel = new InputFieldModel();
-
+    private Strings localization = new Strings();
     private int shownItems = ConfigConstants.FirstShownWordsCount;
     private int storageSize = ConfigConstants.StorageWordsSize;
-
     private IEnumerable<Word> words;
+
+    List<Stroke> strokes = new List<Stroke>();
+    WindowSize windowSize = new WindowSize();
+    ElementReference canvas;
+    Canvas2DContext ctx;
+    static JObject dictionary;
+    char[] characters;
+    bool isPainting = false;
+    double x;
+    double y;
+
+    private static bool isCollapsed = false;
 
     protected override async Task OnInitializedAsync()
     {
+        localization = await I18nText.GetTextTableAsync<Strings>(this);
         words = await Dictionary.SearchAsync("", 0, ConfigConstants.StorageWordsSize);
+        windowSize = await JsRuntime.InvokeAsync<WindowSize>("getWindowSize");
+        int SIZE = 240;
+        if (windowSize.Width > 240)
+        {
+            windowSize.Height = SIZE;
+            windowSize.Width = SIZE;
+        }
+        else
+        {
+            windowSize.Width = (int)(windowSize.Width * 0.9);
+            windowSize.Height = windowSize.Width;
+        }
+        if (dictionary == null)
+        {
+            dictionary = JObject.Parse(await Http.GetStringAsync("orig.json"));
+            dictionary["substrokes"] = CompactDecoder.Decode(dictionary["substrokes"].ToString());
+        }
+    }
+
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        ctx = new Canvas2DContext(JsRuntime, canvas);
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void StartPaintMouse(MouseEventArgs e)
+    {
+        StartPainting(e.ClientX, e.ClientY);
+    }
+
+    private async Task PaintMouse(MouseEventArgs e)
+    {
+        await Paint(e.ClientX, e.ClientY);
+    }
+
+    private void StartPaintTouch(TouchEventArgs e)
+    {
+        StartPainting(e.Touches.First().ClientX, e.Touches.First().ClientY);
+    }
+
+    private async Task Paint(double pointX, double pointY)
+    {
+        if (isPainting)
+        {
+            var eX = pointX;
+            var eY = pointY;
+            await ctx.DrawLine(x, y, eX, eY);
+            x = eX;
+            y = eY;
+            strokes.Last().Points.Add(new Point { X = x, Y = y });
+        }
+    }
+
+    private void StartPainting(double pointX, double pointY)
+    {
+        x = pointX;
+        y = pointY;
+        isPainting = true;
+        strokes.Add(new Stroke());
+    }
+
+    private async Task PaintTouch(TouchEventArgs e)
+    {
+        await Paint(e.Touches.First().ClientX, e.Touches.First().ClientY);
+    }
+
+    private void StopPaint()
+    {
+        if (isPainting)
+        {
+            var analyzer = new Analyzer(strokes);
+            var subStrokes = analyzer.AnalyzedStrokes;
+            var strokesCount = strokes.Count;
+            var subStrokesCount = subStrokes.Count;
+
+            Console.WriteLine("Number of the input character's strokes: " + strokesCount);
+            Console.WriteLine("Number of the input character's substrokes: " + subStrokesCount);
+
+            Matcher mt = new Matcher(strokesCount, subStrokesCount, subStrokes, limit);
+            characters = mt.DoMatching(dictionary);
+        }
+        isPainting = false;
+    }
+
+    public async Task ClearCanvas()
+    {
+        await JsRuntime.InvokeAsync<object>("__blazorCanvasInterop.clearCanvas", canvas);
+        characters = null;
+        strokes.Clear();
     }
 
     private async Task HandleSearchSubmit()
@@ -57,11 +221,20 @@ else
         words = await Dictionary.SearchAsync(fieldModel.SearchString, 0, ConfigConstants.StorageWordsSize);
     }
 
+    private async Task OnCollapsedClicked()
+    {
+        isCollapsed = !isCollapsed;
+        if (isCollapsed)
+        {
+            await ClearCanvas();
+        }
+    }
+
     public async Task AddMore()
     {
         shownItems += ConfigConstants.AddShownWordsCount;
 
-        if(shownItems > storageSize)
+        if (shownItems > storageSize)
         {
             string query = fieldModel.SearchString ?? string.Empty;
             var data = await Dictionary.SearchAsync(query, storageSize, storageSize + ConfigConstants.StorageWordsSize);

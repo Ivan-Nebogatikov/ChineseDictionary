@@ -124,6 +124,20 @@ namespace ChineseDictionary.Services
 
             return data;
         }
+
+        public async Task<TrainItem[]> GenerateTrainWritting(int group, int count)
+        {
+            TrainItem[] data = new TrainItem[count];
+
+            Word word;
+            for (int i = 0; i < count; i++)
+            {
+                word = await GetRandomWordByGroup(group);
+                data[i] = new TrainItem(word);
+            }
+
+            return data;
+        }
         #endregion
 
         #region MoveFlashcards
