@@ -131,8 +131,10 @@ else
         coloredCharacters = PaintingOfCharacters.PaintCharacter(word.Pinyin, word.Chinese);
     }
 
-    private void AddWord2Train()
+    private async Task AddWord2Train()
     {
-        FlashcardsDb.AddWord(word);
+        await FlashcardsDb.AddWord(word);
+        isWordInFlashcards = true;
+        nextTrainDate = await FlashcardsDb.NextTrainDate(word);
     }
 }
