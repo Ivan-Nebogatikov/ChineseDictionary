@@ -153,6 +153,8 @@ button.new {
 .button-char {
     width: 30px;
     height: 30px;
+    text-align: center;
+    padding: 0;
     margin-bottom: 20px;
 }
 

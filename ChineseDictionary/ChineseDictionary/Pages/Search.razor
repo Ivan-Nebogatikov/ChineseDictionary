@@ -34,7 +34,7 @@
         @foreach (char ch in characters)
         {
             string hier = ch.ToString();
-            <button class="button-char btn-warning button-char" @onclick="AddHierToSearchStr">@hier</button>
+           <button class="btn btn-warning button-char" @onclick="AddHierToSearchStr">@hier</button>
 
             async Task AddHierToSearchStr()
             {
@@ -48,7 +48,7 @@
     {
         @for (var i = 0; i < 9; ++i)
         {
-            <button class="button-char btn-warning button-char"> </button>
+            <button class="btn btn-warning button-char"> </button>
         }
     }
 </div>
