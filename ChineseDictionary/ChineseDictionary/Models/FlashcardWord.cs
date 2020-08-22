@@ -10,5 +10,6 @@ namespace ChineseDictionary.Models
         public long? Id { get; set; }
         public string Chinese { get; set; }
         public int Day { get; set; }
+        public long LastTrainDate { get; set; }
     }
 }

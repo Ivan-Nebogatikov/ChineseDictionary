@@ -2,6 +2,7 @@
 
 @inject IJSRuntime JSRuntime
 @inject Toolbelt.Blazor.I18nText.I18nText I18nText
+@inject ChineseDictionary.Services.IFlashcardsDbService FlashcardsDb
 @inject ChineseDictionary.Services.IDictionaryServiceAsync DictionaryService
 
 @using ChineseDictionary.Constants
@@ -73,7 +74,21 @@ else
     </button>
     <br />
     <br />
+
+    @if (isWordInFlashcards)
+    {
+        <h6>Следующая тренировка: @nextTrainDate</h6>
+    }
+    else
+    {
+        <button @onclick="AddWord2Train">Добавить слово в тренировку</button>
+    }
+
+    <br />
+    <br />
+
     <h5><a href="search">@localization.ToSearch</a></h5>
+
 }
 
 @code {
@@ -81,13 +96,19 @@ else
     public string Text { get; set; }
 
     private Word word;
+    private bool isWordInFlashcards;
+    private string nextTrainDate;
+
     List<ColoredCharacter> coloredCharacters;
     private Strings localization = new Strings();
 
     protected override async Task OnInitializedAsync()
     {
-        word = await DictionaryService.GetByChinese(Text);
         localization = await I18nText.GetTextTableAsync<Strings>(this);
+        word = await DictionaryService.GetByChinese(Text);
+        isWordInFlashcards = await FlashcardsDb.IsWordInFlashcards(word);
+        if (isWordInFlashcards)
+            nextTrainDate = await FlashcardsDb.NextTrainDate(word);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -108,5 +129,12 @@ else
     protected override void OnParametersSet()
     {
         coloredCharacters = PaintingOfCharacters.PaintCharacter(word.Pinyin, word.Chinese);
+    }
+
+    private async Task AddWord2Train()
+    {
+        await FlashcardsDb.AddWord(word);
+        isWordInFlashcards = true;
+        nextTrainDate = await FlashcardsDb.NextTrainDate(word);
     }
 }
