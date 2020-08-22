@@ -150,6 +150,14 @@ button.new {
     left: 50px;
 }
 
+.button-char {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
         display: none;
