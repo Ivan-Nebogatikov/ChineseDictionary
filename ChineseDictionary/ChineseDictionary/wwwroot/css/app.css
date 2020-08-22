@@ -158,6 +158,13 @@ button.new {
     margin-bottom: 20px;
 }
 
+.button-handwriting {
+    width: 30px;
+    height: 30px;
+    background-image: url('../handwriting-icon.png');
+    background-size: 100%;
+}
+
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
         display: none;
