@@ -7,35 +7,36 @@
 @inject NavigationManager navigation
 @inject ChineseDictionary.Services.IFlashcardsDbService FlashcardsDb
 @inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
 
-
-<h1>Flashcards</h1>
+<h1>@localization.Flashcards</h1>
 
 <EditForm Model="@input" OnValidSubmit="HandleTrainSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
-    <p>
-        <br />
-        Number of words:
-        <InputNumber id="WordsCount" @bind-Value="input.WordsCount" />
-    </p>
+    @localization.NumberOfWords
+    <InputNumber id="WordsCount" @bind-Value="input.WordsCount" />
     <br>
-    Group of flashcards:
+    @localization.GroupOfFlashcards
     <InputNumber id="FlashcardsGroup" @bind-Value="input.Group" />
-    <br />
     <br>
     <InputSelect @bind-Value="input.Type">
-        <option value="">Select type of train ...</option>
-        <option value="Options">4 Options</option>
-        <option value="Review">Review</option>
+        <option value="">@localization.SelectTypeOfTrain</option>
+        <option value="Options">@localization.FourOptions</option>
+        <option value="Review">@localization.Review</option>
     </InputSelect>
-    <button type="submit">Train!</button>
+    <button type="submit" class="btn-success btn-xs">@localization.Train</button>
 </EditForm>
-
 
 @code {
 
     private InputFlashcardsModel input = new InputFlashcardsModel();
+    private Strings localization = new Strings();
+
+    protected override async Task OnInitializedAsync()
+    {
+        localization = await I18nText.GetTextTableAsync<Strings>(this);
+    }
 
     protected override void OnInitialized()
     {

@@ -4,37 +4,44 @@
 @using ChineseDictionary.Constants
 @using System.ComponentModel.DataAnnotations
 
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
 @inject NavigationManager navigation
 @inject ChineseDictionary.Services.IFlashcardsDbService FlashcardsDb
 @inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
 
-<h1>Flashcards</h1>
+<h1>@localization.Flashcards</h1>
+
 <br />
-<br />
-<h2>Correct:</h2>
+<h2>@localization.Correct</h2>
 @foreach (var word in correct)
 {
     <p>
-        <h1>@word.Chinese</h1>
+        <h4>@word.Chinese</h4>
     </p>
 }
 
 <hr>
 
-<h2>Wrong:</h2>
+<h2>@localization.Wrong</h2>
 @foreach (var word in wrong)
 {
     <p>
-        <h1>@word.Chinese</h1>
+        <h4>@word.Chinese</h4>
     </p>
 }
 
 <br />
-<button @onclick="RestoreHandle">Restore</button>
+<button class="btn btn-secondary" @onclick="RestoreHandle">@localization.Restore</button>
 
 @code {
     private List<Word> correct;
     private List<Word> wrong;
+    private Strings localization = new Strings();
+
+    protected override async Task OnInitializedAsync()
+    {
+        localization = await I18nText.GetTextTableAsync<Strings>(this);
+    }
 
     protected override void OnInitialized()
     {

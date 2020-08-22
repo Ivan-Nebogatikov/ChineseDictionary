@@ -3,33 +3,37 @@
 @using ChineseDictionary.Models
 @using System.ComponentModel.DataAnnotations
 
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
 @inject NavigationManager navigation
 @inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
 
-<h1>Flashcards</h1>
+<h1>@localization.Flashcards</h1>
 
 @if (word != null)
 {
-<p>
-    <br />
-    <h1>@word.Chinese</h1>
-</p>
-    <br />
-    <button @onclick="HandleRemember">Помню</button>
+    <h4>@word.Chinese</h4>
 
-    <button @onclick="HandleNotRemember">Не помню</button>
+    <button class="btn btn-success" @onclick="HandleRemember">@localization.Rremember</button>
+    <br />
+    <button class="btn btn-danger" @onclick="HandleNotRemember">@localization.DontRremember</button>
     <hr />
-    <button @onclick="HandleStopSubmit">Stop train</button>
+    <button class="btn btn-primary" @onclick="HandleStopSubmit">@localization.StopTrain</button>
 }
 else
 {
-    <p><em>Loading...</em></p>
+    <p><em>@localization.Loading</em></p>
 }
 
 @code {
 
     Word word;
     private Model model = new Model();
+    private Strings localization = new Strings();
+
+    protected override async Task OnInitializedAsync()
+    {
+        localization = await I18nText.GetTextTableAsync<Strings>(this);
+    }
 
     protected override void OnInitialized()
     {

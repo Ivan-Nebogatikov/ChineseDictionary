@@ -3,48 +3,52 @@
 @using ChineseDictionary.Models
 @using System.ComponentModel.DataAnnotations
 
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
 @inject NavigationManager navigation
 @inject ChineseDictionary.Services.IFlashcardsStatusService FlashcardsStatus
 
-<h1>Flashcards</h1>
+<h1>@localization.Flashcards</h1>
 
 @if (word != null)
 {
-    <p>
-        <br />
-        <h1>@word.Chinese</h1>
-    </p>
-        <EditForm Model="@model" OnValidSubmit="HandleCheckSubmit">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
+    <h4>@word.Chinese</h4>
+    <EditForm Model="@model" OnValidSubmit="HandleCheckSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-            @foreach (string translate in optionTranslations)
-            {
-                <label>
-                    <ChineseDictionary.Components.InputRadio name="translate" SelectedValue="@translate" @bind-Value="model.Translate" />
-                    @translate
-                </label>
-                <br>
-            }
-
-            <button type="submit">Далее</button>
-        </EditForm>
-
-        <br />
-        <EditForm Model="@model" OnValidSubmit="HandleStopSubmit">
-            <button type="submit">Stop train</button>
-        </EditForm>
-        }
-        else
+        @foreach (string translate in optionTranslations)
         {
-    <p><em>Loading...</em></p>
+            <label>
+                <ChineseDictionary.Components.InputRadio name="translate" SelectedValue="@translate" @bind-Value="model.Translate" />
+                @translate
+            </label>
+            <br>
+        }
+
+        <button type="submit" class="btn btn-success">@localization.Next</button>
+    </EditForm>
+
+    <br />
+    <EditForm Model="@model" OnValidSubmit="HandleStopSubmit">
+        <button type="submit" class="btn btn-danger">@localization.StopTrain</button>
+    </EditForm>
+}
+else
+{
+    <p><em>@localization.Loading</em></p>
+}
+
+@code {
+
+    Word word;
+    string[] optionTranslations;
+    private Model model = new Model();
+    private Strings localization = new Strings();
+
+    protected override async Task OnInitializedAsync()
+    {
+        localization = await I18nText.GetTextTableAsync<Strings>(this);
     }
-
-    @code {
-
-        Word word;
-        string[] optionTranslations;
-private Model model = new Model();
 
     protected override void OnInitialized()
     {
@@ -85,4 +89,4 @@ private Model model = new Model();
         [Required]
         public string Translate { get; set; }
     }
-    }
+}
