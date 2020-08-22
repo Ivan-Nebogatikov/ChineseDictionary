@@ -76,11 +76,12 @@ else
 
     @if (isWordInFlashcards)
     {
-        <h6>Следующая тренировка: @nextTrainDate</h6>
+        <h6>@localization.NextTrain @nextTrainDate</h6>
     }
-    
-        <button @onclick="AddWord2Train">Добавить слово в тренировку</button>
-    
+    else
+    {
+        <button class="btn btn-light" @onclick="AddWord2Train">@localization.AddWordToTrain</button>
+    }
 
     <br />
     <br />
