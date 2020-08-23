@@ -25,10 +25,13 @@
     <br />
     <br>
     <InputSelect @bind-Value="input.Type">
-        <option value="">@localization.SelectTypeOfTrain</option>
-        <option value="Options">@localization.FourOptions</option>
-        <option value="Review">@localization.Review</option>
-    </InputSelect>
+      
+      <option value="">@localization.SelectTypeOfTrain</option>
+      <option value="Options">@localization.FourOptions</option>
+      <option value="Review">@localization.Review</option>
+      <option value="Writting">@localization.Writting</option>
+
+  </InputSelect>
     <button type="submit" class="btn-success btn-xs">@localization.Train</button>
 </EditForm>
 
@@ -49,6 +52,9 @@
 
         if (FlashcardsStatus.IsStateTrainingReview())
             navigation.NavigateTo("flashcards/review");
+
+        if (FlashcardsStatus.IsStateTrainingWritting())
+            navigation.NavigateTo("flashcards/writting");
 
         if (FlashcardsStatus.IsStateEnd())
             navigation.NavigateTo("flashcards/results");
@@ -71,6 +77,13 @@
             trainData = await FlashcardsDb.GenerateTrainReview(input.Group, input.WordsCount);
             FlashcardsStatus.BeginTrainReview(trainData, input.Group, input.WordsCount);
             navigation.NavigateTo("flashcards/review");
+        }
+
+        if (input.Type == "Writting")
+        {
+            trainData = await FlashcardsDb.GenerateTrainWritting(input.Group, input.WordsCount);
+            FlashcardsStatus.BeginTrainWritting(trainData, input.Group, input.WordsCount);
+            navigation.NavigateTo("flashcards/writting");
         }
     }
 

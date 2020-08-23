@@ -29,7 +29,7 @@ namespace ChineseDictionary.Services
         {
             var query = new StoreIndexQuery<string>
             {
-                Storename = DbConstants.StoreName,
+                Storename = DbConstants.FlashcardsStoreName,
                 IndexName = DbConstants.Chinese,
                 QueryValue = word.Chinese
             };
@@ -112,6 +112,20 @@ namespace ChineseDictionary.Services
         }
 
         public async Task<TrainItem[]> GenerateTrainReview(int group, int count)
+        {
+            TrainItem[] data = new TrainItem[count];
+
+            Word word;
+            for (int i = 0; i < count; i++)
+            {
+                word = await GetRandomWordByGroup(group);
+                data[i] = new TrainItem(word);
+            }
+
+            return data;
+        }
+
+        public async Task<TrainItem[]> GenerateTrainWritting(int group, int count)
         {
             TrainItem[] data = new TrainItem[count];
 

@@ -11,6 +11,7 @@ namespace ChineseDictionary.Services
         Task<TrainItem[]> GenerateTrainOptions(int group, int count);
         Task<TrainItem[]> GenerateTrainReview(int group, int count);
         
+        Task<TrainItem[]> GenerateTrainWritting(int group, int count);
         Task MoveFlashcards(IEnumerable<Word> words, int group);
         Task MoveFlashcards(IEnumerable<FlashcardWord> flashcardWords, int group);
         Task MoveFlashcard(FlashcardWord flashcardWord, int group);

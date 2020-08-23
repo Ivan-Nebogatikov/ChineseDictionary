@@ -37,7 +37,7 @@ namespace ChineseDictionary.I18nText
         /// <summary>"Группа карточек:"</summary>
         public string GroupOfFlashcards;
 
-        /// <summary>"Привет! :) "</summary>
+        /// <summary>"Привет!"</summary>
         public string HelloWorld;
 
         /// <summary>"Старт"</summary>
@@ -46,11 +46,17 @@ namespace ChineseDictionary.I18nText
         /// <summary>"Загрузка..."</summary>
         public string Loading;
 
+        /// <summary>"Количество Ваших ошибок:"</summary>
+        public string Mistakes;
+
         /// <summary>"Больше"</summary>
         public string More;
 
         /// <summary>"Далее"</summary>
         public string Next;
+
+        /// <summary>"Следующая тренировка:"</summary>
+        public string NextTrain;
 
         /// <summary>"Количество слов:"</summary>
         public string NumberOfWords;
@@ -102,6 +108,9 @@ namespace ChineseDictionary.I18nText
 
         /// <summary>"Добро пожаловать в ChineseDictionary! Мы являемся лучшим словарем по мнению Билла Гейтса."</summary>
         public string WelcomeToYourNewApp;
+
+        /// <summary>"Написание"</summary>
+        public string Writting;
 
         /// <summary>"Неправильно:"</summary>
         public string Wrong;
