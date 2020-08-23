@@ -13,7 +13,7 @@ namespace HandwritingLibrary
     public class SubStroke
     {
         public int Dir;
-        public double Len;
+        public int Len;
         public double CenterX;
         public double CenterY;
     }
