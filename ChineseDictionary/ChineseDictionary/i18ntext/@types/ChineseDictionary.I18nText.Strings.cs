@@ -37,7 +37,7 @@ namespace ChineseDictionary.I18nText
         /// <summary>"Группа карточек:"</summary>
         public string GroupOfFlashcards;
 
-        /// <summary>"Привет!"</summary>
+        /// <summary>"Привет! :) "</summary>
         public string HelloWorld;
 
         /// <summary>"Старт"</summary>

@@ -30,6 +30,9 @@
   "Animate": "Animate",
   "StrokeOrder": "Stroke order:",
   "ToSearch": "To Search",
-  "TimeToTrain": "Time to train!",
-  "AddWordToTrain": "Add word to train"
+  "TimeToTrain": "Time to train!",  
+  "Writting": "Writting",
+  "Mistakes": "You have made mistakes:",
+  "AddWordToTrain": "Add word to train",
+  "NextTrain": "Next train:"
 }
