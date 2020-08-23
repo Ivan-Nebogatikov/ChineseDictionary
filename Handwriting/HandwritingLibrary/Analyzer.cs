@@ -187,7 +187,7 @@ namespace HandwritingLibrary
                 };
                 double centerX = NormDist(new Point { X = 0, Y = ptCenter.Y }, ptCenter);
                 double centerY = NormDist(new Point { X = ptCenter.X, Y = 0 }, ptCenter);
-                res.Add(new SubStroke { Dir = (int)direction, Len = normLength, CenterX = centerX, CenterY = centerY });
+                res.Add(new SubStroke { Dir = (int)direction, Len = (int)normLength, CenterX = centerX, CenterY = centerY });
                 prevIx = ix;
             }
             return res;
