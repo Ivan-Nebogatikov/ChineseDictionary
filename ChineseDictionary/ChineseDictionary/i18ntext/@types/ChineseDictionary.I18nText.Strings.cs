@@ -37,7 +37,7 @@ namespace ChineseDictionary.I18nText
         /// <summary>"Группа карточек:"</summary>
         public string GroupOfFlashcards;
 
-        /// <summary>"Привет!"</summary>
+        /// <summary>"Привет! :) "</summary>
         public string HelloWorld;
 
         /// <summary>"Старт"</summary>
@@ -91,8 +91,11 @@ namespace ChineseDictionary.I18nText
         /// <summary>"Пожалуйста, пройдите опрос и поделитесь с нами своим мнением."</summary>
         public string SurveyPrompt;
 
-        /// <summary>"Как Blazor работает?"</summary>
+        /// <summary>"Пора проверить насколько ты хорош!"</summary>
         public string SurveyTitle;
+
+        /// <summary>"Время тренироваться!"</summary>
+        public string TimeToTrain;
 
         /// <summary>"Назад"</summary>
         public string ToSearch;

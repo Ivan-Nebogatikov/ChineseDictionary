@@ -1,16 +1,17 @@
 ﻿@page "/search/{text}"
 
 @inject IJSRuntime JSRuntime
-@inject Toolbelt.Blazor.I18nText.I18nText I18nText
 @inject ChineseDictionary.Services.IFlashcardsDbService FlashcardsDb
 @inject ChineseDictionary.Services.IDictionaryServiceAsync DictionaryService
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
 
-@using ChineseDictionary.Constants
 @using ChineseDictionary.Models
+@using ChineseDictionary.Constants
+
 
 @if (word is null)
 {
-    <em>@localization.Loading</em>
+<em>@localization.Loading</em>
 }
 else
 {
@@ -34,7 +35,7 @@ else
 
     @if (word.Examples.Any())
     {
-        <h5>@localization.Examples</h5>
+<h5>@localization.Examples</h5>
         <ul>
             @foreach (Example example in word.Examples)
             {
@@ -47,7 +48,7 @@ else
 
     @if (word.RelativeWords.Any())
     {
-        <h5>@localization.RelativeWords</h5>
+<h5>@localization.RelativeWords</h5>
         <ul>
             @foreach (string relativeWord in word.RelativeWords)
             {
@@ -59,7 +60,7 @@ else
 
     }
 
-    <h5>@localization.StrokeOrder</h5>
+<h5>@localization.StrokeOrder</h5>
     <div id="character-target-div"></div>
     <button id="animate-button"
             style="
@@ -77,12 +78,12 @@ else
 
     @if (isWordInFlashcards)
     {
-        <h6>@localization.NextTrain @nextTrainDate</h6>
+<h6>@localization.TimeToTrain @nextTrainDate</h6>
     }
-    else
-    {
-        <button class="btn btn-light" @onclick="AddWord2Train">@localization.AddWordToTrain</button>
-    }
+    
+
+<button class="btn btn-success btn-xs" @onclick="AddWord2Train">@localization.AddWordToTrain</button>
+
 
     <br />
     <br />
@@ -92,23 +93,24 @@ else
 }
 
 @code {
+
     [Parameter]
     public string Text { get; set; }
 
     private Word word;
     private bool isWordInFlashcards;
     private string nextTrainDate;
+    private Strings localization = new Strings();
 
     List<ColoredCharacter> coloredCharacters;
-    private Strings localization = new Strings();
 
     protected override async Task OnInitializedAsync()
     {
-        localization = await I18nText.GetTextTableAsync<Strings>(this);
         word = await DictionaryService.GetByChinese(Text);
         isWordInFlashcards = await FlashcardsDb.IsWordInFlashcards(word);
         if (isWordInFlashcards)
             nextTrainDate = await FlashcardsDb.NextTrainDate(word);
+        localization = await I18nText.GetTextTableAsync<Strings>(this);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

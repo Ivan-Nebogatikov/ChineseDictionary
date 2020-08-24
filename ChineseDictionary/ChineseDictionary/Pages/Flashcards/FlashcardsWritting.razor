@@ -13,8 +13,9 @@
 <br />
 
 @if (word != null)
-{
-    <h4>@word.Chinese</h4>
+{    
+    <br />
+    <h1>@word.Chinese</h1>
 
     <div id='character-quizzing'></div>
     <br />
@@ -22,10 +23,10 @@
     <br />
     <br />
 
-    <button @onclick="HandleNext">@localization.Next</button>
+    <button @onclick="HandleNext" class="btn btn-success" >@localization.Next</button>
     <br />
     <br />
-    <button @onclick="HandleStopSubmit">@localization.StopTrain</button>
+    <button @onclick="HandleStopSubmit" class="btn btn-danger">@localization.StopTrain</button>
     <br />
     <br />
 }

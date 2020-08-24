@@ -14,11 +14,15 @@
 <EditForm Model="@input" OnValidSubmit="HandleTrainSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
-    @localization.NumberOfWords
-    <InputNumber id="WordsCount" @bind-Value="input.WordsCount" />
+    <p>
+        <br />
+        @localization.NumberOfWords
+        <InputNumber id="WordsCount" @bind-Value="input.WordsCount" />
+    </p>
     <br>
     @localization.GroupOfFlashcards
     <InputNumber id="FlashcardsGroup" @bind-Value="input.Group" />
+    <br />
     <br>
     <InputSelect @bind-Value="input.Type">
       

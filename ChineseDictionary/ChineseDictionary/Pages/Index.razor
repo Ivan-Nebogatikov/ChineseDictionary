@@ -1,15 +1,18 @@
-﻿@inject Toolbelt.Blazor.I18nText.I18nText I18nText
-@page "/"
+﻿@page "/"
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
 
 <h1>@localization.HelloWorld</h1>
 <p/>
 @localization.WelcomeToYourNewApp
+
 <SurveyPrompt Title="@localization.SurveyTitle" />
 
 @code {
+
     private Strings localization = new Strings();
     protected override async Task OnInitializedAsync()
     {
         localization = await I18nText.GetTextTableAsync<Strings>(this);
+
     }
 }
